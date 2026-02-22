@@ -1,0 +1,66 @@
+site_name: AXLE Documentation
+site_description: Python client and CLI for the Axiom Lean Engine API
+site_url: https://axle.axiommath.ai/v1/docs/
+
+repo_name: axiom-lean-engine
+repo_url: https://github.com/AxiomMath/axiom-lean-engine
+
+theme:
+  name: material
+  custom_dir: docs/overrides
+  logo: assets/logo.svg
+  favicon: assets/favicon.svg
+  palette:
+    scheme: default
+    primary: custom
+    accent: custom
+  font: false
+  features:
+    - navigation.instant
+    - navigation.sections
+    - navigation.expand
+    - search.suggest
+    - content.code.copy
+    - header.autohide
+
+nav:
+  - Home: index.md
+  - Getting Started:
+      - Installation: installation.md
+      - Quick Start: quickstart.md
+      - Configuration: configuration.md
+      - Usage Notes: usage-notes.md
+  - Python API: python-api.md
+  - CLI Reference: cli-reference.md
+  - Tools:
+      - verify_proof: tools/verify_proof.md
+      - check: tools/check.md
+      - extract_theorems: tools/extract_theorems.md
+      - rename: tools/rename.md
+      - theorem2lemma: tools/theorem2lemma.md
+      - theorem2sorry: tools/theorem2sorry.md
+      - merge: tools/merge.md
+      - simplify_theorems: tools/simplify_theorems.md
+      - repair_proofs: tools/repair_proofs.md
+      - have2lemma: tools/have2lemma.md
+      - have2sorry: tools/have2sorry.md
+      - sorry2lemma: tools/sorry2lemma.md
+      - disprove: tools/disprove.md
+      - normalize: tools/normalize.md
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - admonition
+  - pymdownx.details
+  - toc:
+      permalink: true
+
+plugins:
+  - search
+
+extra_css:
+  - stylesheets/extra.css

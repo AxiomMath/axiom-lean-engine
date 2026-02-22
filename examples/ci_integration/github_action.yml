@@ -1,0 +1,37 @@
+# Example GitHub Action for checking Lean files with AXLE
+#
+# Add this to .github/workflows/ in your Lean project
+
+name: Check Lean
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+    paths:
+      - '**.lean'
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install AXLE
+        run: pip install axiom-axle
+
+      - name: Check all Lean files
+        env:
+          AXLE_API_KEY: ${{ secrets.AXLE_API_KEY }}
+        run: |
+          find . -name "*.lean" -exec sh -c '
+            echo "Checking $1..."
+            axle check "$1" --environment lean-4.28.0 --json --strict || exit 1
+          ' _ {} \;
