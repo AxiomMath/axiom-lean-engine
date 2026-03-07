@@ -32,6 +32,8 @@ nav:
       - Usage Notes: usage-notes.md
   - Python API: python-api.md
   - CLI Reference: cli-reference.md
+  - Release Notes:
+      - Changelog: changelog.md
   - Tools:
       - verify_proof: tools/verify_proof.md
       - check: tools/check.md
