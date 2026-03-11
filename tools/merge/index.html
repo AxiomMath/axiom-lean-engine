@@ -1,0 +1,1730 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Python client and CLI for the Axiom Lean Engine API">
+      
+      
+      
+        <link rel="canonical" href="https://axle.axiommath.ai/v1/docs/tools/merge/">
+      
+      
+        <link rel="prev" href="../theorem2sorry/">
+      
+      
+        <link rel="next" href="../simplify_theorems/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>merge - AXLE Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  <!-- Additional favicon formats -->
+  <link rel="icon" href="../../assets/favicon.ico" sizes="any">
+  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#merge" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+  <header class="md-header" data-md-component="header">
+    <nav class="md-header__inner md-grid">
+      <!-- Logo -->
+      <a href="https://axiommath.ai/" class="md-header__button md-logo">
+        <img src="../../assets/logo.svg" alt="Axiom">
+      </a>
+
+      <!-- Spacer -->
+      <div style="flex-grow:1;"></div>
+
+      <!-- Nav links -->
+      <nav class="md-header__nav">
+        <a href="https://github.com/AxiomMath/axiom-lean-engine" target="_blank" rel="noopener" class="md-header__link">GitHub</a>
+        <a href="https://axle.axiommath.ai/v1/docs/" class="md-header__link">Docs</a>
+        <a href="https://axle.axiommath.ai/app/console" target="_blank" class="md-header__link">Console</a>
+      </nav>
+
+      <!-- Search -->
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/>
+        </svg>
+      </label>
+
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    </nav>
+  </header>
+
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="AXLE Documentation" class="md-nav__button md-logo" aria-label="AXLE Documentation" data-md-component="logo">
+      
+  <img src="../../assets/logo.svg" alt="logo">
+
+    </a>
+    AXLE Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/AxiomMath/axiom-lean-engine" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    axiom-lean-engine
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick Start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Release Notes
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Release Notes
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tools
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Tools
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../verify_proof/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    verify_proof
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../check/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    check
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../extract_theorems/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    extract_theorems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rename/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rename
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../theorem2lemma/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    theorem2lemma
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../theorem2sorry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    theorem2sorry
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    merge
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    merge
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#input-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Input Parameters
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#output-fields" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output Fields
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#python-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Python API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#http-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HTTP API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-response" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example Response
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#demo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Demo
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Demo">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#file-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        File 1
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#file-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        File 2
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#non-declaration-commands-are-extracted-first" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Non-declaration commands are extracted first
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#declarations-are-merged-respecting-dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Declarations are merged respecting dependencies
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#conflict-resolution-via-renaming" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conflict resolution via renaming
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deduplication-of-identical-theorems" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deduplication of identical theorems
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deduplication-merges-theorems-with-different-names" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deduplication merges theorems with different names
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#preference-for-error-free-and-sorry-free-declarations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Preference for error-free and sorry-free declarations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unsuccessful-attempts-are-preserved-as-comments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Unsuccessful attempts are preserved as comments
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#final-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Final File
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../simplify_theorems/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    simplify_theorems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../repair_proofs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    repair_proofs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../have2lemma/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    have2lemma
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../have2sorry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    have2sorry
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sorry2lemma/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    sorry2lemma
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../disprove/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    disprove
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../normalize/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    normalize
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#input-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Input Parameters
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#output-fields" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output Fields
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#python-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Python API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#http-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HTTP API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-response" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example Response
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#demo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Demo
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Demo">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#file-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        File 1
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#file-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        File 2
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#non-declaration-commands-are-extracted-first" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Non-declaration commands are extracted first
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#declarations-are-merged-respecting-dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Declarations are merged respecting dependencies
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#conflict-resolution-via-renaming" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conflict resolution via renaming
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deduplication-of-identical-theorems" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deduplication of identical theorems
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deduplication-merges-theorems-with-different-names" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deduplication merges theorems with different names
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#preference-for-error-free-and-sorry-free-declarations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Preference for error-free and sorry-free declarations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unsuccessful-attempts-are-preserved-as-comments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Unsuccessful attempts are preserved as comments
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#final-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Final File
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="merge">merge<a class="headerlink" href="#merge" title="Permanent link">&para;</a></h1>
+<p>Combine multiple Lean files into a single file.</p>
+<p><a href="https://axle.axiommath.ai/merge#data=eyJkb2N1bWVudHMiOlsidGhlb3JlbSBEIDogKDEgPSAxIOKIpyAyID0gMikg4oinIFRydWUgOj0gc29ycnlcbnRoZW9yZW0gQiA6IDIgPSAyIDo9IHJmbFxudGhlb3JlbSBBIDogMSA9IDEgOj0gc29ycnlcbnRoZW9yZW0gQyA6IDEgPSAxIOKIpyAyID0gMiA6PSDin6hBLCBC4p%2BpIiwidGhlb3JlbSBBIDogMSA9IDEgOj0gcmZsXG50aGVvcmVtIEMgOiAxID0gMSDiiKcgMiA9IDIgOj0g4p%2BoQSwgQeKfqSAtLSBpbmNvcnJlY3RcbnRoZW9yZW0gRCA6ICgxID0gMSDiiKcgMiA9IDIpIOKIpyBUcnVlIDo9IOKfqEMsIHRyaXZpYWzin6lcbnRoZW9yZW0gQiA6IDIgPSAyIDo9IHNvcnJ5Il0sInVzZV9kZWZfZXEiOnRydWUsImluY2x1ZGVfYWx0c19hc19jb21tZW50cyI6ZmFsc2UsImlnbm9yZV9pbXBvcnRzIjp0cnVlLCJlbnZpcm9ubWVudCI6ImxlYW4tNC4yNy4wIiwidGltZW91dF9zZWNvbmRzIjoxMjB9">Try this example in the web UI</a></p>
+<h2 id="input-parameters">Input Parameters<a class="headerlink" href="#input-parameters" title="Permanent link">&para;</a></h2>
+<details>
+<summary><code>documents</code> · list[str] · required · List of Lean code strings to merge</summary>
+<p>Multiple Lean files to combine into a single file. Duplicate declarations are merged intelligently.</p>
+</details>
+<details>
+<summary><code>use_def_eq</code> · bool · default: <code>True</code> · Use definitional equality for deduplication</summary>
+<p>When <code>true</code>, types are compared using equality after kernel reduction.</p>
+<p>When <code>false</code>, types are compared at face value, which is faster but may rarely fail to merge semantically identical proofs.</p>
+<p>Defaults to true.</p>
+</details>
+<details>
+<summary><code>include_alts_as_comments</code> · bool · default: <code>False</code> · Preserve alternate versions as comments</summary>
+<p>When deduplicating, preserves all versions of a merged declaration as comments for reference. Defaults to false.</p>
+</details>
+<details>
+<summary><code>ignore_imports</code> · bool · default: <code>False</code> · Ignore import mismatches</summary>
+<p>Controls import statement handling:</p>
+<ul>
+<li><code>false</code> (default): Validate that imports match the environment. Returns an error if they don't.</li>
+<li><code>true</code>: Ignore the imports in <code>content</code> and use the environment's default imports instead. See the troubleshooting page for more details.</li>
+</ul>
+</details>
+<details>
+<summary><code>environment</code> · str · required · Lean environment or version</summary>
+<p>The Lean environment to use for evaluation. Each environment includes a specific
+Lean version and pre-built dependencies (typically Mathlib).</p>
+<p>Available environments: <code>lean-4.28.0</code>, <code>lean-4.27.0</code>, <code>lean-4.26.0</code>, etc.</p>
+</details>
+<details>
+<summary><code>timeout_seconds</code> · float · default: <code>120</code> · Max execution time in seconds</summary>
+<p>Maximum execution time in seconds. Requests exceeding this limit return a timeout error. Note that end-to-end request latency may exceed this timeout due to queue time and other overhead. Additionally, all non-admin requests are subject to an absolute maximum timeout of 300 seconds (5 minutes).</p>
+</details>
+<h2 id="output-fields">Output Fields<a class="headerlink" href="#output-fields" title="Permanent link">&para;</a></h2>
+<details>
+<summary><code>lean_messages</code> · dict · Messages from Lean compiler</summary>
+<p>Messages from the Lean compiler with <code>errors</code>, <code>warnings</code>, and <code>infos</code> lists.
+Errors here indicate invalid Lean code (syntax errors, type errors, etc.).</p>
+</details>
+<details>
+<summary><code>tool_messages</code> · dict · Messages from merge tool</summary>
+<p>Messages from the merge tool with <code>errors</code>, <code>warnings</code>, and <code>infos</code> lists.
+Errors here indicate tool-specific issues (not Lean compilation errors).</p>
+</details>
+<details>
+<summary><code>content</code> · string · All input files merged into a single Lean file</summary>
+<p>Duplicates and dependencies are resolved.</p>
+</details>
+<details>
+<summary><code>timings</code> · dict · Execution timing breakdown</summary>
+<p>Timing information in milliseconds for various stages of processing.</p>
+</details>
+<h2 id="python-api">Python API<a class="headerlink" href="#python-api" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">axle</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">documents</span><span class="o">=</span><span class="p">[</span><span class="n">code1</span><span class="p">,</span> <span class="n">code2</span><span class="p">,</span> <span class="n">code3</span><span class="p">],</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">environment</span><span class="o">=</span><span class="s2">&quot;lean-4.28.0&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">use_def_eq</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>                  <span class="c1"># Optional</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">include_alts_as_comments</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>   <span class="c1"># Optional</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">timeout_seconds</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span>              <span class="c1"># Optional</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="p">)</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h2>
+<p><strong>Usage:</strong> <code>axle merge FILE1 FILE2 ... [OPTIONS]</code></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># Merge multiple files to stdout</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>axle<span class="w"> </span>merge<span class="w"> </span>theorem1.lean<span class="w"> </span>theorem2.lean<span class="w"> </span>theorem3.lean<span class="w"> </span>--environment<span class="w"> </span>lean-4.28.0
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1"># Merge all .lean files in directory</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>axle<span class="w"> </span>merge<span class="w"> </span>*.lean<span class="w"> </span>-o<span class="w"> </span>combined.lean<span class="w"> </span>--environment<span class="w"> </span>lean-4.28.0
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1"># Merge and check</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>axle<span class="w"> </span>merge<span class="w"> </span>*.lean<span class="w"> </span>--environment<span class="w"> </span>lean-4.28.0<span class="w"> </span><span class="p">|</span><span class="w"> </span>axle<span class="w"> </span>check<span class="w"> </span>-<span class="w"> </span>--environment<span class="w"> </span>lean-4.28.0
+</code></pre></div>
+<h2 id="http-api">HTTP API<a class="headerlink" href="#http-api" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>curl<span class="w"> </span>-s<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>https://axle.axiommath.ai/api/v1/merge<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;documents&quot;: [&quot;import Mathlib\ntheorem foo : 1 = 1 := rfl&quot;, &quot;import Mathlib\ntheorem bar : 2 = 2 := rfl&quot;], &quot;environment&quot;: &quot;lean-4.28.0&quot;}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq
+</code></pre></div>
+<h2 id="example-response">Example Response<a class="headerlink" href="#example-response" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="p">{</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">&quot;lean_messages&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="nt">&quot;errors&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span><span class="nt">&quot;warnings&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span><span class="nt">&quot;infos&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">  </span><span class="p">},</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">  </span><span class="nt">&quot;tool_messages&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">    </span><span class="nt">&quot;errors&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">    </span><span class="nt">&quot;warnings&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">    </span><span class="nt">&quot;infos&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">  </span><span class="p">},</span>
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="w">  </span><span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;import Mathlib\n\ntheorem foo : 1 = 1 := rfl\n\ntheorem bar : 2 = 2 := rfl&quot;</span><span class="p">,</span>
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="w">  </span><span class="nt">&quot;timings&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="w">    </span><span class="nt">&quot;total_ms&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">105</span><span class="p">,</span>
+<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="w">    </span><span class="nt">&quot;parse_ms&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">95</span>
+<a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="p">}</span>
+</code></pre></div>
+<h2 id="demo">Demo<a class="headerlink" href="#demo" title="Permanent link">&para;</a></h2>
+<p>This merge function is intended to be a consolidation of multiple Lean files that performs best-effort deduplication and conflict resolution. As a demonstration, we'll merge the following two files, with descriptions of features along the way.</p>
+<h3 id="file-1">File 1<a class="headerlink" href="#file-1" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>import Mathlib
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>open Lean
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>theorem D : (1 = 1 ∧ 2 = 2) ∧ True := rfl
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>theorem A : 2 = 2 := rfl
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>variable (x : Nat)
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>theorem E : x = 5 := trivial
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>
+<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>theorem B : 1 = 1 := rfl
+<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>theorem C2 : 1 = 1 ∧ 2 = 2 := ⟨B, A⟩
+<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>
+<a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>set_option maxHeartbeats 0
+</code></pre></div>
+<h3 id="file-2">File 2<a class="headerlink" href="#file-2" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>import Mathlib
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>open Lean.Elab
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>set_option maxHeartbeats 200000
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>theorem A : 4 = 4 := rfl
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>theorem B : 1 = 1 := rfl
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>theorem C1 : 1 = 1 ∧ 2 = 2 := ⟨B, A⟩
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>theorem D : (1 = 1 ∧ 2 = 2) ∧ True := ⟨C1, trivial⟩
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>
+<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>variable (x : Nat)
+<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>theorem E : x = 5 := sorry
+</code></pre></div>
+<h3 id="non-declaration-commands-are-extracted-first">Non-declaration commands are extracted first<a class="headerlink" href="#non-declaration-commands-are-extracted-first" title="Permanent link">&para;</a></h3>
+<p>Any non-declaration commands (variables, open scopes, options, notations, etc.) will be extracted <em>first</em> from all files. These commands will be placed under a comment label like <code>----------------------</code></p>
+<p>Note that this may break files, since many of these commands have global side effects that change how a proof is run, so it is a good idea to normalize your code first, whether manually or by calling <a href="../normalize/">normalize</a>.</p>
+<p>This gives us:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>----------------------
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>open Lean
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>variable (x : Nat)
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>set_option maxHeartbeats 0
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>----------------------
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>open Lean.Elab
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>set_option maxHeartbeats 200000
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>variable (x : Nat)
+</code></pre></div></p>
+<p>Pay attention to how we have conflicting commands here: at first, we set <code>maxHeartbeats</code> to 0, and then immediately reset it to 200000. Until we figure out a better way to handle this scenario, it is good to keep in mind.</p>
+<h3 id="declarations-are-merged-respecting-dependencies">Declarations are merged respecting dependencies<a class="headerlink" href="#declarations-are-merged-respecting-dependencies" title="Permanent link">&para;</a></h3>
+<p>All remaining commands will be declarations, and will be merged in topological order.</p>
+<h3 id="conflict-resolution-via-renaming">Conflict resolution via renaming<a class="headerlink" href="#conflict-resolution-via-renaming" title="Permanent link">&para;</a></h3>
+<p>Notice that both files have a theorem <code>A</code>, which assert different things. The merge function will automatically rename one of them to a globally unique identifier. Note that our renaming function is fairly robust as seen in the <a href="../rename/">rename</a> endpoint.
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>theorem A : 2 = 2 := rfl
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>theorem A_1 : 4 = 4 := rfl
+</code></pre></div></p>
+<h3 id="deduplication-of-identical-theorems">Deduplication of identical theorems<a class="headerlink" href="#deduplication-of-identical-theorems" title="Permanent link">&para;</a></h3>
+<p>Theorem <code>B</code> exists in both files here, so we merge them into a single theorem.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>theorem B : 1 = 1 := rfl
+</code></pre></div>
+<p>Note that we also merge non-theorems (e.g., definitions and structures), but these must have the same <em>value</em> in addition to having the same type, because they <em>are</em> implementation-specific.</p>
+<h3 id="deduplication-merges-theorems-with-different-names">Deduplication merges theorems with different names<a class="headerlink" href="#deduplication-merges-theorems-with-different-names" title="Permanent link">&para;</a></h3>
+<p>Theorem <code>C</code> exists in both files, but with different names (<code>C1</code> vs. <code>C2</code>). Our merge function will automatically detect this equivalence and generate a unique name to use in the merged file.
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>theorem C2_1 : 1 = 1 ∧ 2 = 2 := ⟨B, A⟩
+</code></pre></div></p>
+<h3 id="preference-for-error-free-and-sorry-free-declarations">Preference for error-free and sorry-free declarations<a class="headerlink" href="#preference-for-error-free-and-sorry-free-declarations" title="Permanent link">&para;</a></h3>
+<p>Theorem <code>D</code> exists in both files, but in the first file, the proof <code>rfl</code> completely fails, so we'll prefer the implementation in the second file.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>theorem D : (1 = 1 ∧ 2 = 2) ∧ True := ⟨C2_1, trivial⟩
+</code></pre></div>
+<p>Notice something interesting here: in the first file, <code>D</code> was declared <em>before</em> <code>A, B, C</code> existed, so there couldn't possibly be a proof of <code>D</code> that uses <code>A, B, C</code>. However, our dependency tracking figures out that since we should use the implementation in the second file, we need the dependencies from that file, where <code>A, B, C</code> <em>are</em> defined.</p>
+<h3 id="unsuccessful-attempts-are-preserved-as-comments">Unsuccessful attempts are preserved as comments<a class="headerlink" href="#unsuccessful-attempts-are-preserved-as-comments" title="Permanent link">&para;</a></h3>
+<p>If no successful proofs exist, we select one arbitrarily, but keep the others as reference. We retain the remaining unsuccessful proofs as comments following the chosen proof, with the signposting <code>unsuccessful attempt</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>theorem E : x = 5 := trivial
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>/-
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>-- unsuccessful attempt
+<a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>theorem E : x = 5 := sorry
+<a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>-/
+</code></pre></div>
+<h3 id="final-file">Final File<a class="headerlink" href="#final-file" title="Permanent link">&para;</a></h3>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>import Mathlib
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>----------------------
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>open Lean
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>variable (x : Nat)
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>set_option maxHeartbeats 0
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>
+<a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a>----------------------
+<a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>open Lean.Elab
+<a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a>set_option maxHeartbeats 200000
+<a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a>variable (x : Nat)
+<a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a>
+<a id="__codelineno-12-13" name="__codelineno-12-13" href="#__codelineno-12-13"></a>theorem A : 2 = 2 := rfl
+<a id="__codelineno-12-14" name="__codelineno-12-14" href="#__codelineno-12-14"></a>
+<a id="__codelineno-12-15" name="__codelineno-12-15" href="#__codelineno-12-15"></a>theorem B : 1 = 1 := rfl
+<a id="__codelineno-12-16" name="__codelineno-12-16" href="#__codelineno-12-16"></a>
+<a id="__codelineno-12-17" name="__codelineno-12-17" href="#__codelineno-12-17"></a>theorem C2_1 : 1 = 1 ∧ 2 = 2 := ⟨B, A⟩
+<a id="__codelineno-12-18" name="__codelineno-12-18" href="#__codelineno-12-18"></a>
+<a id="__codelineno-12-19" name="__codelineno-12-19" href="#__codelineno-12-19"></a>theorem A_1 : 4 = 4 := rfl
+<a id="__codelineno-12-20" name="__codelineno-12-20" href="#__codelineno-12-20"></a>
+<a id="__codelineno-12-21" name="__codelineno-12-21" href="#__codelineno-12-21"></a>theorem D : (1 = 1 ∧ 2 = 2) ∧ True := ⟨C2_1, trivial⟩
+<a id="__codelineno-12-22" name="__codelineno-12-22" href="#__codelineno-12-22"></a>
+<a id="__codelineno-12-23" name="__codelineno-12-23" href="#__codelineno-12-23"></a>theorem E : x = 5 := trivial
+<a id="__codelineno-12-24" name="__codelineno-12-24" href="#__codelineno-12-24"></a>
+<a id="__codelineno-12-25" name="__codelineno-12-25" href="#__codelineno-12-25"></a>/-
+<a id="__codelineno-12-26" name="__codelineno-12-26" href="#__codelineno-12-26"></a>-- unsuccessful attempt
+<a id="__codelineno-12-27" name="__codelineno-12-27" href="#__codelineno-12-27"></a>theorem E : x = 5 := sorry
+<a id="__codelineno-12-28" name="__codelineno-12-28" href="#__codelineno-12-28"></a>-/
+</code></pre></div>
+Note that you may get slightly different results due to the possibility of multiple topological orderings of the declarations.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.sections", "navigation.expand", "search.suggest", "content.code.copy", "header.autohide"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
