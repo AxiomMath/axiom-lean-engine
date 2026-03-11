@@ -153,4 +153,4 @@ Each environment includes the following fields:
 ]
 ```
 
-See [Header Handling](usage-notes.md#header-handling) for important notes on how AXLE handles import statements.
+See [Import Mismatch Errors](troubleshooting.md#import-mismatch-errors) for important notes on how AXLE handles import statements.

@@ -25,7 +25,7 @@ Simplify theorem proofs by removing unnecessary tactics and cleaning up code.
     Controls import statement handling:
 
     - `false` (default): Validate that imports match the environment. Returns an error if they don't.
-    - `true`: Ignore the imports in `content` and use the environment's default imports instead. See the usage notes page for more details.
+    - `true`: Ignore the imports in `content` and use the environment's default imports instead. See the troubleshooting page for more details.
 
 ??? "`environment` · str · required · Lean environment or version"
     The Lean environment to use for evaluation. Each environment includes a specific
@@ -34,7 +34,7 @@ Simplify theorem proofs by removing unnecessary tactics and cleaning up code.
     Available environments: `lean-4.28.0`, `lean-4.27.0`, `lean-4.26.0`, etc.
 
 ??? "`timeout_seconds` · float · default: `120` · Max execution time in seconds"
-    Maximum execution time in seconds. Requests exceeding this limit return a timeout error. Note that end-to-end request latency may exceed this timeout due to queue time and other overhead.
+    Maximum execution time in seconds. Requests exceeding this limit return a timeout error. Note that end-to-end request latency may exceed this timeout due to queue time and other overhead. Additionally, all non-admin requests are subject to an absolute maximum timeout of 300 seconds (5 minutes).
 
 
 ## Output Fields
@@ -135,7 +135,6 @@ theorem duh (h : 1 + 4 = 5) : 1 = 1 := by
 In this theorem, `h'` is obvious -- it's the exact same as `h`, so we should remove it. However, this has not been implemented because it also requires renaming any occurrences of `h'`. This gets a little messy because we are now dealing with local variables, which are not unique (unlike global constants). Punting for now.
 
 -->
-
 
 ## Python API
 

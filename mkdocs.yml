@@ -29,7 +29,7 @@ nav:
       - Installation: installation.md
       - Quick Start: quickstart.md
       - Configuration: configuration.md
-      - Usage Notes: usage-notes.md
+      - Troubleshooting: troubleshooting.md
   - Python API: python-api.md
   - CLI Reference: cli-reference.md
   - Release Notes:

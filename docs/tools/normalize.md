@@ -19,7 +19,7 @@ Standardize Lean file formatting to prepare for other operations, especially `me
     Controls import statement handling:
 
     - `false` (default): Validate that imports match the environment. Returns an error if they don't.
-    - `true`: Ignore the imports in `content` and use the environment's default imports instead. See the usage notes page for more details.
+    - `true`: Ignore the imports in `content` and use the environment's default imports instead. See the troubleshooting page for more details.
 
 ??? "`environment` · str · required · Lean environment or version"
     The Lean environment to use for evaluation. Each environment includes a specific
@@ -28,7 +28,7 @@ Standardize Lean file formatting to prepare for other operations, especially `me
     Available environments: `lean-4.28.0`, `lean-4.27.0`, `lean-4.26.0`, etc.
 
 ??? "`timeout_seconds` · float · default: `120` · Max execution time in seconds"
-    Maximum execution time in seconds. Requests exceeding this limit return a timeout error. Note that end-to-end request latency may exceed this timeout due to queue time and other overhead.
+    Maximum execution time in seconds. Requests exceeding this limit return a timeout error. Note that end-to-end request latency may exceed this timeout due to queue time and other overhead. Additionally, all non-admin requests are subject to an absolute maximum timeout of 300 seconds (5 minutes).
 
 
 ## Output Fields

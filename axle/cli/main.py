@@ -90,8 +90,8 @@ def add_endpoint_subparser(
     # Create subparser
     sub = subparsers.add_parser(
         endpoint_name,
-        help=metadata.get("cli_one_line_desc", metadata.get("description", "")),
-        description=metadata.get("description", ""),
+        help=metadata.get("description", ""),
+        description=metadata.get("details", ""),
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
 

@@ -13,7 +13,7 @@ Split a file containing one or more theorems into smaller units, each containing
     Controls import statement handling:
 
     - `false` (default): Validate that imports match the environment. Returns an error if they don't.
-    - `true`: Ignore the imports in `content` and use the environment's default imports instead. See the usage notes page for more details.
+    - `true`: Ignore the imports in `content` and use the environment's default imports instead. See the troubleshooting page for more details.
 
 ??? "`environment` · str · required · Lean environment or version"
     The Lean environment to use for evaluation. Each environment includes a specific
@@ -22,7 +22,7 @@ Split a file containing one or more theorems into smaller units, each containing
     Available environments: `lean-4.28.0`, `lean-4.27.0`, `lean-4.26.0`, etc.
 
 ??? "`timeout_seconds` · float · default: `120` · Max execution time in seconds"
-    Maximum execution time in seconds. Requests exceeding this limit return a timeout error. Note that end-to-end request latency may exceed this timeout due to queue time and other overhead.
+    Maximum execution time in seconds. Requests exceeding this limit return a timeout error. Note that end-to-end request latency may exceed this timeout due to queue time and other overhead. Additionally, all non-admin requests are subject to an absolute maximum timeout of 300 seconds (5 minutes).
 
 
 ## Output Fields
@@ -44,6 +44,7 @@ Split a file containing one or more theorems into smaller units, each containing
 ??? "`timings` · dict · Execution timing breakdown"
     Timing information in milliseconds for various stages of processing.
 
+
 ## Document Fields
 
 Each document in the `documents` dictionary contains:
@@ -64,10 +65,10 @@ Each document in the `documents` dictionary contains:
     The type of the theorem as pretty-printed by Lean.
 
 ??? "`type_hash` · int · Hash of the canonical type expression"
-    Hash of the canonical (reduced, alpha-invariant) type expression. Useful for deduplication.
+    Hash of the canonical, alpha-invariant type expression. Useful for deduplication.
 
 ??? "`is_sorry` · bool · Whether the theorem contains a sorry"
-    True if the theorem's proof contains `sorry`.
+    True if the theorem's proof contains an explicit `sorry`.
 
 ??? "`index` · int · 0-based index in original file"
     Position of this theorem in the original file. Note: indices may not be contiguous (mutual definitions share indices).

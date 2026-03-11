@@ -6,6 +6,13 @@ Homepage: https://axle.axiommath.ai/
 
 ## Announcements
 
+<details open>
+<summary><strong>March 11, 2026 - v1.0.1</strong></summary>
+
+New documentation pages, increased rate limits, and bug fixes. See the [changelog](https://axle.axiommath.ai/v1/docs/changelog/) for details.
+
+</details>
+
 <details>
 <summary><strong>March 6, 2026</strong></summary>
 
@@ -25,7 +32,7 @@ Rate limits were unintentionally too restrictive:
 </details>
 
 <details>
-<summary><strong>March 5, 2026</strong></summary>
+<summary><strong>March 5, 2026 - v1.0.0</strong></summary>
 
 ### AXLE Public Release
 We're excited to release AXLE to the public! AXLE provides proof verification and manipulation primitives we've used across all of our research efforts, including training AI models and AxiomProver's 12/12 on Putnam 2025.

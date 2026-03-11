@@ -11,7 +11,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Releases]
 
-## v1.0.0
+## v1.0.1 - March 11, 2026
+
+### Added
+
+- Added [Changelog](https://axle.axiommath.ai/v1/docs/changelog/) and [Troubleshooting](https://axle.axiommath.ai/v1/docs/troubleshooting/) to the documentation pages.
+
+### Fixed
+
+- Increased request limits and fixed a typo in the documentation. Users with an API key are now limited to 20 active requests, and anonymous users are limited to 10 active requests.
+- Increased maximum timeout to 15 minutes (from 5 minutes).
+- Environments are now sorted by prefix (alphabetically) and then by version number (more recent versions first)
+- Fixed a bug with `disprove` failing to recognize implicit local variables. This bug was [found by Bulhwi Cha](https://leanprover.zulipchat.com/#narrow/channel/219941-Machine-Learning-for-Theorem-Proving/topic/Axiom.20Lean.20Engine/near/578064991) on Lean Zulip.
+
+
+## v1.0.0 - March 4, 2026
 
 ### Added
 

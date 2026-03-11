@@ -29,7 +29,7 @@ This tool is partially powered by [Plausible](https://github.com/leanprover-comm
     Controls import statement handling:
 
     - `false` (default): Validate that imports match the environment. Returns an error if they don't.
-    - `true`: Ignore the imports in `content` and use the environment's default imports instead. See the usage notes page for more details.
+    - `true`: Ignore the imports in `content` and use the environment's default imports instead. See the troubleshooting page for more details.
 
 ??? "`environment` · str · required · Lean environment or version"
     The Lean environment to use for evaluation. Each environment includes a specific
@@ -38,7 +38,7 @@ This tool is partially powered by [Plausible](https://github.com/leanprover-comm
     Available environments: `lean-4.28.0`, `lean-4.27.0`, `lean-4.26.0`, etc.
 
 ??? "`timeout_seconds` · float · default: `120` · Max execution time in seconds"
-    Maximum execution time in seconds. Requests exceeding this limit return a timeout error. Note that end-to-end request latency may exceed this timeout due to queue time and other overhead.
+    Maximum execution time in seconds. Requests exceeding this limit return a timeout error. Note that end-to-end request latency may exceed this timeout due to queue time and other overhead. Additionally, all non-admin requests are subject to an absolute maximum timeout of 300 seconds (5 minutes).
 
 
 ## Output Fields
@@ -58,10 +58,11 @@ This tool is partially powered by [Plausible](https://github.com/leanprover-comm
     Each theorem maps to a string indicating the outcome of the disprove attempt.
 
 ??? "`disproved_theorems` · list · List of theorems that were disproved"
-    Names of theorems where the negation was successfully proven.
+    List of theorems that were disproved
 
 ??? "`timings` · dict · Execution timing breakdown"
     Timing information in milliseconds for various stages of processing.
+
 
 ## Python API
 

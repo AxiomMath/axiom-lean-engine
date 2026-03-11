@@ -49,7 +49,7 @@ See tools documentation for detailed parameters and response fields.
 - [Python API Reference](python-api.md)
 - [CLI Reference](cli-reference.md)
 - [Configuration](configuration.md)
-- [Usage Notes](usage-notes.md)
+- [Troubleshooting](troubleshooting.md)
 
 ## Public Deployments
 
@@ -71,3 +71,13 @@ If you encounter bugs, unexpected behavior, or have feature requests:
   </svg>
   FILE A BUG
 </a>
+
+## Resources
+
+- [Axiom Homepage](https://axiommath.ai/)
+- [Lean Homepage](https://lean-lang.org/)
+- [Mathlib](https://leanprover-community.github.io) - Mathematics library for Lean 4
+- [Lean Zulip](https://leanprover.zulipchat.com/) - Community discussion
+- [AXLE on Zulip](https://leanprover.zulipchat.com/#narrow/channel/219941-Machine-Learning-for-Theorem-Proving/topic/Axiom.20Lean.20Engine/with/577859288) - Discussion thread for AXLE
+- [axiom-axle-mcp](https://pypi.org/project/axiom-axle-mcp/) - MCP server for AXLE
+- [Pantograph](https://github.com/lenianiva/Pantograph) - Machine-to-machine interaction interface for Lean
