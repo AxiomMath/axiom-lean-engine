@@ -57,13 +57,16 @@ Attempt to repair broken theorem proofs.
     Errors here indicate tool-specific issues (not Lean compilation errors).
 
 ??? "`content` · string · Lean code with repair attempts applied"
-    Check `lean_messages.errors` to see if repairs succeeded.
+    Check `okay` to see if repairs succeeded.
 
 ??? "`timings` · dict · Execution timing breakdown"
     Timing information in milliseconds for various stages of processing.
 
 ??? "`repair_stats` · dict · Count of each repair type applied"
     Maps repair names to counts (e.g., `{"apply_terminal_tactics": 2}`).
+
+??? "`okay` · bool · Whether the proof compiles after repair and all repairs succeed"
+    `True` when the file compiles after repair and all repairs succeed; `False` otherwise.
 
 
 ## Available Repairs
@@ -196,6 +199,7 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/repair_proofs \
     "remove_extraneous_tactics": 2,
     "apply_terminal_tactics": 0,
     "replace_unsafe_tactics": 0
-  }
+  },
+  "okay": true
 }
 ```

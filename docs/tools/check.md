@@ -112,6 +112,7 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/check \
     "infos": []
   },
   "timings": {
+    "parse_ms": 30,
     "total_ms": 62
   },
   "failed_declarations": []

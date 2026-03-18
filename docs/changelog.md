@@ -11,6 +11,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Releases]
 
+## v1.0.2 - March 18, 2026
+
+### Added
+
+- Added explicit `okay` return value to `repair_proofs`
+
+### Changed
+
+- Improved error messages for unknown options in `simplify_theorems`, `repair_proofs`, `normalize`
+- Improved error messages for `ignore_imports` error (with links to relevant docs)
+- Improved the efficiency of `merge`, bringing down the time spent on large requests by 20-30%.
+
+
 ## v1.0.1 - March 11, 2026
 
 ### Added

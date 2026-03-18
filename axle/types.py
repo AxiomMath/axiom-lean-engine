@@ -245,6 +245,7 @@ class RepairProofsResponse:
     timings: dict[str, int]
     repair_stats: dict[str, int]
     info: dict | None
+    okay: bool
 
     @classmethod
     def from_response(cls, response: dict) -> "RepairProofsResponse":
@@ -255,6 +256,7 @@ class RepairProofsResponse:
             timings=response.get("timings", {}),
             repair_stats=response.get("repair_stats", {}),
             info=response.get("info"),
+            okay=response.get("okay", False),
         )
 
 

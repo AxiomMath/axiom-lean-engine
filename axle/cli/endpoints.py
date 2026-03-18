@@ -438,6 +438,7 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/check \\
     "infos": []
   },
   "timings": {
+    "parse_ms": 30,
     "total_ms": 62
   },
   "failed_declarations": []
@@ -1510,7 +1511,8 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/repair_proofs \\
     "remove_extraneous_tactics": 2,
     "apply_terminal_tactics": 0,
     "replace_unsafe_tactics": 0
-  }
+  },
+  "okay": true
 }""",
         "inputs": [
             {**CONTENT_INPUT, "placeholder": "theorem foo : 1 = 1 := by sorry"},
@@ -1544,7 +1546,7 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/repair_proofs \\
                 "name": "content",
                 "type": "string",
                 "description": "Lean code with repair attempts applied",
-                "details": "Check `lean_messages.errors` to see if repairs succeeded.",
+                "details": "Check `okay` to see if repairs succeeded.",
             },
             TIMINGS_OUTPUT,
             {
@@ -1552,6 +1554,12 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/repair_proofs \\
                 "type": "dict",
                 "description": "Count of each repair type applied",
                 "details": 'Maps repair names to counts (e.g., `{"apply_terminal_tactics": 2}`).',
+            },
+            {
+                "name": "okay",
+                "type": "bool",
+                "description": "Whether the proof compiles after repair and all repairs succeed",
+                "details": "`True` when the file compiles after repair and all repairs succeed; `False` otherwise.",
             },
         ],
     },
