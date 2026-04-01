@@ -6,7 +6,7 @@ AXLE can be configured via environment variables or constructor arguments.
 
 AXLE uses API key authentication for active request rate limiting. Requests without an API key are limited to 10 concurrent active requests.
 
-To obtain an API key, visit [axle.axiommath.ai/app/console](https://axle.axiommath.ai/app/console)
+To obtain an API key, visit [axle.axiommath.ai/app/console](https://axle.axiommath.ai/app/console). If you need higher rate limits, you can [request more capacity](https://forms.gle/CdLKu45tEsRXtFQ29).
 
 ### Setting Your API Key
 

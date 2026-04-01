@@ -125,11 +125,12 @@ def inline_lean_messages(
 
     Example messages:
         -:1:23: info: unsolved goals at sorry
+        -:1:23-1:30: info: unsolved goals at sorry (with endPos)
         file_1:1:0: info: renaming `foo` -> `foo_1`
         Missing required declaration 'requiredTheorem'
     """
-    # Parse messages: file_name:line_no:line_pos: message
-    pattern = re.compile(r"^[^:]+:(\d+):(\d+):")
+    # Parse messages: file_name:line_no:line_pos[-end_line:end_pos]: message
+    pattern = re.compile(r"^[^:]+:(\d+):(\d+)(?:-\d+:\d+)?:")
     messages_by_line: dict[int, list[tuple[int, str]]] = {}
     unmatched: list[str] = []
 

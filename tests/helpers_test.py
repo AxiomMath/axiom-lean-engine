@@ -89,3 +89,24 @@ def test_inline_lean_messages_multiple_same_line() -> None:
     result = inline_lean_messages(code, messages)
     assert "warning: a" in result
     assert "warning: b" in result
+
+
+def test_inline_lean_messages_with_endpos() -> None:
+    """Messages with endPos (line:col-line:col format) should be parsed correctly."""
+    code = "def x := 1"
+    messages = ["-:1:4-1:10: error: type mismatch"]
+    result = inline_lean_messages(code, messages)
+    assert "def x := 1" in result
+    assert "/- -:1:4-1:10: error: type mismatch -/" in result
+
+
+def test_inline_lean_messages_mixed_formats() -> None:
+    """Messages with and without endPos should both work."""
+    code = "def x := 1\ndef y := 2"
+    messages = [
+        "-:1:4: warning: without endPos",
+        "-:2:4-2:10: warning: with endPos",
+    ]
+    result = inline_lean_messages(code, messages)
+    assert "without endPos" in result
+    assert "with endPos" in result

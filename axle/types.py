@@ -64,7 +64,6 @@ class Document:
     external_value_dependencies: list[str]
     local_syntactic_dependencies: list[str]
     external_syntactic_dependencies: list[str]
-    document_messages: Messages
     theorem_messages: Messages
 
     @classmethod
@@ -89,7 +88,6 @@ class Document:
             external_value_dependencies=response.get("external_value_dependencies", []),
             local_syntactic_dependencies=response.get("local_syntactic_dependencies", []),
             external_syntactic_dependencies=response.get("external_syntactic_dependencies", []),
-            document_messages=Messages.from_response(response.get("document_messages", {})),
             theorem_messages=Messages.from_response(response.get("theorem_messages", {})),
         )
 

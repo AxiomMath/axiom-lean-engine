@@ -548,11 +548,8 @@ Each document in the `documents` dictionary contains:
 ??? "`external_syntactic_dependencies` · list[str] · External constants explicitly written in source"
     External constants that appear literally in source (not from notation/macro expansion).
 
-??? "`document_messages` · dict · Messages from standalone document compilation"
-    Lean messages (`errors`, `warnings`, `infos`) from compiling the standalone `content`.
-
 ??? "`theorem_messages` · dict · Messages specific to this theorem"
-    Lean messages (`errors`, `warnings`, `infos`) specific to this theorem declaration.""",
+    Lean messages (`errors`, `warnings`, `infos`) specific to this theorem declaration in the original document.""",
             "__python__": True,
             "__cli__": True,
             "__http__": True,
@@ -610,7 +607,6 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/extract_theorems \\
       "external_type_dependencies": ["Eq", "Nat", "OfNat.ofNat", "instOfNatNat"],
       "local_syntactic_dependencies": [],
       "external_syntactic_dependencies": ["rfl"],
-      "document_messages": {"errors": [], "warnings": [], "infos": []},
       "theorem_messages": {"errors": [], "warnings": [], "infos": []}
     }
   }
@@ -1958,7 +1954,7 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/sorry2lemma \\
 {
   "lean_messages": {
     "errors": [],
-    "warnings": ["-:3:6: warning: declaration uses 'sorry'\\n", "-:5:8: warning: declaration uses 'sorry'\\n"],
+    "warnings": ["-:3:6-3:11: warning: declaration uses 'sorry'\\n", "-:5:8-5:13: warning: declaration uses 'sorry'\\n"],
     "infos": []
   },
   "tool_messages": {

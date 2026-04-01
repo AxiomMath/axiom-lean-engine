@@ -11,6 +11,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Releases]
 
+## v1.1.0 - April 1, 2026
+
+### Changed
+
+- [!] Removed `document_messages` from the response of `extract_theorems` — to replicate old behavior, run the `content` field of the resulting documents through the `check` tool. This change significantly improves the speed of `extract_theorems`.
+- [!] `includeEndPos` has been turned on for Lean messages. This changes the format from:
+`-:4:38: error: Function expected at...`
+to (when endPos is available):
+`-:4:38-4:43: error: Function expected at...`
+This change affects all tools with Lean messages.
+- Significantly reworked the Lean executor pool backend.
+    - Latency has been decreased by 50% in most cases. For longer requests, the new executors can be more than 5 times faster!
+    - Previously, the first request to each environment required a ~10s warmup. This is no longer the case, and so requests will be more faithful to their Lean timeout limits (not including queueing / waiting for available slots).
+    - Eliminates a security risk involving persistent Lean workers.
+- Improved the Lean worker warm-up pipeline. Worker scale-up is also more aggressive than before. In the worst case, when all workers are completely occupied / offline, users should expect no more than a 2-3 minute delay before more worker capacity spins up.
+
+### Fixed
+
+- Removed redundant parsing resulting in occasional speedups in `repair_proofs`, `normalize`, etc. when content does not change.
+- Pruned missing executors from the gateway registry. Fixes a bug with autoscaling improperly triggering.
+
+
 ## v1.0.2 - March 18, 2026
 
 ### Added

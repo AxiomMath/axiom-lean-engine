@@ -135,6 +135,8 @@ Try simplifying your input or breaking it into smaller pieces.
 
 2. **Increase client-side concurrency.** Set the `AXLE_MAX_CONCURRENCY` environment variable to allow more concurrent requests from your client.
 
+3. **Request more capacity.** If you need higher rate limits, you can [request more capacity](https://forms.gle/CdLKu45tEsRXtFQ29).
+
 ### Slow Requests / Timing Mismatches
 
 **Symptom:** Requests take longer than expected, or reported timings don't match end-to-end latency.

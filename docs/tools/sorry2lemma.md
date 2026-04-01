@@ -116,7 +116,7 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/sorry2lemma \
 {
   "lean_messages": {
     "errors": [],
-    "warnings": ["-:3:6: warning: declaration uses 'sorry'\n", "-:5:8: warning: declaration uses 'sorry'\n"],
+    "warnings": ["-:3:6-3:11: warning: declaration uses 'sorry'\n", "-:5:8-5:13: warning: declaration uses 'sorry'\n"],
     "infos": []
   },
   "tool_messages": {
