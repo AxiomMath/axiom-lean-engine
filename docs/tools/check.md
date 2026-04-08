@@ -2,7 +2,7 @@
 
 Evaluate Lean code and collect all messages (errors, warnings, and info). Use this to check if code is valid without verification against a formal statement, or to get the output of `#check` / `#eval` statements.
 
-[Try this example in the web UI](https://axle.axiommath.ai/check#data=eyJjb250ZW50IjoiI2NoZWNrIE5hdFxuI2NoZWNrIExpc3RcbiNldmFsIDEgKyAxIiwibWF0aGxpYl9saW50ZXIiOmZhbHNlLCJpZ25vcmVfaW1wb3J0cyI6dHJ1ZSwiZW52aXJvbm1lbnQiOiJsZWFuLTQuMjcuMCIsInRpbWVvdXRfc2Vjb25kcyI6MTIwfQ%3D%3D)
+[Try this example in the web UI](https://axle.axiommath.ai/check#data=eyJjb250ZW50IjoiI2NoZWNrIE5hdFxuI2NoZWNrIExpc3RcbiNldmFsIDEgKyAxIiwibWF0aGxpYl9vcHRpb25zIjpmYWxzZSwiaWdub3JlX2ltcG9ydHMiOnRydWUsImVudmlyb25tZW50IjoibGVhbi00LjI3LjAiLCJ0aW1lb3V0X3NlY29uZHMiOjEyMH0%3D)
 
 ## See Also
 
@@ -13,8 +13,8 @@ For interactive compilation feedback without an API, try the [Lean 4 Web Playgro
 ??? "`content` · str · required · Lean source code"
     The Lean source code to be processed by this tool.
 
-??? "`mathlib_linter` · bool · default: `False` · Enable Mathlib linters"
-    If true, enables Mathlib's standard linter set. Linter messages appear in `lean_messages.warnings`.
+??? "`mathlib_options` · bool · default: `False` · Enable Mathlib options"
+    If true, enables conventional Mathlib options. This toggle sets `linter.mathlibStandardSet` to true, `autoImplicit` to false, `relaxedAutoImplicit` to false, and `pp.unicode.fun` to true.
 
 ??? "`ignore_imports` · bool · default: `False` · Ignore import mismatches"
     Controls import statement handling:
@@ -29,7 +29,7 @@ For interactive compilation feedback without an API, try the [Lean 4 Web Playgro
     Available environments: `lean-4.28.0`, `lean-4.27.0`, `lean-4.26.0`, etc.
 
 ??? "`timeout_seconds` · float · default: `120` · Max execution time in seconds"
-    Maximum execution time in seconds. Requests exceeding this limit return a timeout error. Note that end-to-end request latency may exceed this timeout due to queue time and other overhead. Additionally, all non-admin requests are subject to an absolute maximum timeout of 300 seconds (5 minutes).
+    Maximum execution time in seconds. Requests exceeding this limit return a timeout error. Note that end-to-end request latency may exceed this timeout due to queue time and other overhead. Additionally, all non-admin requests are subject to an absolute maximum timeout of 900 seconds (15 minutes).
 
 
 ## Output Fields
@@ -61,7 +61,7 @@ For interactive compilation feedback without an API, try the [Lean 4 Web Playgro
 result = await axle.check(
     content="import Mathlib\n#eval 2+2",
     environment="lean-4.28.0",
-    mathlib_linter=False,     # Optional
+    mathlib_options=False,     # Optional
     ignore_imports=False,     # Optional
     timeout_seconds=120,      # Optional
 )

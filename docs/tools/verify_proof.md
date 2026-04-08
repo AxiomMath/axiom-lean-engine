@@ -2,7 +2,7 @@
 
 Validate a candidate Lean theorem and check that it conforms to the given formal statement.
 
-[Try this example in the web UI](https://axle.axiommath.ai/verify_proof#data=eyJmb3JtYWxfc3RhdGVtZW50IjoiZGVmIEEgOj0gNFxudGhlb3JlbSBtYWluIDogQSA9IDUgOj0gc29ycnkiLCJjb250ZW50IjoiZGVmIEEgOj0gNVxudGhlb3JlbSBtYWluIDogQSA9IDUgOj0gcmZsIiwibWF0aGxpYl9saW50ZXIiOmZhbHNlLCJ1c2VfZGVmX2VxIjp0cnVlLCJpZ25vcmVfaW1wb3J0cyI6dHJ1ZSwiZW52aXJvbm1lbnQiOiJsZWFuLTQuMjcuMCIsInRpbWVvdXRfc2Vjb25kcyI6MTIwfQ%3D%3D)
+[Try this example in the web UI](https://axle.axiommath.ai/verify_proof#data=eyJmb3JtYWxfc3RhdGVtZW50IjoiZGVmIEEgOj0gNFxudGhlb3JlbSBtYWluIDogQSA9IDUgOj0gc29ycnkiLCJjb250ZW50IjoiZGVmIEEgOj0gNVxudGhlb3JlbSBtYWluIDogQSA9IDUgOj0gcmZsIiwibWF0aGxpYl9vcHRpb25zIjpmYWxzZSwidXNlX2RlZl9lcSI6dHJ1ZSwiaWdub3JlX2ltcG9ydHMiOnRydWUsImVudmlyb25tZW50IjoibGVhbi00LjI3LjAiLCJ0aW1lb3V0X3NlY29uZHMiOjEyMH0%3D)
 
 ## See Also
 
@@ -59,10 +59,15 @@ See the corresponding [Github issue](https://github.com/AxiomMath/axiom-lean-eng
 
     Names not present in the code are silently ignored.
 
-    This option is also useful for enabling tactics like `native_decide`. To do so, simply include the axioms `Lean.trustCompiler`, `Lean.ofReduceBool`, and `Lean.ofReduceNat` in this field.
+    This option is also useful for enabling tactics like `native_decide`, which introduce extra axioms:
 
-??? "`mathlib_linter` · bool · default: `False` · Enable Mathlib linters"
-    If true, enables Mathlib's standard linter set. Linter messages appear in `lean_messages.warnings`.
+    - **Lean 4.28.0 and below:** include `Lean.trustCompiler`, `Lean.ofReduceBool`, and `Lean.ofReduceNat`.
+    - **Lean 4.29.0 and above:** `native_decide` axioms were reworked (see [here](https://github.com/leanprover/lean4/pull/12217)). Use glob patterns, e.g. `<theorem_name>._native.native_decide.*`, to allow all `native_decide`-related axioms for a given theorem.
+
+    **Note:** glob patterns do not defend against an adversary deliberately crafting malicious axioms with matching names, so we don't recommend using them with untrusted code.
+
+??? "`mathlib_options` · bool · default: `False` · Enable Mathlib options"
+    If true, enables conventional Mathlib options. This toggle sets `linter.mathlibStandardSet` to true, `autoImplicit` to false, `relaxedAutoImplicit` to false, and `pp.unicode.fun` to true.
 
 ??? "`use_def_eq` · bool · default: `True` · Use definitional equality for type comparison"
     When `true`, types are compared using equality after kernel reduction.
@@ -83,7 +88,7 @@ See the corresponding [Github issue](https://github.com/AxiomMath/axiom-lean-eng
     Available environments: `lean-4.28.0`, `lean-4.27.0`, `lean-4.26.0`, etc.
 
 ??? "`timeout_seconds` · float · default: `120` · Max execution time in seconds"
-    Maximum execution time in seconds. Requests exceeding this limit return a timeout error. Note that end-to-end request latency may exceed this timeout due to queue time and other overhead. Additionally, all non-admin requests are subject to an absolute maximum timeout of 300 seconds (5 minutes).
+    Maximum execution time in seconds. Requests exceeding this limit return a timeout error. Note that end-to-end request latency may exceed this timeout due to queue time and other overhead. Additionally, all non-admin requests are subject to an absolute maximum timeout of 900 seconds (15 minutes).
 
 
 ## Output Fields
@@ -134,7 +139,7 @@ result = await axle.verify_proof(
     content="import Mathlib\ntheorem citation_needed : 1 = 1 := rfl",
     environment="lean-4.28.0",
     permitted_sorries=["helper"],  # Optional
-    mathlib_linter=False,          # Optional
+    mathlib_options=False,          # Optional
     ignore_imports=False,          # Optional
     timeout_seconds=120,           # Optional
 )

@@ -7,6 +7,20 @@ Homepage: https://axle.axiommath.ai/
 ## Announcements
 
 <details open>
+<summary><strong>April 8, 2026 - v1.1.1</strong></summary>
+
+Default option changes, a Lean version bump, and bug fixes.
+
+### Highlights:
+- **Default options changed:** `autoImplicit` is now set to `true` by default, matching standard Lean behavior.
+- **Lean 4.29.0:** Added the latest stable Lean release.
+- **Timeout bug fix:** Fixed a bug where requests were prematurely preempted. Requests now properly max out at the 15-minute maximum timeout.
+
+See the [changelog](https://axle.axiommath.ai/v1/docs/changelog/) for details and other changes.
+
+</details>
+
+<details>
 <summary><strong>April 1, 2026 - v1.1.0</strong></summary>
 
 🎉 After mass feedback from the public, we're excited to announce that AXLE is switching from Lean to Rocq. The new name will be **AXRE** (Axiom Rocq Engine). All existing Lean proofs will be automatically translated using GPT-2. 🚀

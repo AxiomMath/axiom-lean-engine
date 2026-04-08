@@ -11,6 +11,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Releases]
 
+## v1.1.1 - April 8, 2026
+
+### Changed
+
+- [!] We are turning *on* the `autoImplicit` and turning *off* the `pp.unicode.fun` Lean options. AXLE will now automatically insert implicit variables when they are missing. **This is a significant behavioral change, check your code!** These settings are consistent with Lean's default. The previous options were remnants from internal use preferences.
+- [!] **We have renamed `mathlib_linter` to `mathlib_options`**, which now sets `linter.mathlibStandardSet` to true, `autoImplicit` to false, `relaxedAutoImplicit` to false, and `pp.unicode.fun` to true. Use this toggle to enable the stricter defaults that Mathlib uses by convention.
+
+### Added
+
+- Added Lean 4.29.0 support.
+- Added support for glob patterns in the `permitted_sorries` field for `verify_proof`. See the `verify_proof` documentation page under the `permitted_sorries` field for example use cases.
+
+### Fixed
+
+- Fixed a bug causing timeouts to be capped at 10 minutes. All requests now max out at 15 minutes (with documentation updated correspondingly).
+
 ## v1.1.0 - April 1, 2026
 
 ### Changed

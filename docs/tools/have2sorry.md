@@ -31,7 +31,7 @@ Replace `have` statements in proofs with `sorry`. Useful for creating problem te
     Available environments: `lean-4.28.0`, `lean-4.27.0`, `lean-4.26.0`, etc.
 
 ??? "`timeout_seconds` · float · default: `120` · Max execution time in seconds"
-    Maximum execution time in seconds. Requests exceeding this limit return a timeout error. Note that end-to-end request latency may exceed this timeout due to queue time and other overhead. Additionally, all non-admin requests are subject to an absolute maximum timeout of 300 seconds (5 minutes).
+    Maximum execution time in seconds. Requests exceeding this limit return a timeout error. Note that end-to-end request latency may exceed this timeout due to queue time and other overhead. Additionally, all non-admin requests are subject to an absolute maximum timeout of 900 seconds (15 minutes).
 
 
 ## Output Fields

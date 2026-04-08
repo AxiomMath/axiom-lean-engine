@@ -69,7 +69,7 @@ TIMEOUT_INPUT: InputField = {
     "type": "number",
     "description": "Max execution time in seconds",
     "details": """\
-Maximum execution time in seconds. Requests exceeding this limit return a timeout error. Note that end-to-end request latency may exceed this timeout due to queue time and other overhead. Additionally, all non-admin requests are subject to an absolute maximum timeout of 300 seconds (5 minutes).""",
+Maximum execution time in seconds. Requests exceeding this limit return a timeout error. Note that end-to-end request latency may exceed this timeout due to queue time and other overhead. Additionally, all non-admin requests are subject to an absolute maximum timeout of 900 seconds (15 minutes).""",
     "required": False,
     "default": 120,
     "placeholder": "120",
@@ -114,12 +114,12 @@ If not specified, all theorems are processed.""",
     "cli_list_type": "int",
 }
 
-# Mathlib linter toggle
-MATHLIB_LINTER_INPUT: InputField = {
-    "name": "mathlib_linter",
+# Mathlib options toggle
+MATHLIB_OPTIONS_INPUT: InputField = {
+    "name": "mathlib_options",
     "type": "checkbox",
-    "description": "Enable Mathlib linters",
-    "details": "If true, enables Mathlib's standard linter set. Linter messages appear in `lean_messages.warnings`.",
+    "description": "Enable Mathlib options",
+    "details": "If true, enables conventional Mathlib options. This toggle sets `linter.mathlibStandardSet` to true, `autoImplicit` to false, `relaxedAutoImplicit` to false, and `pp.unicode.fun` to true.",
     "default": False,
 }
 
@@ -215,7 +215,7 @@ ENDPOINTS: dict[str, EndpointMetadata] = {
             '# Use in shell conditionals\nif axle verify-proof statement.lean proof.lean --strict --environment lean-4.28.0 > /dev/null; then\n    echo "Proof valid"\nfi',
             "# Specify different environment\naxle verify-proof statement.lean proof.lean --environment lean-4.25.1",
         ],
-        "web_ui_example_data": "eyJmb3JtYWxfc3RhdGVtZW50IjoiZGVmIEEgOj0gNFxudGhlb3JlbSBtYWluIDogQSA9IDUgOj0gc29ycnkiLCJjb250ZW50IjoiZGVmIEEgOj0gNVxudGhlb3JlbSBtYWluIDogQSA9IDUgOj0gcmZsIiwibWF0aGxpYl9saW50ZXIiOmZhbHNlLCJ1c2VfZGVmX2VxIjp0cnVlLCJpZ25vcmVfaW1wb3J0cyI6dHJ1ZSwiZW52aXJvbm1lbnQiOiJsZWFuLTQuMjcuMCIsInRpbWVvdXRfc2Vjb25kcyI6MTIwfQ%3D%3D",
+        "web_ui_example_data": "eyJmb3JtYWxfc3RhdGVtZW50IjoiZGVmIEEgOj0gNFxudGhlb3JlbSBtYWluIDogQSA9IDUgOj0gc29ycnkiLCJjb250ZW50IjoiZGVmIEEgOj0gNVxudGhlb3JlbSBtYWluIDogQSA9IDUgOj0gcmZsIiwibWF0aGxpYl9vcHRpb25zIjpmYWxzZSwidXNlX2RlZl9lcSI6dHJ1ZSwiaWdub3JlX2ltcG9ydHMiOnRydWUsImVudmlyb25tZW50IjoibGVhbi00LjI3LjAiLCJ0aW1lb3V0X3NlY29uZHMiOjEyMH0%3D",
         "sections": {
             "See Also": """\
 In the interest of scalability, `verify_proof` trusts the Lean environment to behave correctly. That's usually fine, but a sufficiently creative adversary can exploit this to make invalid proofs appear valid with Lean metaprogramming.
@@ -257,7 +257,7 @@ result = await axle.verify_proof(
     content="import Mathlib\\ntheorem citation_needed : 1 = 1 := rfl",
     environment="lean-4.28.0",
     permitted_sorries=["helper"],  # Optional
-    mathlib_linter=False,          # Optional
+    mathlib_options=False,          # Optional
     ignore_imports=False,          # Optional
     timeout_seconds=120,           # Optional
 )
@@ -345,11 +345,16 @@ result = await axle.verify_proof(
 
 Names not present in the code are silently ignored.
 
-This option is also useful for enabling tactics like `native_decide`. To do so, simply include the axioms `Lean.trustCompiler`, `Lean.ofReduceBool`, and `Lean.ofReduceNat` in this field.""",
+This option is also useful for enabling tactics like `native_decide`, which introduce extra axioms:
+
+- **Lean 4.28.0 and below:** include `Lean.trustCompiler`, `Lean.ofReduceBool`, and `Lean.ofReduceNat`.
+- **Lean 4.29.0 and above:** `native_decide` axioms were reworked (see [here](https://github.com/leanprover/lean4/pull/12217)). Use glob patterns, e.g. `<theorem_name>._native.native_decide.*`, to allow all `native_decide`-related axioms for a given theorem.
+
+**Note:** glob patterns do not defend against an adversary deliberately crafting malicious axioms with matching names, so we don't recommend using them with untrusted code.""",
                 "required": False,
                 "placeholder": "helper_lemma, auxiliary_theorem",
             },
-            MATHLIB_LINTER_INPUT,
+            MATHLIB_OPTIONS_INPUT,
             {
                 "name": "use_def_eq",
                 "type": "checkbox",
@@ -404,7 +409,7 @@ Common errors include: "Missing required declaration", "does not match expected 
             "# Exit non-zero if code is invalid\naxle check theorem.lean --strict --environment lean-4.28.0",
             '# Use in shell conditionals\nif axle check theorem.lean --strict --environment lean-4.28.0 > /dev/null; then\n    echo "Valid Lean code"\nfi',
         ],
-        "web_ui_example_data": "eyJjb250ZW50IjoiI2NoZWNrIE5hdFxuI2NoZWNrIExpc3RcbiNldmFsIDEgKyAxIiwibWF0aGxpYl9saW50ZXIiOmZhbHNlLCJpZ25vcmVfaW1wb3J0cyI6dHJ1ZSwiZW52aXJvbm1lbnQiOiJsZWFuLTQuMjcuMCIsInRpbWVvdXRfc2Vjb25kcyI6MTIwfQ%3D%3D",
+        "web_ui_example_data": "eyJjb250ZW50IjoiI2NoZWNrIE5hdFxuI2NoZWNrIExpc3RcbiNldmFsIDEgKyAxIiwibWF0aGxpYl9vcHRpb25zIjpmYWxzZSwiaWdub3JlX2ltcG9ydHMiOnRydWUsImVudmlyb25tZW50IjoibGVhbi00LjI3LjAiLCJ0aW1lb3V0X3NlY29uZHMiOjEyMH0%3D",
         "sections": {
             "See Also": "For interactive compilation feedback without an API, try the [Lean 4 Web Playground](https://live.lean-lang.org).",
         },
@@ -412,7 +417,7 @@ Common errors include: "Missing required declaration", "does not match expected 
 result = await axle.check(
     content="import Mathlib\\n#eval 2+2",
     environment="lean-4.28.0",
-    mathlib_linter=False,     # Optional
+    mathlib_options=False,     # Optional
     ignore_imports=False,     # Optional
     timeout_seconds=120,      # Optional
 )
@@ -445,7 +450,7 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/check \\
 }""",
         "inputs": [
             CONTENT_INPUT,
-            MATHLIB_LINTER_INPUT,
+            MATHLIB_OPTIONS_INPUT,
             IGNORE_IMPORTS_INPUT,
             ENVIRONMENT_INPUT,
             TIMEOUT_INPUT,
