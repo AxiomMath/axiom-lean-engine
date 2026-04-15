@@ -29,6 +29,7 @@ from axle.exceptions import (
 from axle.types import (
     CheckResponse,
     DisproveResponse,
+    ExtractDeclsResponse,
     ExtractTheoremsResponse,
     Have2LemmaResponse,
     Have2SorryResponse,
@@ -199,6 +200,26 @@ class AxleClient:
         return ExtractTheoremsResponse.from_response(
             await self.run_one(
                 "extract_theorems",
+                _to_request(
+                    content=content,
+                    ignore_imports=ignore_imports,
+                    environment=environment,
+                    timeout_seconds=timeout_seconds,
+                ),
+            )
+        )
+
+    async def extract_decls(
+        self,
+        content: str,
+        environment: str,
+        ignore_imports: bool | None = None,
+        timeout_seconds: float | None = None,
+    ) -> ExtractDeclsResponse:
+        """Extract all declarations with dependencies from Lean code."""
+        return ExtractDeclsResponse.from_response(
+            await self.run_one(
+                "extract_decls",
                 _to_request(
                     content=content,
                     ignore_imports=ignore_imports,

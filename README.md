@@ -7,6 +7,13 @@ Homepage: https://axle.axiommath.ai/
 ## Announcements
 
 <details open>
+<summary><strong>April 15, 2026 - v1.2.0</strong></summary>
+
+New `extract_decls` tool for extracting all declaration kinds, and corresponding updates to `extract_theorems`. Users using `extract_theorems` (which will be deprecated in a future update) should migrate to `extract_decls`. See the [changelog](https://axle.axiommath.ai/v1/docs/changelog/) for details.
+
+</details>
+
+<details>
 <summary><strong>April 8, 2026 - v1.1.1</strong></summary>
 
 Default option changes, a Lean version bump, and bug fixes.

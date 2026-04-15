@@ -38,6 +38,7 @@ nav:
       - verify_proof: tools/verify_proof.md
       - check: tools/check.md
       - extract_theorems: tools/extract_theorems.md
+      - extract_decls: tools/extract_decls.md
       - rename: tools/rename.md
       - theorem2lemma: tools/theorem2lemma.md
       - theorem2sorry: tools/theorem2sorry.md

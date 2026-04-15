@@ -43,9 +43,10 @@ class VerifyProofResponse:
 
 @dataclass
 class Document:
-    """A single theorem/lemma extracted from Lean code."""
+    """A single declaration extracted from Lean code (theorem, def, structure, etc.)."""
 
     name: str
+    kind: str
     declaration: str
     content: str
     tokens: list[str]
@@ -64,12 +65,14 @@ class Document:
     external_value_dependencies: list[str]
     local_syntactic_dependencies: list[str]
     external_syntactic_dependencies: list[str]
-    theorem_messages: Messages
+    declaration_messages: Messages
+    theorem_messages: Messages  # Deprecated: use declaration_messages instead
 
     @classmethod
     def from_response(cls, name: str, response: dict) -> "Document":
         return cls(
             name=name,
+            kind=response.get("kind", ""),
             declaration=response.get("declaration", ""),
             content=response.get("content", ""),
             tokens=response.get("tokens", []),
@@ -88,6 +91,7 @@ class Document:
             external_value_dependencies=response.get("external_value_dependencies", []),
             local_syntactic_dependencies=response.get("local_syntactic_dependencies", []),
             external_syntactic_dependencies=response.get("external_syntactic_dependencies", []),
+            declaration_messages=Messages.from_response(response.get("declaration_messages", {})),
             theorem_messages=Messages.from_response(response.get("theorem_messages", {})),
         )
 
@@ -103,6 +107,29 @@ class ExtractTheoremsResponse:
 
     @classmethod
     def from_response(cls, response: dict) -> "ExtractTheoremsResponse":
+        return cls(
+            content=response.get("content", ""),
+            lean_messages=Messages.from_response(response.get("lean_messages", {})),
+            tool_messages=Messages.from_response(response.get("tool_messages", {})),
+            documents={
+                k: Document.from_response(k, v) for k, v in response.get("documents", {}).items()
+            },
+            timings=response.get("timings", {}),
+            info=response.get("info"),
+        )
+
+
+@dataclass
+class ExtractDeclsResponse:
+    content: str
+    lean_messages: Messages
+    tool_messages: Messages
+    documents: dict[str, Document]
+    timings: dict[str, int]
+    info: dict | None
+
+    @classmethod
+    def from_response(cls, response: dict) -> "ExtractDeclsResponse":
         return cls(
             content=response.get("content", ""),
             lean_messages=Messages.from_response(response.get("lean_messages", {})),

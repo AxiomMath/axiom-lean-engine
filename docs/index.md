@@ -28,6 +28,7 @@ See the [Quick Start](quickstart.md) tutorial for examples of each method.
 | `verify_proof` | Validate a proof against a formal statement |
 | `check` | Check Lean code for errors |
 | `extract_theorems` | Split file into individual theorems with dependencies |
+| `extract_decls` | Split file into individual declarations with dependencies |
 | `rename` | Rename declarations |
 | `theorem2lemma` | Convert between `theorem` and `lemma` keywords |
 | `theorem2sorry` | Strip proofs from theorems |

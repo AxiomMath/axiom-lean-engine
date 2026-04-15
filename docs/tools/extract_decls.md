@@ -1,8 +1,8 @@
-# extract_theorems
+# extract_decls
 
-Split a file containing one or more theorems into smaller units, each containing a single theorem along with any required dependencies.
+Split a file containing one or more declarations into smaller units, each containing a single declaration along with any required dependencies. Unlike extract_theorems, this works for all declaration kinds (def, theorem, lemma, abbrev, instance, structure, etc.).
 
-[Try this example in the web UI](https://axle.axiommath.ai/extract_theorems#data=eyJjb250ZW50IjoiZGVmIGRvdWJsZSAobiA6IE5hdCkgOiBOYXQgOj0gMiAqIG5cbnRoZW9yZW0gZG91YmxlX2V2ZW4gOiDiiIAgbiA6IE5hdCwg4oiDIGsgOiBOYXQsIGRvdWJsZSBuID0gMiAqIGsgOj0gYnkgc29ycnlcbnRoZW9yZW0gZG91YmxlX3BvcyA6IOKIgCBuIDogTmF0LCBuID4gMCDihpIgZG91YmxlIG4gPiAwIDo9IGJ5IHNvcnJ5IiwiaWdub3JlX2ltcG9ydHMiOnRydWUsImVudmlyb25tZW50IjoibGVhbi00LjI3LjAiLCJ0aW1lb3V0X3NlY29uZHMiOjEyMH0%3D)
+[Try this example in the web UI](https://axle.axiommath.ai/extract_decls#data=eyJjb250ZW50Ijoic3RydWN0dXJlIFdlaWdodCB3aGVyZVxuICB2YWwgOiBOYXRcbiAgcG9zIDogdmFsID4gMCA6PSBieSBvbWVnYVxuXG5jbGFzcyBXZWlnaHRlZCAozrEgOiBUeXBlKSB3aGVyZVxuICB3ZWlnaHQgOiDOsSDihpIgV2VpZ2h0XG5cbmRlZiB0cml2aWFsV2VpZ2h0IDogV2VpZ2h0IDo9IOKfqDEsIGJ5IG9tZWdh4p+pXG5cbmluc3RhbmNlIDogV2VpZ2h0ZWQgTmF0IHdoZXJlXG4gIHdlaWdodCBfIDo9IHRyaXZpYWxXZWlnaHQiLCJpZ25vcmVfaW1wb3J0cyI6dHJ1ZSwiZW52aXJvbm1lbnQiOiJsZWFuLTQuMjguMCIsInRpbWVvdXRfc2Vjb25kcyI6MTIwfQ%3D%3D)
 
 ## Input Parameters
 
@@ -38,8 +38,8 @@ Split a file containing one or more theorems into smaller units, each containing
     Messages from the extraction tool with `errors`, `warnings`, and `infos` lists.
     Errors here indicate tool-specific issues (not Lean compilation errors).
 
-??? "`documents` · dict · Theorem names mapped to self-contained documents"
-    Dictionary mapping theorem names to self-contained Lean code documents. Each key is a theorem name, and the value is a self-contained breakdown of the theorem, including a content field containing that theorem plus all dependencies it needs (imports, definitions, etc.).
+??? "`documents` · dict · Declaration names mapped to self-contained documents"
+    Dictionary mapping declaration names to self-contained Lean code documents. Each key is a declaration name, and the value is a self-contained breakdown of the declaration, including a content field containing that declaration plus all dependencies it needs (imports, definitions, etc.).
 
 ??? "`timings` · dict · Execution timing breakdown"
     Timing information in milliseconds for various stages of processing.
@@ -48,6 +48,9 @@ Split a file containing one or more theorems into smaller units, each containing
 ## Document Fields
 
 Each document in the `documents` dictionary contains:
+
+!!! note "Field applicability"
+    Not all fields are meaningful for all declaration kinds. For example, `proof_length` and `tactic_counts` are only relevant for theorems/lemmas with tactic proofs. For other declaration kinds (def, abbrev, structure, class, inductive, etc.), these fields may be empty or zero.
 
 ??? "`kind` · str · The kind of declaration"
     The kind of the declaration. For `extract_theorems`, this is always `"theorem"`. For `extract_decls`, possible values are: `theorem`, `def`, `abbrev`, `axiom`, `opaque`, `structure`, `class`, `class inductive`, `inductive`, `instance`, `example`, `unknown`.
@@ -118,8 +121,8 @@ Each document in the `documents` dictionary contains:
 ## Python API
 
 ```python
-result = await axle.extract_theorems(
-    content="import Mathlib\ntheorem foo : 1 = 1 := rfl\ntheorem bar : 2 = 2 := rfl",
+result = await axle.extract_decls(
+    content="import Mathlib\ndef foo : Nat := 1\ntheorem bar : foo = 1 := rfl",
     environment="lean-4.28.0",
     ignore_imports=False,  # Optional
     timeout_seconds=120,   # Optional
@@ -127,37 +130,36 @@ result = await axle.extract_theorems(
 
 print(result.content)  # The processed Lean code
 for name, doc in result.documents.items():
-    print(f"{name}: {doc.signature}")
-    print(f"  Dependencies: {doc.local_value_dependencies}")
+    print(f"{name}: {doc.declaration}")
 ```
 
 ## CLI
 
-**Usage:** `axle extract-theorems CONTENT [OPTIONS]`
+**Usage:** `axle extract-decls CONTENT [OPTIONS]`
 
 ```bash
 # Extract to default directory
-axle extract-theorems combined.lean --environment lean-4.28.0
+axle extract-decls combined.lean --environment lean-4.28.0
 # Extract to custom directory
-axle extract-theorems combined.lean -o my_theorems/ --environment lean-4.28.0
+axle extract-decls combined.lean -o my_decls/ --environment lean-4.28.0
 # Force overwrite
-axle extract-theorems combined.lean -o my_theorems/ -f --environment lean-4.28.0
+axle extract-decls combined.lean -o my_decls/ -f --environment lean-4.28.0
 # Pipeline usage
-cat combined.lean | axle extract-theorems - -o output/ --environment lean-4.28.0
+cat combined.lean | axle extract-decls - -o output/ --environment lean-4.28.0
 ```
 
 ## HTTP API
 
 ```bash
-curl -s -X POST https://axle.axiommath.ai/api/v1/extract_theorems \
-    -d '{"content": "import Mathlib\ntheorem foo : 1 = 1 := rfl", "environment": "lean-4.28.0"}' | jq
+curl -s -X POST https://axle.axiommath.ai/api/v1/extract_decls \
+    -d '{"content": "import Mathlib\ndef foo : Nat := 1\ntheorem bar : foo = 1 := rfl", "environment": "lean-4.28.0"}' | jq
 ```
 
 ## Example Response
 
 ```json
 {
-  "content": "import Mathlib\ntheorem foo : 1 = 1 := rfl",
+  "content": "import Mathlib\ndef foo : Nat := 1\ntheorem bar : foo = 1 := rfl",
   "lean_messages": {
     "errors": [],
     "warnings": [],
@@ -174,13 +176,13 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/extract_theorems \
   },
   "documents": {
     "foo": {
-      "kind": "theorem",
-      "declaration": "theorem foo : 1 = 1 := rfl",
-      "content": "import Mathlib\n\ntheorem foo : 1 = 1 := rfl",
-      "tokens": ["theorem", "foo", ":", "1", "=", "1", ":=", "rfl"],
-      "signature": "theorem foo : 1 = 1",
-      "type": "1 = 1",
-      "type_hash": 1326858781,
+      "kind": "def",
+      "declaration": "def foo : Nat := 1",
+      "content": "import Mathlib\n\ndef foo : Nat := 1",
+      "tokens": ["def", "foo", ":", "Nat", ":=", "1"],
+      "signature": "def foo : Nat",
+      "type": "ℕ",
+      "type_hash": 421340980,
       "is_sorry": false,
       "index": 0,
       "line_pos": 2,
@@ -189,9 +191,32 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/extract_theorems \
       "tactic_counts": {},
       "local_value_dependencies": [],
       "local_type_dependencies": [],
-      "external_value_dependencies": ["rfl", "Nat", "OfNat.ofNat", "instOfNatNat"],
-      "external_type_dependencies": ["Eq", "Nat", "OfNat.ofNat", "instOfNatNat"],
+      "external_value_dependencies": ["OfNat.ofNat", "Nat", "instOfNatNat"],
+      "external_type_dependencies": ["Nat"],
       "local_syntactic_dependencies": [],
+      "external_syntactic_dependencies": ["Nat"],
+      "theorem_messages": {"errors": [], "warnings": [], "infos": []},
+      "declaration_messages": {"errors": [], "warnings": [], "infos": []}
+    },
+    "bar": {
+      "kind": "theorem",
+      "declaration": "theorem bar : foo = 1 := rfl",
+      "content": "import Mathlib\n\ndef foo : Nat := 1\n\ntheorem bar : foo = 1 := rfl",
+      "tokens": ["theorem", "bar", ":", "foo", "=", "1", ":=", "rfl"],
+      "signature": "theorem bar : foo = 1",
+      "type": "foo = 1",
+      "type_hash": 254164366,
+      "is_sorry": false,
+      "index": 1,
+      "line_pos": 3,
+      "end_line_pos": 3,
+      "proof_length": 1,
+      "tactic_counts": {},
+      "local_value_dependencies": ["foo"],
+      "local_type_dependencies": ["foo"],
+      "external_value_dependencies": ["rfl", "Nat"],
+      "external_type_dependencies": ["Eq", "Nat", "OfNat.ofNat", "instOfNatNat"],
+      "local_syntactic_dependencies": ["foo"],
       "external_syntactic_dependencies": ["rfl"],
       "theorem_messages": {"errors": [], "warnings": [], "infos": []},
       "declaration_messages": {"errors": [], "warnings": [], "infos": []}

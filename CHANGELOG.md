@@ -8,8 +8,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
-
 ## [Releases]
+
+## v1.2.0 - April 15, 2026
+
+### Added
+
+- Added two new fields in `extract_theorems` to be consistent with `extract_decls` (see below):
+    - `kind`: always `theorem` for `extract_theorems`.
+    - `declaration_messages`: same content as `theorem_messages`. `theorem_messages` is now deprecated and will be removed in a future update.
+- Added `extract_decls`, an upgraded version of `extract_theorems` that extracts all declaration kinds.
+    - New `kind` field in each document. Possible values: `theorem`, `def`, `abbrev`, `axiom`, `opaque`, `structure`, `class`, `class inductive`, `inductive`, `instance`, `example`, `unknown`
+    - Note: Not all fields are meaningful for all declaration kinds (e.g., `proof_length`/`tactic_counts` only apply to theorems/lemmas with tactic proofs.)
+    - This tool should be used instead of `extract_theorems` as it is a strict superset of functionality. `extract_theorems` will be deprecated in a future update.
+
+### Fixed
+
+- Added "Last Used" and "Requests (24h)" columns to the API key console page for better visibility into API key usage.
+
 
 ## v1.1.1 - April 8, 2026
 

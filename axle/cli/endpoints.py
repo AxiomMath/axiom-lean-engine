@@ -149,6 +149,75 @@ CONTENT_OUTPUT: OutputField = {
 }
 
 
+# Shared Document Fields documentation for extract_theorems and extract_decls
+DOCUMENT_FIELDS_BASE = """\
+??? "`kind` · str · The kind of declaration"
+    The kind of the declaration. For `extract_theorems`, this is always `"theorem"`. For `extract_decls`, possible values are: `theorem`, `def`, `abbrev`, `axiom`, `opaque`, `structure`, `class`, `class inductive`, `inductive`, `instance`, `example`, `unknown`.
+
+??? "`declaration` · str · The declaration source code"
+    The raw source code of this declaration.
+
+??? "`content` · str · Standalone content including declaration and dependencies"
+    Complete, self-contained Lean code that includes the declaration and all its local dependencies. Can be compiled independently.
+
+??? "`tokens` · list[str] · Raw tokens from the declaration"
+    The declaration's source code split into tokens.
+
+??? "`signature` · str · Declaration signature (everything before the body)"
+    The declaration signature, e.g., `theorem foo (x : Nat) : x = x` or `def bar : Nat`.
+
+??? "`type` · str · Pretty-printed type of the declaration"
+    The type of the declaration as pretty-printed by Lean.
+
+??? "`type_hash` · int · Hash of the canonical type expression"
+    Hash of the canonical, alpha-invariant type expression. Useful for deduplication.
+
+??? "`is_sorry` · bool · Whether the declaration contains a sorry"
+    True if the declaration contains a `sorry`.
+
+??? "`index` · int · 0-based index in original file"
+    Position of this declaration in the original file. Note: indices may not be contiguous (mutual definitions share indices).
+
+??? "`line_pos` · int · 1-based line number where declaration starts"
+    Line number where the declaration begins.
+
+??? "`end_line_pos` · int · 1-based line number where declaration ends"
+    Line number where the declaration ends.
+
+??? "`proof_length` · int · Approximate number of tactics in proof"
+    Rough measure of proof complexity based on tactic count. Only meaningful for theorems/lemmas with tactic proofs.
+
+??? "`tactic_counts` · dict[str, int] · Map of tactic names to occurrence counts"
+    Breakdown of which tactics are used and how often. Only meaningful for theorems/lemmas with tactic proofs.
+
+??? "`local_type_dependencies` · list[str] · Transitive local dependencies of the type"
+    Local declarations that the declaration's type depends on (non-transitive).
+
+??? "`local_value_dependencies` · list[str] · Transitive local dependencies of the body"
+    Local declarations that the declaration's body/proof depends on (non-transitive).
+
+??? "`external_type_dependencies` · list[str] · Immediate external dependencies of the type"
+    External constants (builtins, imports) that appear in the type.
+
+??? "`external_value_dependencies` · list[str] · Immediate external dependencies of the body"
+    External constants (builtins, imports) that appear in the body/proof.
+
+??? "`local_syntactic_dependencies` · list[str] · Local constants explicitly written in source"
+    Local constants that appear literally in source (not from notation/macro expansion).
+
+??? "`external_syntactic_dependencies` · list[str] · External constants explicitly written in source"
+    External constants that appear literally in source (not from notation/macro expansion).
+
+??? "`declaration_messages` · dict · Messages specific to this declaration"
+    Lean messages (`errors`, `warnings`, `infos`) specific to this declaration in the original document.
+
+??? "`theorem_messages` · dict · (Deprecated) Messages specific to this declaration"
+    Lean messages (`errors`, `warnings`, `infos`) specific to this declaration. For `extract_theorems`, this contains the same data as `declaration_messages`. For `extract_decls`, this is always empty.
+
+    !!! warning "Deprecated"
+        This field is deprecated. Use `declaration_messages` instead for new code."""
+
+
 def tool_messages_output(tool_name: str) -> OutputField:
     """Generate tool_messages output with tool-specific description."""
     return {
@@ -496,65 +565,10 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/check \\
         "sections": {
             "__inputs__": True,
             "__outputs__": True,
-            "Document Fields": """\
+            "Document Fields": f"""\
 Each document in the `documents` dictionary contains:
 
-??? "`declaration` · str · The content of this theorem declaration"
-    The raw source code of this theorem declaration.
-
-??? "`content` · str · Standalone content including theorem and dependencies"
-    Complete, self-contained Lean code that includes the theorem and all its local dependencies. Can be compiled independently.
-
-??? "`tokens` · list[str] · Raw tokens from the theorem"
-    The theorem's source code split into tokens.
-
-??? "`signature` · str · Theorem signature (everything before proof body)"
-    The theorem signature, e.g., `theorem foo (x : Nat) : x = x`.
-
-??? "`type` · str · Pretty-printed type of the theorem"
-    The type of the theorem as pretty-printed by Lean.
-
-??? "`type_hash` · int · Hash of the canonical type expression"
-    Hash of the canonical, alpha-invariant type expression. Useful for deduplication.
-
-??? "`is_sorry` · bool · Whether the theorem contains a sorry"
-    True if the theorem's proof contains an explicit `sorry`.
-
-??? "`index` · int · 0-based index in original file"
-    Position of this theorem in the original file. Note: indices may not be contiguous (mutual definitions share indices).
-
-??? "`line_pos` · int · 1-based line number where theorem starts"
-    Line number where the theorem declaration begins.
-
-??? "`end_line_pos` · int · 1-based line number where theorem ends"
-    Line number where the theorem declaration ends.
-
-??? "`proof_length` · int · Approximate number of tactics in proof"
-    Rough measure of proof complexity based on tactic count.
-
-??? "`tactic_counts` · dict[str, int] · Map of tactic names to occurrence counts"
-    Breakdown of which tactics are used and how often.
-
-??? "`local_type_dependencies` · list[str] · Transitive local dependencies of the type"
-    Local declarations that the theorem's type depends on (transitively).
-
-??? "`local_value_dependencies` · list[str] · Transitive local dependencies of the proof"
-    Local declarations that the theorem's proof depends on (transitively).
-
-??? "`external_type_dependencies` · list[str] · Immediate external dependencies of the type"
-    External constants (builtins, imports) that appear in the type.
-
-??? "`external_value_dependencies` · list[str] · Immediate external dependencies of the proof"
-    External constants (builtins, imports) that appear in the proof.
-
-??? "`local_syntactic_dependencies` · list[str] · Local constants explicitly written in source"
-    Local constants that appear literally in source (not from notation/macro expansion).
-
-??? "`external_syntactic_dependencies` · list[str] · External constants explicitly written in source"
-    External constants that appear literally in source (not from notation/macro expansion).
-
-??? "`theorem_messages` · dict · Messages specific to this theorem"
-    Lean messages (`errors`, `warnings`, `infos`) specific to this theorem declaration in the original document.""",
+{DOCUMENT_FIELDS_BASE}""",
             "__python__": True,
             "__cli__": True,
             "__http__": True,
@@ -577,7 +591,7 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/extract_theorems \\
     -d '{"content": "import Mathlib\\ntheorem foo : 1 = 1 := rfl", "environment": "lean-4.28.0"}' | jq""",
         "example_response": """\
 {
-  "content": "import Mathlib\\n\\ntheorem foo : 1 = 1 := rfl\\n",
+  "content": "import Mathlib\\ntheorem foo : 1 = 1 := rfl",
   "lean_messages": {
     "errors": [],
     "warnings": [],
@@ -594,16 +608,17 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/extract_theorems \\
   },
   "documents": {
     "foo": {
+      "kind": "theorem",
       "declaration": "theorem foo : 1 = 1 := rfl",
       "content": "import Mathlib\\n\\ntheorem foo : 1 = 1 := rfl",
       "tokens": ["theorem", "foo", ":", "1", "=", "1", ":=", "rfl"],
       "signature": "theorem foo : 1 = 1",
       "type": "1 = 1",
-      "type_hash": 12345678901234567890,
+      "type_hash": 1326858781,
       "is_sorry": false,
       "index": 0,
-      "line_pos": 1,
-      "end_line_pos": 1,
+      "line_pos": 2,
+      "end_line_pos": 2,
       "proof_length": 1,
       "tactic_counts": {},
       "local_value_dependencies": [],
@@ -612,7 +627,8 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/extract_theorems \\
       "external_type_dependencies": ["Eq", "Nat", "OfNat.ofNat", "instOfNatNat"],
       "local_syntactic_dependencies": [],
       "external_syntactic_dependencies": ["rfl"],
-      "theorem_messages": {"errors": [], "warnings": [], "infos": []}
+      "theorem_messages": {"errors": [], "warnings": [], "infos": []},
+      "declaration_messages": {"errors": [], "warnings": [], "infos": []}
     }
   }
 }""",
@@ -635,6 +651,143 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/extract_theorems \\
                 "description": "Theorem names mapped to self-contained documents",
                 "details": """\
 Dictionary mapping theorem names to self-contained Lean code documents. Each key is a theorem name, and the value is a self-contained breakdown of the theorem, including a content field containing that theorem plus all dependencies it needs (imports, definitions, etc.).""",
+            },
+            TIMINGS_OUTPUT,
+        ],
+    },
+    "extract_decls": {
+        "title": "Extract Declarations",
+        "details": "Split a file containing one or more declarations into smaller units, each containing a single declaration along with any required dependencies. Unlike extract_theorems, this works for all declaration kinds (def, theorem, lemma, abbrev, instance, structure, etc.).",
+        "description": "split file into separate declarations with dependencies",
+        "cli_output": {
+            "mode": "multiple_files",
+            "supports_output_dir": True,
+            "output_dir_default": "extract_decls/",
+            "output_file_pattern": "decl_{i}.lean",
+            "metadata_to_stderr": False,
+            "force_flag": True,
+        },
+        "cli_examples": [
+            "# Extract to default directory\naxle extract-decls combined.lean --environment lean-4.28.0",
+            "# Extract to custom directory\naxle extract-decls combined.lean -o my_decls/ --environment lean-4.28.0",
+            "# Force overwrite\naxle extract-decls combined.lean -o my_decls/ -f --environment lean-4.28.0",
+            "# Pipeline usage\ncat combined.lean | axle extract-decls - -o output/ --environment lean-4.28.0",
+        ],
+        "web_ui_example_data": "eyJjb250ZW50Ijoic3RydWN0dXJlIFdlaWdodCB3aGVyZVxuICB2YWwgOiBOYXRcbiAgcG9zIDogdmFsID4gMCA6PSBieSBvbWVnYVxuXG5jbGFzcyBXZWlnaHRlZCAozrEgOiBUeXBlKSB3aGVyZVxuICB3ZWlnaHQgOiDOsSDihpIgV2VpZ2h0XG5cbmRlZiB0cml2aWFsV2VpZ2h0IDogV2VpZ2h0IDo9IOKfqDEsIGJ5IG9tZWdh4p+pXG5cbmluc3RhbmNlIDogV2VpZ2h0ZWQgTmF0IHdoZXJlXG4gIHdlaWdodCBfIDo9IHRyaXZpYWxXZWlnaHQiLCJpZ25vcmVfaW1wb3J0cyI6dHJ1ZSwiZW52aXJvbm1lbnQiOiJsZWFuLTQuMjguMCIsInRpbWVvdXRfc2Vjb25kcyI6MTIwfQ%3D%3D",
+        "sections": {
+            "__inputs__": True,
+            "__outputs__": True,
+            "Document Fields": f"""\
+Each document in the `documents` dictionary contains:
+
+!!! note "Field applicability"
+    Not all fields are meaningful for all declaration kinds. For example, `proof_length` and `tactic_counts` are only relevant for theorems/lemmas with tactic proofs. For other declaration kinds (def, abbrev, structure, class, inductive, etc.), these fields may be empty or zero.
+
+{DOCUMENT_FIELDS_BASE}""",
+            "__python__": True,
+            "__cli__": True,
+            "__http__": True,
+            "__response__": True,
+        },
+        "python_example": """\
+result = await axle.extract_decls(
+    content="import Mathlib\\ndef foo : Nat := 1\\ntheorem bar : foo = 1 := rfl",
+    environment="lean-4.28.0",
+    ignore_imports=False,  # Optional
+    timeout_seconds=120,   # Optional
+)
+
+print(result.content)  # The processed Lean code
+for name, doc in result.documents.items():
+    print(f"{name}: {doc.declaration}")""",
+        "http_example": """\
+curl -s -X POST https://axle.axiommath.ai/api/v1/extract_decls \\
+    -d '{"content": "import Mathlib\\ndef foo : Nat := 1\\ntheorem bar : foo = 1 := rfl", "environment": "lean-4.28.0"}' | jq""",
+        "example_response": """\
+{
+  "content": "import Mathlib\\ndef foo : Nat := 1\\ntheorem bar : foo = 1 := rfl",
+  "lean_messages": {
+    "errors": [],
+    "warnings": [],
+    "infos": []
+  },
+  "tool_messages": {
+    "errors": [],
+    "warnings": [],
+    "infos": []
+  },
+  "timings": {
+    "total_ms": 92,
+    "parse_ms": 87
+  },
+  "documents": {
+    "foo": {
+      "kind": "def",
+      "declaration": "def foo : Nat := 1",
+      "content": "import Mathlib\\n\\ndef foo : Nat := 1",
+      "tokens": ["def", "foo", ":", "Nat", ":=", "1"],
+      "signature": "def foo : Nat",
+      "type": "\u2115",
+      "type_hash": 421340980,
+      "is_sorry": false,
+      "index": 0,
+      "line_pos": 2,
+      "end_line_pos": 2,
+      "proof_length": 1,
+      "tactic_counts": {},
+      "local_value_dependencies": [],
+      "local_type_dependencies": [],
+      "external_value_dependencies": ["OfNat.ofNat", "Nat", "instOfNatNat"],
+      "external_type_dependencies": ["Nat"],
+      "local_syntactic_dependencies": [],
+      "external_syntactic_dependencies": ["Nat"],
+      "theorem_messages": {"errors": [], "warnings": [], "infos": []},
+      "declaration_messages": {"errors": [], "warnings": [], "infos": []}
+    },
+    "bar": {
+      "kind": "theorem",
+      "declaration": "theorem bar : foo = 1 := rfl",
+      "content": "import Mathlib\\n\\ndef foo : Nat := 1\\n\\ntheorem bar : foo = 1 := rfl",
+      "tokens": ["theorem", "bar", ":", "foo", "=", "1", ":=", "rfl"],
+      "signature": "theorem bar : foo = 1",
+      "type": "foo = 1",
+      "type_hash": 254164366,
+      "is_sorry": false,
+      "index": 1,
+      "line_pos": 3,
+      "end_line_pos": 3,
+      "proof_length": 1,
+      "tactic_counts": {},
+      "local_value_dependencies": ["foo"],
+      "local_type_dependencies": ["foo"],
+      "external_value_dependencies": ["rfl", "Nat"],
+      "external_type_dependencies": ["Eq", "Nat", "OfNat.ofNat", "instOfNatNat"],
+      "local_syntactic_dependencies": ["foo"],
+      "external_syntactic_dependencies": ["rfl"],
+      "theorem_messages": {"errors": [], "warnings": [], "infos": []},
+      "declaration_messages": {"errors": [], "warnings": [], "infos": []}
+    }
+  }
+}""",
+        "inputs": [
+            {
+                **CONTENT_INPUT,
+                "placeholder": "def foo : Nat := 1\ntheorem bar : foo = 1 := rfl",
+            },
+            IGNORE_IMPORTS_INPUT,
+            ENVIRONMENT_INPUT,
+            TIMEOUT_INPUT,
+        ],
+        "outputs": [
+            CONTENT_OUTPUT,
+            LEAN_MESSAGES_OUTPUT,
+            tool_messages_output("extraction"),
+            {
+                "name": "documents",
+                "type": "dict",
+                "description": "Declaration names mapped to self-contained documents",
+                "details": """\
+Dictionary mapping declaration names to self-contained Lean code documents. Each key is a declaration name, and the value is a self-contained breakdown of the declaration, including a content field containing that declaration plus all dependencies it needs (imports, definitions, etc.).""",
             },
             TIMINGS_OUTPUT,
         ],
