@@ -11,10 +11,10 @@ Strip proofs from theorems, replacing them with `sorry`.
 
 ??? "`names` · list[str] · Theorem names to process"
     Optional list of theorem names to process. If not specified, all theorems are processed.
-    Names not found in the code are silently ignored.
+    Requesting a name not found in the code returns an error.
     When `theorems_only` is `false`, these select over all declarations (not just theorems).
 
-??? "`indices` · list[str] · Theorem indices to process"
+??? "`indices` · list[int] · Theorem indices to process"
     Optional list of theorem indices to process (0-based). Supports negative indices:
     `-1` is the last theorem, `-2` is second-to-last, etc.
     If not specified, all theorems are processed.
@@ -45,9 +45,13 @@ Strip proofs from theorems, replacing them with `sorry`.
     Messages from the Lean compiler with `errors`, `warnings`, and `infos` lists.
     Errors here indicate invalid Lean code (syntax errors, type errors, etc.); an empty `errors` list means the code compiles.
 
+    If the tool allows declaration selection and a `names`/`indices` selection is given, elaboration is skipped for the proofs of unselected declarations, so this field reflects only the selected declarations and is otherwise incomplete.
+
 ??? "`tool_messages` · dict · Messages from theorem2sorry tool"
     Messages from the theorem2sorry tool with `errors`, `warnings`, and `infos` lists.
     Errors here indicate tool-specific issues (not Lean compilation errors).
+
+    If the tool allows declaration selection and a `names`/`indices` selection is given, elaboration is skipped for the proofs of unselected declarations, so this field reflects only the selected declarations and is otherwise incomplete.
 
 ??? "`content` · string · Lean code with proof bodies replaced by sorry"
     Useful for creating problem templates from solutions.
@@ -83,11 +87,11 @@ result = await axle.theorem2sorry(
 
 ```bash
 # Convert all theorems to sorry
-axle theorem2sorry solution.lean -o problem.lean --environment lean-4.28.0
+axle theorem2sorry solution.lean -o problem.lean --environment lean-4.31.0
 # Convert specific theorems by name
-axle theorem2sorry solution.lean --names main_theorem,helper --environment lean-4.28.0
+axle theorem2sorry solution.lean --names main_theorem,helper --environment lean-4.31.0
 # Pipeline usage
-cat solution.lean | axle theorem2sorry - --names main_theorem --environment lean-4.28.0 > problem.lean
+cat solution.lean | axle theorem2sorry - --names main_theorem --environment lean-4.31.0 > problem.lean
 ```
 
 ## HTTP API

@@ -12,6 +12,8 @@ from axle.exceptions import (
     AxleNotFoundError,
     AxleRateLimitedError,
     AxleRuntimeError,
+    LeanResourceExceeded,
+    LeanTimeout,
 )
 from axle.helpers import (
     inline_lean_messages,
@@ -50,6 +52,8 @@ __all__ = [
     "AxleNotFoundError",
     "AxleRateLimitedError",
     "AxleRuntimeError",
+    "LeanResourceExceeded",
+    "LeanTimeout",
     # Helpers
     "inline_lean_messages",
     "remove_comments",

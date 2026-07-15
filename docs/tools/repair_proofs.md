@@ -28,10 +28,10 @@ If `repairs` is omitted, all of the above run. Pass an explicit list to limit wh
 
 ??? "`names` · list[str] · Theorem names to process"
     Optional list of theorem names to process. If not specified, all theorems are processed.
-    Names not found in the code are silently ignored.
+    Requesting a name not found in the code returns an error.
     When `theorems_only` is `false`, these select over all declarations (not just theorems).
 
-??? "`indices` · list[str] · Theorem indices to process"
+??? "`indices` · list[int] · Theorem indices to process"
     Optional list of theorem indices to process (0-based). Supports negative indices:
     `-1` is the last theorem, `-2` is second-to-last, etc.
     If not specified, all theorems are processed.
@@ -67,6 +67,8 @@ If `repairs` is omitted, all of the above run. Pass an explicit list to limit wh
 ??? "`lean_messages` · dict · Messages from Lean compiler"
     Messages from the Lean compiler with `errors`, `warnings`, and `infos` lists.
     Errors here indicate invalid Lean code (syntax errors, type errors, etc.); an empty `errors` list means the code compiles.
+
+    If the tool allows declaration selection and a `names`/`indices` selection is given, elaboration is skipped for the proofs of unselected declarations, so this field reflects only the selected declarations and is otherwise incomplete.
 
 ??? "`tool_messages` · dict · Messages from repair_proofs tool"
     Messages from the repair_proofs tool with `errors`, `warnings`, and `infos` lists.
@@ -234,13 +236,13 @@ print(result.repair_stats)
 
 ```bash
 # Repair all theorems
-axle repair-proofs broken.lean --environment lean-4.28.0
+axle repair-proofs broken.lean --environment lean-4.31.0
 # Repair specific theorems
-axle repair-proofs broken.lean --names main_theorem,helper --environment lean-4.28.0
+axle repair-proofs broken.lean --names main_theorem,helper --environment lean-4.31.0
 # Apply only specific repairs
-axle repair-proofs broken.lean --repairs remove_extraneous_tactics --environment lean-4.28.0
+axle repair-proofs broken.lean --repairs remove_extraneous_tactics --environment lean-4.31.0
 # Pipeline usage
-cat broken.lean | axle repair-proofs - --environment lean-4.28.0 | axle check - --environment lean-4.28.0
+cat broken.lean | axle repair-proofs - --environment lean-4.31.0 | axle check - --environment lean-4.31.0
 ```
 
 ## HTTP API

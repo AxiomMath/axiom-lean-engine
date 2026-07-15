@@ -19,23 +19,41 @@ class Messages:
 
 
 @dataclass
+class VerifyProofNegation:
+    okay: bool
+    tool_messages: Messages
+    failed_declarations: list[str]
+
+    @classmethod
+    def from_response(cls, response: dict) -> "VerifyProofNegation":
+        return cls(
+            okay=response.get("okay", False),
+            tool_messages=Messages.from_response(response.get("tool_messages", {})),
+            failed_declarations=response.get("failed_declarations", []),
+        )
+
+
+@dataclass
 class VerifyProofResponse:
     okay: bool
     content: str
     lean_messages: Messages
     tool_messages: Messages
     failed_declarations: list[str]
+    negation: VerifyProofNegation | None
     timings: dict[str, int]
     info: dict | None
 
     @classmethod
     def from_response(cls, response: dict) -> "VerifyProofResponse":
+        negation = response.get("negation")
         return cls(
             okay=response.get("okay", False),
             content=response.get("content", ""),
             lean_messages=Messages.from_response(response.get("lean_messages", {})),
             tool_messages=Messages.from_response(response.get("tool_messages", {})),
             failed_declarations=response.get("failed_declarations", []),
+            negation=VerifyProofNegation.from_response(negation) if negation else None,
             timings=response.get("timings", {}),
             info=response.get("info"),
         )
@@ -53,6 +71,7 @@ class Document:
     signature: str
     type: str
     type_hash: int
+    unfolded_type_hash: int
     type_depth: int
     term_depth: int
     is_sorry: bool
@@ -83,6 +102,7 @@ class Document:
             signature=response.get("signature", ""),
             type=response.get("type", ""),
             type_hash=response.get("type_hash", 0),
+            unfolded_type_hash=response.get("unfolded_type_hash", 0),
             type_depth=response.get("type_depth", 0),
             term_depth=response.get("term_depth", 0),
             is_sorry=response.get("is_sorry", False),

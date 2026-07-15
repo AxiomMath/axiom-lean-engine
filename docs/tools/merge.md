@@ -41,9 +41,13 @@ Combine multiple Lean files into a single file.
     Messages from the Lean compiler with `errors`, `warnings`, and `infos` lists.
     Errors here indicate invalid Lean code (syntax errors, type errors, etc.); an empty `errors` list means the code compiles.
 
+    If the tool allows declaration selection and a `names`/`indices` selection is given, elaboration is skipped for the proofs of unselected declarations, so this field reflects only the selected declarations and is otherwise incomplete.
+
 ??? "`tool_messages` · dict · Messages from merge tool"
     Messages from the merge tool with `errors`, `warnings`, and `infos` lists.
     Errors here indicate tool-specific issues (not Lean compilation errors).
+
+    If the tool allows declaration selection and a `names`/`indices` selection is given, elaboration is skipped for the proofs of unselected declarations, so this field reflects only the selected declarations and is otherwise incomplete.
 
 ??? "`content` · string · All input files merged into a single Lean file"
     Duplicates and dependencies are resolved.
@@ -71,11 +75,11 @@ print(result.content)
 
 ```bash
 # Merge multiple files to stdout
-axle merge theorem1.lean theorem2.lean theorem3.lean --environment lean-4.28.0
+axle merge theorem1.lean theorem2.lean theorem3.lean --environment lean-4.31.0
 # Merge all .lean files in directory
-axle merge *.lean -o combined.lean --environment lean-4.28.0
+axle merge *.lean -o combined.lean --environment lean-4.31.0
 # Merge and check
-axle merge *.lean --environment lean-4.28.0 | axle check - --environment lean-4.28.0
+axle merge *.lean --environment lean-4.31.0 | axle check - --environment lean-4.31.0
 ```
 
 ## HTTP API

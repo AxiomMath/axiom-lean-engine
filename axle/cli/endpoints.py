@@ -33,6 +33,7 @@ class OutputField(TypedDict, total=False):
     type: str  # "bool", "list", "dict", "string", "number"
     description: str
     details: str  # Extended description for documentation (supports markdown)
+    optional: bool  # Field may be absent or null in the response
 
 
 # REUSABLE INPUT FIELDS
@@ -60,7 +61,7 @@ Lean version and pre-built dependencies (typically Mathlib).
 
 Available environments: `lean-4.28.0`, `lean-4.27.0`, `lean-4.26.0`, etc.""",
     "required": True,
-    "placeholder": "lean-4.28.0",
+    "placeholder": "lean-4.31.0",
 }
 
 # Timeout setting
@@ -95,7 +96,7 @@ NAMES_INPUT: InputField = {
     "description": "Theorem names to process",
     "details": """\
 Optional list of theorem names to process. If not specified, all theorems are processed.
-Names not found in the code are silently ignored.
+Requesting a name not found in the code returns an error.
 When `theorems_only` is `false`, these select over all declarations (not just theorems).""",
     "required": False,
     "placeholder": "foo, bar",
@@ -115,6 +116,11 @@ When `theorems_only` is `false`, these select over all declarations (not just th
     "placeholder": "0, 1, -1",
     "cli_list_type": "int",
 }
+
+# Addendum for output fields affected by a names/indices selection
+DECL_SELECTION_NOTE = """
+
+If the tool allows declaration selection and a `names`/`indices` selection is given, elaboration is skipped for the proofs of unselected declarations, so this field reflects only the selected declarations and is otherwise incomplete."""
 
 # Theorems-only toggle (for tools that can operate on all declaration kinds)
 THEOREMS_ONLY_INPUT: InputField = {
@@ -136,6 +142,16 @@ THEOREMS_ONLY_NOOP_INPUT: InputField = {
     "default": True,
 }
 
+VERBOSITY_INPUT: InputField = {
+    "name": "verbosity",
+    "type": "number",
+    "description": "Pretty-printer verbosity level (0-2)",
+    "details": "0=default, 1=robust, 2=extra robust. Higher levels produce more explicit type annotations. Use when default output has ambiguity errors.",
+    "required": False,
+    "default": 0,
+    "placeholder": "0",
+}
+
 # Mathlib options toggle
 MATHLIB_OPTIONS_INPUT: InputField = {
     "name": "mathlib_options",
@@ -153,7 +169,8 @@ LEAN_MESSAGES_OUTPUT: OutputField = {
     "description": "Messages from Lean compiler",
     "details": """\
 Messages from the Lean compiler with `errors`, `warnings`, and `infos` lists.
-Errors here indicate invalid Lean code (syntax errors, type errors, etc.); an empty `errors` list means the code compiles.""",
+Errors here indicate invalid Lean code (syntax errors, type errors, etc.); an empty `errors` list means the code compiles."""
+    + DECL_SELECTION_NOTE,
 }
 
 TIMINGS_OUTPUT: OutputField = {
@@ -182,6 +199,8 @@ DOCUMENT_FIELDS_BASE = """\
 ??? "`content` · str · Standalone content including declaration and dependencies"
     Complete, self-contained Lean code that includes the declaration and all its local dependencies. Can be compiled independently.
 
+    **Empty** when the request specifies `names` or `indices`. In that mode only the selected declarations are returned and the unselected ones are *not* elaborated (a large speedup), so their transitive dependencies can no longer be computed. A `tool_messages` warning is emitted; all other fields (`type`, dependency lists, `is_sorry`, etc.) are still populated. Call the tool without `names`/`indices` to get the self-contained `content`.
+
 ??? "`tokens` · list[str] · Raw tokens from the declaration"
     The declaration's source code split into tokens.
 
@@ -193,6 +212,9 @@ DOCUMENT_FIELDS_BASE = """\
 
 ??? "`type_hash` · int · Hash of the canonical type expression"
     Hash of the canonical, alpha-invariant type expression. Useful for deduplication.
+
+??? "`unfolded_type_hash` · int · Hash after unfolding local elaboration auxiliaries"
+    Hash of the type after unfolding module-local elaboration auxiliaries; useful for deduplication.
 
 ??? "`type_depth` · int · Structural depth of the type expression"
     The nesting depth of the declaration's type as a Lean expression. This field maxes out at 255.
@@ -260,7 +282,8 @@ def tool_messages_output(tool_name: str) -> OutputField:
         "description": f"Messages from {tool_name} tool",
         "details": f"""\
 Messages from the {tool_name} tool with `errors`, `warnings`, and `infos` lists.
-Errors here indicate tool-specific issues (not Lean compilation errors).""",
+Errors here indicate tool-specific issues (not Lean compilation errors)."""
+        + DECL_SELECTION_NOTE,
     }
 
 
@@ -470,6 +493,16 @@ When `false`, types are compared at face value, which is faster but may rarely
 reject valid proofs.""",
                 "default": True,
             },
+            {
+                "name": "verify_negation",
+                "type": "checkbox",
+                "description": "Also check whether `content` proves the negation of the statement",
+                "details": """\
+When `true`, AXLE additionally checks whether `content` proves the *negation* of
+`formal_statement` (i.e. disproves it) and reports the result in the `negation`
+field. `negation.okay` is `true` when `content` is a valid proof of the negation.""",
+                "default": False,
+            },
             IGNORE_IMPORTS_INPUT,
             ENVIRONMENT_INPUT,
             TIMEOUT_INPUT,
@@ -496,6 +529,19 @@ Common errors include: "Missing required declaration", "does not match expected 
                 "type": "list",
                 "description": "Declaration names that failed validation",
                 "details": "List of declaration names that have compilation or validation errors. These are declarations that do not compile, use `sorry`, use disallowed axioms, etc. A file-level validation finding (e.g. use of `open private`) marks every declaration in the file as failed.",
+            },
+            {
+                "name": "negation",
+                "type": "dict",
+                "optional": True,
+                "description": "Result of verifying `content` against the negation of `formal_statement`",
+                "details": """\
+Present only when `verify_negation` is `true`. Reports whether `content` is a proof
+of the *negation* of `formal_statement` — i.e. whether it disproves the statement —
+with the same `okay`, `tool_messages`, and `failed_declarations` fields, computed
+against the negated theorem types.
+
+`negation.okay` is `true` when `content` is a valid proof of the negation.""",
             },
             TIMINGS_OUTPUT,
         ],
@@ -560,6 +606,9 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/check \\
         "inputs": [
             CONTENT_INPUT,
             MATHLIB_OPTIONS_INPUT,
+            NAMES_INPUT,
+            INDICES_INPUT,
+            THEOREMS_ONLY_INPUT,
             IGNORE_IMPORTS_INPUT,
             ENVIRONMENT_INPUT,
             TIMEOUT_INPUT,
@@ -581,13 +630,15 @@ This only reflects compilation. It does **not** mean the code is a complete, val
                 "details": """\
 Messages from the check tool with `errors`, `warnings`, and `infos` lists.
 
-Validation findings — uses of `sorry`, disallowed axioms, or unsafe definitions — are reported as warnings here. Use [`verify_proof`](verify_proof.md) to treat them as errors.""",
+Validation findings — uses of `sorry`, disallowed axioms, or unsafe definitions — are reported as warnings here. Use [`verify_proof`](verify_proof.md) to treat them as errors."""
+                + DECL_SELECTION_NOTE,
             },
             {
                 "name": "failed_declarations",
                 "type": "list",
                 "description": "Declaration names that failed validation",
-                "details": "List of declaration names that have compilation or validation errors. These are declarations that do not compile, use `sorry`, use disallowed axioms, etc. A file-level validation finding (e.g. use of `open private`) marks every declaration in the file as failed.",
+                "details": "List of declaration names that have compilation or validation errors. These are declarations that do not compile, use `sorry`, use disallowed axioms, etc. A file-level validation finding (e.g. use of `open private`) marks every declaration in the file as failed."
+                + DECL_SELECTION_NOTE,
             },
             TIMINGS_OUTPUT,
         ],
@@ -691,6 +742,8 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/extract_theorems \\
                 **CONTENT_INPUT,
                 "placeholder": "theorem foo : 1 = 1 := rfl\ntheorem bar : 2 = 2 := rfl",
             },
+            NAMES_INPUT,
+            INDICES_INPUT,
             IGNORE_IMPORTS_INPUT,
             ENVIRONMENT_INPUT,
             TIMEOUT_INPUT,
@@ -836,6 +889,9 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/extract_decls \\
                 **CONTENT_INPUT,
                 "placeholder": "def foo : Nat := 1\ntheorem bar : foo = 1 := rfl",
             },
+            NAMES_INPUT,
+            INDICES_INPUT,
+            VERBOSITY_INPUT,
             IGNORE_IMPORTS_INPUT,
             ENVIRONMENT_INPUT,
             TIMEOUT_INPUT,
@@ -2132,15 +2188,7 @@ These configuration options provide some flexibility around usage, at the cost o
                 "details": "If `true`, the original `have` is replaced with a call to the extracted lemma. Defaults to false.",
                 "default": False,
             },
-            {
-                "name": "verbosity",
-                "type": "number",
-                "description": "Pretty-printer verbosity level (0-2)",
-                "details": "0=default, 1=robust, 2=extra robust. Higher levels produce more explicit type annotations. Use when default output has ambiguity errors.",
-                "required": False,
-                "default": 0,
-                "placeholder": "0",
-            },
+            VERBOSITY_INPUT,
             IGNORE_IMPORTS_INPUT,
             ENVIRONMENT_INPUT,
             TIMEOUT_INPUT,
@@ -2360,15 +2408,7 @@ theorem multiple (n : Nat) : 1 = 1 ∧ 2 = 2 := by constructor <;> (first | exac
                 "default": False,
             },
             THEOREMS_ONLY_INPUT,
-            {
-                "name": "verbosity",
-                "type": "number",
-                "description": "Pretty-printer verbosity level (0-2)",
-                "details": "0=default, 1=robust, 2=extra robust. Higher levels produce more explicit type annotations. Use when default output has ambiguity errors.",
-                "required": False,
-                "default": 0,
-                "placeholder": "0",
-            },
+            VERBOSITY_INPUT,
             IGNORE_IMPORTS_INPUT,
             ENVIRONMENT_INPUT,
             TIMEOUT_INPUT,
@@ -2464,6 +2504,7 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/disprove \\
                 "placeholder": "grind, aesop, rfl, simp, decide",
             },
             THEOREMS_ONLY_NOOP_INPUT,
+            VERBOSITY_INPUT,
             IGNORE_IMPORTS_INPUT,
             ENVIRONMENT_INPUT,
             TIMEOUT_INPUT,

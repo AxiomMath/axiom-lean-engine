@@ -15,10 +15,10 @@ This tool is partially powered by [Plausible](https://github.com/leanprover-comm
 
 ??? "`names` · list[str] · Theorem names to process"
     Optional list of theorem names to process. If not specified, all theorems are processed.
-    Names not found in the code are silently ignored.
+    Requesting a name not found in the code returns an error.
     When `theorems_only` is `false`, these select over all declarations (not just theorems).
 
-??? "`indices` · list[str] · Theorem indices to process"
+??? "`indices` · list[int] · Theorem indices to process"
     Optional list of theorem indices to process (0-based). Supports negative indices:
     `-1` is the last theorem, `-2` is second-to-last, etc.
     If not specified, all theorems are processed.
@@ -31,6 +31,9 @@ This tool is partially powered by [Plausible](https://github.com/leanprover-comm
     If `true` (default), only `theorem`/`lemma` declarations are processed. Set to `false` to process all declaration kinds (`def`/`instance`/`abbrev`/`opaque`/etc). When `false`, `names` and `indices` select over all declarations rather than just theorems.
 
     Note: on this tool, operations on non-theorem kinds are a no-op.
+
+??? "`verbosity` · float · default: `0` · Pretty-printer verbosity level (0-2)"
+    0=default, 1=robust, 2=extra robust. Higher levels produce more explicit type annotations. Use when default output has ambiguity errors.
 
 ??? "`ignore_imports` · bool · default: `True` · Ignore import mismatches"
     Controls import statement handling:
@@ -57,9 +60,13 @@ This tool is partially powered by [Plausible](https://github.com/leanprover-comm
     Messages from the Lean compiler with `errors`, `warnings`, and `infos` lists.
     Errors here indicate invalid Lean code (syntax errors, type errors, etc.); an empty `errors` list means the code compiles.
 
+    If the tool allows declaration selection and a `names`/`indices` selection is given, elaboration is skipped for the proofs of unselected declarations, so this field reflects only the selected declarations and is otherwise incomplete.
+
 ??? "`tool_messages` · dict · Messages from disprove tool"
     Messages from the disprove tool with `errors`, `warnings`, and `infos` lists.
     Errors here indicate tool-specific issues (not Lean compilation errors).
+
+    If the tool allows declaration selection and a `names`/`indices` selection is given, elaboration is skipped for the proofs of unselected declarations, so this field reflects only the selected declarations and is otherwise incomplete.
 
 ??? "`results` · dict · Map from theorem name to disprove result"
     Each theorem maps to a string indicating the outcome of the disprove attempt.
@@ -95,13 +102,13 @@ print(result.content)  # The processed Lean code
 
 ```bash
 # Disprove all theorems
-axle disprove theorems.lean --environment lean-4.28.0
+axle disprove theorems.lean --environment lean-4.31.0
 # Disprove specific theorems by name
-axle disprove theorems.lean --names main_theorem,helper --environment lean-4.28.0
+axle disprove theorems.lean --names main_theorem,helper --environment lean-4.31.0
 # Disprove specific theorems by index
-axle disprove theorems.lean --indices 0,-1 --environment lean-4.28.0
+axle disprove theorems.lean --indices 0,-1 --environment lean-4.31.0
 # Pipeline usage
-cat theorems.lean | axle disprove - --environment lean-4.28.0
+cat theorems.lean | axle disprove - --environment lean-4.31.0
 ```
 
 ## HTTP API

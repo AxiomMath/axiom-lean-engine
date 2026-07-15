@@ -7,6 +7,13 @@ Homepage: https://axle.axiommath.ai/
 ## Recent Announcements
 
 <details open>
+<summary><strong>July 15, 2026 - v1.5.0</strong></summary>
+
+New `LeanTimeout`/`LeanResourceExceeded` exceptions, `names`/`indices` selection on `check` and `extract_decls`/`extract_theorems` (to skip elaboration for faster runs), and new fields and options (`unfolded_type_hash`, `verify_negation`, `verbosity`). See the [changelog](https://axle.axiommath.ai/v1/docs/changelog/) for details.
+
+</details>
+
+<details>
 <summary><strong>July 1, 2026 - v1.4.0</strong></summary>
 
 This update comes with two notable changes and a variety of additional features:
@@ -19,7 +26,7 @@ Also: opaque support in `merge`/`extract_decls`, a `disprove` fix, and Lean 4.30
 
 </details>
 
-<details open>
+<details>
 <summary><strong>June 24, 2026 - 📣 AXLE @ ICML 2026</strong></summary>
 
 We're presenting AXLE at the **3rd AI for Math Workshop** at **ICML 2026** in Seoul, as a contributed talk. Come find our poster and say hi! Read the technical report on [arXiv](https://arxiv.org/abs/2606.26442).
@@ -65,11 +72,26 @@ See the [changelog](https://axle.axiommath.ai/v1/docs/changelog/) for details an
 
 ## Documentation
 
-- [Technical report (arXiv)](https://arxiv.org/abs/2606.26442)
 - [Installation Guide](docs/installation.md)
 - [Python API Reference](docs/python-api.md)
 - [CLI Reference](docs/cli-reference.md)
 - [Examples](examples/)
+
+## Citing AXLE
+
+To cite AXLE, please cite the [technical report](https://arxiv.org/abs/2606.26442):
+
+```bibtex
+@misc{xin2026axle,
+  title={AXLE: A Cloud Infrastructure for Lean 4 Theorem Proving Utilities},
+  author={Xin, Jimmy and Schneidman, Alex and Cummins, Chris and Ram, Karun and Ganesh, Srihari and Limperg, Jannis},
+  year={2026},
+  eprint={2606.26442},
+  archivePrefix={arXiv},
+  primaryClass={cs.LO},
+  url={https://arxiv.org/abs/2606.26442},
+}
+```
 
 ## Past Announcements
 

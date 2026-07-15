@@ -37,9 +37,13 @@ Standardize Lean file formatting to prepare for other operations, especially `me
     Messages from the Lean compiler with `errors`, `warnings`, and `infos` lists.
     Errors here indicate invalid Lean code (syntax errors, type errors, etc.); an empty `errors` list means the code compiles.
 
+    If the tool allows declaration selection and a `names`/`indices` selection is given, elaboration is skipped for the proofs of unselected declarations, so this field reflects only the selected declarations and is otherwise incomplete.
+
 ??? "`tool_messages` · dict · Messages from normalize tool"
     Messages from the normalize tool with `errors`, `warnings`, and `infos` lists.
     Errors here indicate tool-specific issues (not Lean compilation errors).
+
+    If the tool allows declaration selection and a `names`/`indices` selection is given, elaboration is skipped for the proofs of unselected declarations, so this field reflects only the selected declarations and is otherwise incomplete.
 
 ??? "`content` · string · The normalized Lean code"
     The standardized code. May be identical to input if `failsafe` triggered.
@@ -177,15 +181,15 @@ print(result.normalize_stats)
 
 ```bash
 # Normalize a file
-axle normalize theorem.lean --environment lean-4.28.0
+axle normalize theorem.lean --environment lean-4.31.0
 # Normalize and save to file
-axle normalize theorem.lean -o normalized.lean --environment lean-4.28.0
+axle normalize theorem.lean -o normalized.lean --environment lean-4.31.0
 # Apply only specific normalizations
-axle normalize theorem.lean --normalizations remove_sections,expand_decl_names --environment lean-4.28.0
+axle normalize theorem.lean --normalizations remove_sections,expand_decl_names --environment lean-4.31.0
 # Pipeline usage
-cat theorem.lean | axle normalize - --environment lean-4.28.0 | axle merge - other.lean --environment lean-4.28.0
+cat theorem.lean | axle normalize - --environment lean-4.31.0 | axle merge - other.lean --environment lean-4.31.0
 # Disable failsafe to always return normalized output
-axle normalize theorem.lean --no-failsafe --environment lean-4.28.0
+axle normalize theorem.lean --no-failsafe --environment lean-4.31.0
 ```
 
 ## HTTP API

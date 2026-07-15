@@ -4,6 +4,7 @@ import asyncio
 import json
 import logging
 import os
+import re
 import warnings
 from http import HTTPMethod
 from typing import Any, Final, cast
@@ -29,6 +30,8 @@ from axle.exceptions import (
     AxleNotFoundError,
     AxleRateLimitedError,
     AxleRuntimeError,
+    LeanResourceExceeded,
+    LeanTimeout,
 )
 from axle.types import (
     CheckResponse,
@@ -49,6 +52,14 @@ from axle.types import (
 )
 
 JsonDict = dict[str, Any]
+
+_LEAN_ENV_RE: Final = re.compile(r"^lean-(\d+)\.(\d+)\.(\d+)(?:-rc(\d+))?$")
+
+
+def _lean_version_key(match: re.Match[str]) -> tuple[int, int, int, int]:
+    major, minor, patch, rc = match.groups()
+    return (int(major), int(minor), int(patch), int(rc) if rc else 9999)
+
 
 logger = logging.getLogger(__name__)
 
@@ -167,6 +178,12 @@ class AxleClient:
         if "user_error" in response:
             raise AxleInvalidArgument(response["user_error"])
 
+        error_type = response.get("error_type")
+        if error_type == "LeanResourceExceeded":
+            raise LeanResourceExceeded(response["error"])
+        if error_type == "LeanTimeout":
+            raise LeanTimeout(response["error"])
+
         if "error" in response:
             raise AxleRuntimeError(response["error"])
 
@@ -182,6 +199,7 @@ class AxleClient:
         permitted_sorries: list[str] | None = None,
         mathlib_options: bool | None = None,
         use_def_eq: bool | None = None,
+        verify_negation: bool | None = None,
         ignore_imports: bool | None = None,
         timeout_seconds: float | None = None,
     ) -> VerifyProofResponse:
@@ -195,6 +213,7 @@ class AxleClient:
                     permitted_sorries=permitted_sorries,
                     mathlib_options=mathlib_options,
                     use_def_eq=use_def_eq,
+                    verify_negation=verify_negation,
                     ignore_imports=ignore_imports,
                     environment=environment,
                     timeout_seconds=timeout_seconds,
@@ -206,6 +225,8 @@ class AxleClient:
         self,
         content: str,
         environment: str,
+        names: list[str] | None = None,
+        indices: list[int] | None = None,
         ignore_imports: bool | None = None,
         timeout_seconds: float | None = None,
     ) -> ExtractTheoremsResponse:
@@ -224,6 +245,8 @@ class AxleClient:
                 "extract_theorems",
                 _to_request(
                     content=content,
+                    names=names,
+                    indices=indices,
                     ignore_imports=ignore_imports,
                     environment=environment,
                     timeout_seconds=timeout_seconds,
@@ -235,6 +258,9 @@ class AxleClient:
         self,
         content: str,
         environment: str,
+        names: list[str] | None = None,
+        indices: list[int] | None = None,
+        verbosity: int | None = None,
         ignore_imports: bool | None = None,
         timeout_seconds: float | None = None,
     ) -> ExtractDeclsResponse:
@@ -244,6 +270,9 @@ class AxleClient:
                 "extract_decls",
                 _to_request(
                     content=content,
+                    names=names,
+                    indices=indices,
+                    verbosity=verbosity,
                     ignore_imports=ignore_imports,
                     environment=environment,
                     timeout_seconds=timeout_seconds,
@@ -356,6 +385,9 @@ class AxleClient:
         content: str,
         environment: str,
         mathlib_options: bool | None = None,
+        names: list[str] | None = None,
+        indices: list[int] | None = None,
+        theorems_only: bool | None = None,
         ignore_imports: bool | None = None,
         timeout_seconds: float | None = None,
     ) -> CheckResponse:
@@ -366,6 +398,9 @@ class AxleClient:
                 _to_request(
                     content=content,
                     mathlib_options=mathlib_options,
+                    names=names,
+                    indices=indices,
+                    theorems_only=theorems_only,
                     ignore_imports=ignore_imports,
                     environment=environment,
                     timeout_seconds=timeout_seconds,
@@ -537,6 +572,7 @@ class AxleClient:
         indices: list[int] | None = None,
         terminal_tactics: list[str] | None = None,
         theorems_only: bool | None = None,
+        verbosity: int | None = None,
         ignore_imports: bool | None = None,
         timeout_seconds: float | None = None,
     ) -> DisproveResponse:
@@ -550,6 +586,7 @@ class AxleClient:
                     indices=indices,
                     terminal_tactics=terminal_tactics,
                     theorems_only=theorems_only,
+                    verbosity=verbosity,
                     ignore_imports=ignore_imports,
                     environment=environment,
                     timeout_seconds=timeout_seconds,
@@ -589,6 +626,18 @@ class AxleClient:
             http_method=HTTPMethod.GET,
         )
         return cast(list[dict[str, Any]], json.loads(response_text))
+
+    async def get_latest_environment(
+        self, timeout_seconds: float | None = None
+    ) -> dict[str, Any] | None:
+        basic = [
+            (_lean_version_key(match), env)
+            for env in await self.environments(timeout_seconds)
+            if (match := _LEAN_ENV_RE.match(env["name"]))
+        ]
+        if not basic:
+            return None
+        return max(basic, key=lambda item: item[0])[1]
 
     async def prove_riemann(self, timeout_seconds: float | None = None) -> JsonDict:
         response_text = await self._call(

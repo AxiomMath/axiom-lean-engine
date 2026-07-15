@@ -72,7 +72,9 @@ except AxleRuntimeError as e:
 | `AxleConflictError` | 409 | Request conflicts with current state | Resolve the conflict |
 | `AxleInternalError` | 500 | Server bug | [Report it](https://github.com/AxiomMath/axiom-lean-engine/issues) |
 | `AxleBrowserLoginRequiredError` | 302 | Endpoint is gated behind interactive browser sign-in | Access via browser, or use an endpoint intended for CLI access |
-| `AxleRuntimeError` | — | Operation couldn't complete (timeout, resource limits) | Retry or adjust parameters |
+| `AxleRuntimeError` | — | Operation reached the executors but failed | Usually not worth retrying — AXLE already retried across executors internally |
+| `LeanResourceExceeded` | — | Lean worker hit a resource cap (e.g. memory) for this input | Reduce the problem's memory allocation |
+| `LeanTimeout` | — | Lean worker exceeded its time budget for this input | Simplify the input or raise the timeout |
 
 ### Automatic Retries
 
@@ -82,5 +84,7 @@ The client automatically retries transient errors with exponential backoff:
 - `AxleRateLimitedError` (429)
 
 Non-retryable errors like `AxleInternalError` (500) and client errors (4xx) are raised immediately.
+
+Beyond the client's own retries, the AXLE gateway retries transient executor failures (worker crashes) across multiple executors before giving up — so an `AxleRuntimeError` usually means those internal retries are already exhausted and re-retrying rarely helps. `LeanResourceExceeded` and `LeanTimeout` are deterministic for a given input and are never retried: the same input yields the same outcome.
 
 To catch all API errors at once, use the base class `AxleApiError`.

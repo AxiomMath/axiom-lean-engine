@@ -18,6 +18,20 @@ For interactive compilation feedback without an API, try the [Lean 4 Web Playgro
 ??? "`mathlib_options` · bool · default: `False` · Enable Mathlib options"
     If true, enables conventional Mathlib options. This toggle sets `linter.mathlibStandardSet` to true, `autoImplicit` to false, `relaxedAutoImplicit` to false, and `pp.unicode.fun` to true.
 
+??? "`names` · list[str] · Theorem names to process"
+    Optional list of theorem names to process. If not specified, all theorems are processed.
+    Requesting a name not found in the code returns an error.
+    When `theorems_only` is `false`, these select over all declarations (not just theorems).
+
+??? "`indices` · list[int] · Theorem indices to process"
+    Optional list of theorem indices to process (0-based). Supports negative indices:
+    `-1` is the last theorem, `-2` is second-to-last, etc.
+    If not specified, all theorems are processed.
+    When `theorems_only` is `false`, these select over all declarations (not just theorems).
+
+??? "`theorems_only` · bool · default: `True` · Process theorems/lemmas only"
+    If `true` (default), only `theorem`/`lemma` declarations are processed. Set to `false` to process all declaration kinds (`def`/`instance`/`abbrev`/`opaque`/etc). When `false`, `names` and `indices` select over all declarations rather than just theorems.
+
 ??? "`ignore_imports` · bool · default: `True` · Ignore import mismatches"
     Controls import statement handling:
 
@@ -48,13 +62,19 @@ For interactive compilation feedback without an API, try the [Lean 4 Web Playgro
     Messages from the Lean compiler with `errors`, `warnings`, and `infos` lists.
     Errors here indicate invalid Lean code (syntax errors, type errors, etc.); an empty `errors` list means the code compiles.
 
+    If the tool allows declaration selection and a `names`/`indices` selection is given, elaboration is skipped for the proofs of unselected declarations, so this field reflects only the selected declarations and is otherwise incomplete.
+
 ??? "`tool_messages` · dict · Messages from check tool"
     Messages from the check tool with `errors`, `warnings`, and `infos` lists.
 
     Validation findings — uses of `sorry`, disallowed axioms, or unsafe definitions — are reported as warnings here. Use [`verify_proof`](verify_proof.md) to treat them as errors.
 
+    If the tool allows declaration selection and a `names`/`indices` selection is given, elaboration is skipped for the proofs of unselected declarations, so this field reflects only the selected declarations and is otherwise incomplete.
+
 ??? "`failed_declarations` · list · Declaration names that failed validation"
     List of declaration names that have compilation or validation errors. These are declarations that do not compile, use `sorry`, use disallowed axioms, etc. A file-level validation finding (e.g. use of `open private`) marks every declaration in the file as failed.
+
+    If the tool allows declaration selection and a `names`/`indices` selection is given, elaboration is skipped for the proofs of unselected declarations, so this field reflects only the selected declarations and is otherwise incomplete.
 
 ??? "`timings` · dict · Execution timing breakdown"
     Timing information in milliseconds for various stages of processing.
@@ -83,13 +103,13 @@ print(result.lean_messages.infos)  # ["4\n"]
 
 ```bash
 # Basic usage
-axle check theorem.lean --environment lean-4.28.0
+axle check theorem.lean --environment lean-4.31.0
 # Pipeline usage
-cat theorem.lean | axle check - --environment lean-4.28.0
+cat theorem.lean | axle check - --environment lean-4.31.0
 # Exit non-zero if code is invalid
-axle check theorem.lean --strict --environment lean-4.28.0
+axle check theorem.lean --strict --environment lean-4.31.0
 # Use in shell conditionals
-if axle check theorem.lean --strict --environment lean-4.28.0 > /dev/null; then
+if axle check theorem.lean --strict --environment lean-4.31.0 > /dev/null; then
     echo "Valid Lean code"
 fi
 ```

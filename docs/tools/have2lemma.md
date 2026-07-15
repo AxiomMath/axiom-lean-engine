@@ -15,10 +15,10 @@ This tool is partially powered by [`extract_goal`](https://leanprover-community.
 
 ??? "`names` · list[str] · Theorem names to process"
     Optional list of theorem names to process. If not specified, all theorems are processed.
-    Names not found in the code are silently ignored.
+    Requesting a name not found in the code returns an error.
     When `theorems_only` is `false`, these select over all declarations (not just theorems).
 
-??? "`indices` · list[str] · Theorem indices to process"
+??? "`indices` · list[int] · Theorem indices to process"
     Optional list of theorem indices to process (0-based). Supports negative indices:
     `-1` is the last theorem, `-2` is second-to-last, etc.
     If not specified, all theorems are processed.
@@ -61,9 +61,13 @@ This tool is partially powered by [`extract_goal`](https://leanprover-community.
     Messages from the Lean compiler with `errors`, `warnings`, and `infos` lists.
     Errors here indicate invalid Lean code (syntax errors, type errors, etc.); an empty `errors` list means the code compiles.
 
+    If the tool allows declaration selection and a `names`/`indices` selection is given, elaboration is skipped for the proofs of unselected declarations, so this field reflects only the selected declarations and is otherwise incomplete.
+
 ??? "`tool_messages` · dict · Messages from have2lemma tool"
     Messages from the have2lemma tool with `errors`, `warnings`, and `infos` lists.
     Errors here indicate tool-specific issues (not Lean compilation errors).
+
+    If the tool allows declaration selection and a `names`/`indices` selection is given, elaboration is skipped for the proofs of unselected declarations, so this field reflects only the selected declarations and is otherwise incomplete.
 
 ??? "`content` · string · Lean code with have statements extracted as lemmas"
     The code with `have` statements lifted to top-level lemmas. Original theorems may reference these new lemmas.
@@ -97,17 +101,17 @@ print(result.lemma_names)  # ["main_theorem.h1", "main_theorem.h2"]
 
 ```bash
 # Extract all have statements
-axle have2lemma theorem.lean --environment lean-4.28.0
+axle have2lemma theorem.lean --environment lean-4.31.0
 # Extract from specific theorems
-axle have2lemma theorem.lean --names main_proof,helper --environment lean-4.28.0
+axle have2lemma theorem.lean --names main_proof,helper --environment lean-4.31.0
 # Include proof bodies in extracted lemmas
-axle have2lemma theorem.lean --include-have-body --environment lean-4.28.0
+axle have2lemma theorem.lean --include-have-body --environment lean-4.31.0
 # Reconstruct callsites (replace have with lemma call)
-axle have2lemma theorem.lean --reconstruct-callsite --environment lean-4.28.0
+axle have2lemma theorem.lean --reconstruct-callsite --environment lean-4.31.0
 # Skip context cleanup
-axle have2lemma theorem.lean --no-include-whole-context --environment lean-4.28.0
+axle have2lemma theorem.lean --no-include-whole-context --environment lean-4.31.0
 # Pipeline usage
-cat theorem.lean | axle have2lemma - --environment lean-4.28.0 | axle check - --environment lean-4.28.0
+cat theorem.lean | axle have2lemma - --environment lean-4.31.0 | axle check - --environment lean-4.31.0
 ```
 
 ## HTTP API

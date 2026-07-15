@@ -45,13 +45,28 @@ See tools documentation for detailed parameters and response fields.
 
 ## Links
 
-- [Technical report (arXiv)](https://arxiv.org/abs/2606.26442)
 - [Installation Guide](installation.md)
 - [Quick Start Tutorial](quickstart.md)
 - [Python API Reference](python-api.md)
 - [CLI Reference](cli-reference.md)
 - [Configuration](configuration.md)
 - [Troubleshooting](troubleshooting.md)
+
+## Citing AXLE
+
+To cite AXLE, please cite the [technical report](https://arxiv.org/abs/2606.26442):
+
+```bibtex
+@misc{xin2026axle,
+  title={AXLE: A Cloud Infrastructure for Lean 4 Theorem Proving Utilities},
+  author={Xin, Jimmy and Schneidman, Alex and Cummins, Chris and Ram, Karun and Ganesh, Srihari and Limperg, Jannis},
+  year={2026},
+  eprint={2606.26442},
+  archivePrefix={arXiv},
+  primaryClass={cs.LO},
+  url={https://arxiv.org/abs/2606.26442},
+}
+```
 
 ## Public Deployments
 

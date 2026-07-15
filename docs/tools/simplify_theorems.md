@@ -11,10 +11,10 @@ Simplify theorem proofs by removing unnecessary tactics and cleaning up code.
 
 ??? "`names` · list[str] · Theorem names to process"
     Optional list of theorem names to process. If not specified, all theorems are processed.
-    Names not found in the code are silently ignored.
+    Requesting a name not found in the code returns an error.
     When `theorems_only` is `false`, these select over all declarations (not just theorems).
 
-??? "`indices` · list[str] · Theorem indices to process"
+??? "`indices` · list[int] · Theorem indices to process"
     Optional list of theorem indices to process (0-based). Supports negative indices:
     `-1` is the last theorem, `-2` is second-to-last, etc.
     If not specified, all theorems are processed.
@@ -48,9 +48,13 @@ Simplify theorem proofs by removing unnecessary tactics and cleaning up code.
     Messages from the Lean compiler with `errors`, `warnings`, and `infos` lists.
     Errors here indicate invalid Lean code (syntax errors, type errors, etc.); an empty `errors` list means the code compiles.
 
+    If the tool allows declaration selection and a `names`/`indices` selection is given, elaboration is skipped for the proofs of unselected declarations, so this field reflects only the selected declarations and is otherwise incomplete.
+
 ??? "`tool_messages` · dict · Messages from simplify_theorems tool"
     Messages from the simplify_theorems tool with `errors`, `warnings`, and `infos` lists.
     Errors here indicate tool-specific issues (not Lean compilation errors).
+
+    If the tool allows declaration selection and a `names`/`indices` selection is given, elaboration is skipped for the proofs of unselected declarations, so this field reflects only the selected declarations and is otherwise incomplete.
 
 ??? "`content` · string · Lean code with simplified theorem proofs"
     May be shorter and cleaner than input.
@@ -171,13 +175,13 @@ print(result.simplification_stats)
 
 ```bash
 # Simplify all theorems
-axle simplify-theorems complex.lean --environment lean-4.28.0
+axle simplify-theorems complex.lean --environment lean-4.31.0
 # Simplify specific theorems
-axle simplify-theorems complex.lean --names main_theorem,helper --environment lean-4.28.0
+axle simplify-theorems complex.lean --names main_theorem,helper --environment lean-4.31.0
 # Apply only specific simplifications
-axle simplify-theorems complex.lean --simplifications remove_unused_tactics --environment lean-4.28.0
+axle simplify-theorems complex.lean --simplifications remove_unused_tactics --environment lean-4.31.0
 # Pipeline usage
-cat complex.lean | axle simplify-theorems - --environment lean-4.28.0 | axle check - --environment lean-4.28.0
+cat complex.lean | axle simplify-theorems - --environment lean-4.31.0 | axle check - --environment lean-4.31.0
 ```
 
 ## HTTP API

@@ -12,9 +12,15 @@ When a request fails entirely, the response includes an error type at the top le
 |------------|---------|--------|
 | `user_error` | Invalid request (missing parameters, bad arguments, import mismatch) | Fix the request—check your inputs |
 | `internal_error` | Server bug | [Report it](https://github.com/AxiomMath/axiom-lean-engine/issues) |
-| `error` | Runtime failure (timeout, OOM, executor crash) | Retry or simplify input |
+| `error` | Runtime failure that exhausted internal retries (executor crash) | Rarely worth retrying—AXLE already retried internally |
+| `error` + `error_type: LeanResourceExceeded` | Lean worker hit a resource cap (e.g. memory) for this input | Reduce the problem's memory allocation |
+| `error` + `error_type: LeanTimeout` | Lean worker exceeded its time budget for this input | Simplify the input or raise the timeout |
 
-In the Python client, these map to exceptions: `AxleInvalidArgument`, `AxleInternalError`, and `AxleRuntimeError`. See [Error Handling](python-api.md#error-handling) for details on catching and handling these exceptions, and for an exhaustive list of all AXLE exceptions, including networking errors.
+In the Python client, these map to exceptions: `AxleInvalidArgument`, `AxleInternalError`, `AxleRuntimeError`, `LeanResourceExceeded`, and `LeanTimeout`. See [Error Handling](python-api.md#error-handling) for details on catching and handling these exceptions, and for an exhaustive list of all AXLE exceptions, including networking errors.
+
+### Resource Limits
+
+Each request runs in a worker with a default time budget of **120 seconds** and a cap of **16 GB** on allocatable working memory. Exceeding the time budget yields a `LeanTimeout`; exceeding the memory cap yields a `LeanResourceExceeded`. The timeout is configurable per request via the `timeout_seconds` parameter, up to a maximum of 900 seconds (15 minutes).
 
 ### Non-Fatal Errors
 When troubleshooting, start by examining the messages in the response. AXLE responses include two message fields, each containing `errors`, `warnings`, and `infos` arrays:

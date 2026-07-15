@@ -75,6 +75,11 @@ See the corresponding [Github issue](https://github.com/AxiomMath/axiom-lean-eng
     When `false`, types are compared at face value, which is faster but may rarely
     reject valid proofs.
 
+??? "`verify_negation` · bool · default: `False` · Also check whether `content` proves the negation of the statement"
+    When `true`, AXLE additionally checks whether `content` proves the *negation* of
+    `formal_statement` (i.e. disproves it) and reports the result in the `negation`
+    field. `negation.okay` is `true` when `content` is a valid proof of the negation.
+
 ??? "`ignore_imports` · bool · default: `True` · Ignore import mismatches"
     Controls import statement handling:
 
@@ -103,6 +108,8 @@ See the corresponding [Github issue](https://github.com/AxiomMath/axiom-lean-eng
     Messages from the Lean compiler with `errors`, `warnings`, and `infos` lists.
     Errors here indicate invalid Lean code (syntax errors, type errors, etc.); an empty `errors` list means the code compiles.
 
+    If the tool allows declaration selection and a `names`/`indices` selection is given, elaboration is skipped for the proofs of unselected declarations, so this field reflects only the selected declarations and is otherwise incomplete.
+
 ??? "`tool_messages` · dict · Messages from verify_proof tool"
     Messages from the AXLE verification tool with `errors`, `warnings`, and `infos` lists.
 
@@ -111,6 +118,14 @@ See the corresponding [Github issue](https://github.com/AxiomMath/axiom-lean-eng
 
 ??? "`failed_declarations` · list · Declaration names that failed validation"
     List of declaration names that have compilation or validation errors. These are declarations that do not compile, use `sorry`, use disallowed axioms, etc. A file-level validation finding (e.g. use of `open private`) marks every declaration in the file as failed.
+
+??? "`negation` · dict · Result of verifying `content` against the negation of `formal_statement`"
+    Present only when `verify_negation` is `true`. Reports whether `content` is a proof
+    of the *negation* of `formal_statement` — i.e. whether it disproves the statement —
+    with the same `okay`, `tool_messages`, and `failed_declarations` fields, computed
+    against the negated theorem types.
+
+    `negation.okay` is `true` when `content` is a valid proof of the negation.
 
 ??? "`timings` · dict · Execution timing breakdown"
     Timing information in milliseconds for various stages of processing.
@@ -154,19 +169,19 @@ print(result.content)  # The processed Lean code
 
 ```bash
 # Basic usage
-axle verify-proof statement.lean proof.lean --environment lean-4.28.0
+axle verify-proof statement.lean proof.lean --environment lean-4.31.0
 # With permitted sorries
-axle verify-proof statement.lean proof.lean --permitted-sorries helper1,helper2 --environment lean-4.28.0
+axle verify-proof statement.lean proof.lean --permitted-sorries helper1,helper2 --environment lean-4.31.0
 # Pipeline usage
-cat proof.lean | axle verify-proof statement.lean - --environment lean-4.28.0
+cat proof.lean | axle verify-proof statement.lean - --environment lean-4.31.0
 # Exit non-zero if proof is invalid
-axle verify-proof statement.lean proof.lean --strict --environment lean-4.28.0
+axle verify-proof statement.lean proof.lean --strict --environment lean-4.31.0
 # Use in shell conditionals
-if axle verify-proof statement.lean proof.lean --strict --environment lean-4.28.0 > /dev/null; then
+if axle verify-proof statement.lean proof.lean --strict --environment lean-4.31.0 > /dev/null; then
     echo "Proof valid"
 fi
 # Specify different environment
-axle verify-proof statement.lean proof.lean --environment lean-4.28.0
+axle verify-proof statement.lean proof.lean --environment lean-4.31.0
 ```
 
 ## HTTP API

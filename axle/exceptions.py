@@ -62,6 +62,26 @@ class AxleRuntimeError(AxleApiError):
         super().__init__("Error 40-something: " + message)
 
 
+class LeanResourceExceeded(AxleApiError):
+    """The Lean worker exceeded a resource cap (e.g. memory) evaluating the input.
+
+    Deterministic for a given statement; not retryable.
+    """
+
+    def __init__(self, message: str):
+        super().__init__(message)
+
+
+class LeanTimeout(AxleApiError):
+    """The Lean worker exceeded its time budget evaluating the input.
+
+    Deterministic for a given statement and timeout; not retryable.
+    """
+
+    def __init__(self, message: str):
+        super().__init__(message)
+
+
 class AxleForbiddenError(AxleApiError):
     """Request was blocked by the server (403 Forbidden)."""
 

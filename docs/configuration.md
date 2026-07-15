@@ -118,7 +118,7 @@ axle environments
 curl -s -H "Authorization: Bearer $AXLE_API_KEY" https://axle.axiommath.ai/v1/environments | jq
 ```
 
-The `Authorization` header is required on deployments with `api_allow_anonymous=false`; on permissive deployments it is silently accepted.
+The `Authorization` header is required for all requests.
 
 ### Environment Response Format
 
@@ -143,16 +143,7 @@ Each environment includes the following fields:
     "lean_toolchain": "leanprover/lean4:v4.21.0",
     "imports": "import Mathlib",
     "description": "Lean 4.21.0 with Mathlib"
-  },
-  {
-    "name": "pnt-4.26.0",
-    "lean_toolchain": "leanprover/lean4:v4.26.0",
-    "repo_url": "https://github.com/AlexKontorovich/PrimeNumberTheoremAnd",
-    "revision": "d24e98e2384cd191486517bfca980576772f6c17",
-    "imports": "import Mathlib\nimport PrimeNumberTheoremAnd",
-    "description": "Lean + Mathlib version 4.26.0 with Terence Tao's Prime Number Theorem Project"
-  }
-]
+  }]
 ```
 
 See [Import Mismatches](troubleshooting.md#import-mismatches) for important notes on how AXLE handles import statements.

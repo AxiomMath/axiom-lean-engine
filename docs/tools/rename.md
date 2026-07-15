@@ -37,9 +37,13 @@ Rename declarations in Lean code.
     Messages from the Lean compiler with `errors`, `warnings`, and `infos` lists.
     Errors here indicate invalid Lean code (syntax errors, type errors, etc.); an empty `errors` list means the code compiles.
 
+    If the tool allows declaration selection and a `names`/`indices` selection is given, elaboration is skipped for the proofs of unselected declarations, so this field reflects only the selected declarations and is otherwise incomplete.
+
 ??? "`tool_messages` · dict · Messages from rename tool"
     Messages from the rename tool with `errors`, `warnings`, and `infos` lists.
     Errors here indicate tool-specific issues (not Lean compilation errors).
+
+    If the tool allows declaration selection and a `names`/`indices` selection is given, elaboration is skipped for the proofs of unselected declarations, so this field reflects only the selected declarations and is otherwise incomplete.
 
 ??? "`content` · string · Lean code with renamed declarations"
     The Lean code with renamed declarations. The transformed code with all specified declarations renamed. References are updated throughout.
@@ -66,13 +70,13 @@ print(result.content)  # theorem bar : 1 = 1 := rfl
 
 ```bash
 # Rename using command-line mapping
-axle rename theorem.lean --declarations foo=bar,helper=main_helper --environment lean-4.28.0
+axle rename theorem.lean --declarations foo=bar,helper=main_helper --environment lean-4.31.0
 # Rename using JSON file
-axle rename theorem.lean --declarations-file mapping.json --environment lean-4.28.0
+axle rename theorem.lean --declarations-file mapping.json --environment lean-4.31.0
 # Save to file
-axle rename theorem.lean --declarations foo=bar -o renamed.lean --environment lean-4.28.0
+axle rename theorem.lean --declarations foo=bar -o renamed.lean --environment lean-4.31.0
 # Pipeline usage
-cat theorem.lean | axle rename - --declarations foo=bar --environment lean-4.28.0 | axle check - --environment lean-4.28.0
+cat theorem.lean | axle rename - --declarations foo=bar --environment lean-4.31.0 | axle check - --environment lean-4.31.0
 ```
 
 ## HTTP API

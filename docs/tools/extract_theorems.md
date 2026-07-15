@@ -12,6 +12,17 @@ Split a file containing one or more theorems into smaller units, each containing
 ??? "`content` · str · required · Lean source code"
     The Lean source code to be processed by this tool.
 
+??? "`names` · list[str] · Theorem names to process"
+    Optional list of theorem names to process. If not specified, all theorems are processed.
+    Requesting a name not found in the code returns an error.
+    When `theorems_only` is `false`, these select over all declarations (not just theorems).
+
+??? "`indices` · list[int] · Theorem indices to process"
+    Optional list of theorem indices to process (0-based). Supports negative indices:
+    `-1` is the last theorem, `-2` is second-to-last, etc.
+    If not specified, all theorems are processed.
+    When `theorems_only` is `false`, these select over all declarations (not just theorems).
+
 ??? "`ignore_imports` · bool · default: `True` · Ignore import mismatches"
     Controls import statement handling:
 
@@ -37,9 +48,13 @@ Split a file containing one or more theorems into smaller units, each containing
     Messages from the Lean compiler with `errors`, `warnings`, and `infos` lists.
     Errors here indicate invalid Lean code (syntax errors, type errors, etc.); an empty `errors` list means the code compiles.
 
+    If the tool allows declaration selection and a `names`/`indices` selection is given, elaboration is skipped for the proofs of unselected declarations, so this field reflects only the selected declarations and is otherwise incomplete.
+
 ??? "`tool_messages` · dict · Messages from extraction tool"
     Messages from the extraction tool with `errors`, `warnings`, and `infos` lists.
     Errors here indicate tool-specific issues (not Lean compilation errors).
+
+    If the tool allows declaration selection and a `names`/`indices` selection is given, elaboration is skipped for the proofs of unselected declarations, so this field reflects only the selected declarations and is otherwise incomplete.
 
 ??? "`documents` · dict · Theorem names mapped to self-contained documents"
     Dictionary mapping theorem names to self-contained Lean code documents. Each key is a theorem name, and the value is a self-contained breakdown of the theorem, including a content field containing that theorem plus all dependencies it needs (imports, definitions, etc.).
@@ -61,6 +76,8 @@ Each document in the `documents` dictionary contains:
 ??? "`content` · str · Standalone content including declaration and dependencies"
     Complete, self-contained Lean code that includes the declaration and all its local dependencies. Can be compiled independently.
 
+    **Empty** when the request specifies `names` or `indices`. In that mode only the selected declarations are returned and the unselected ones are *not* elaborated (a large speedup), so their transitive dependencies can no longer be computed. A `tool_messages` warning is emitted; all other fields (`type`, dependency lists, `is_sorry`, etc.) are still populated. Call the tool without `names`/`indices` to get the self-contained `content`.
+
 ??? "`tokens` · list[str] · Raw tokens from the declaration"
     The declaration's source code split into tokens.
 
@@ -72,6 +89,9 @@ Each document in the `documents` dictionary contains:
 
 ??? "`type_hash` · int · Hash of the canonical type expression"
     Hash of the canonical, alpha-invariant type expression. Useful for deduplication.
+
+??? "`unfolded_type_hash` · int · Hash after unfolding local elaboration auxiliaries"
+    Hash of the type after unfolding module-local elaboration auxiliaries; useful for deduplication.
 
 ??? "`type_depth` · int · Structural depth of the type expression"
     The nesting depth of the declaration's type as a Lean expression. This field maxes out at 255.
@@ -152,13 +172,13 @@ for name, doc in result.documents.items():
 
 ```bash
 # Extract to default directory
-axle extract-theorems combined.lean --environment lean-4.28.0
+axle extract-theorems combined.lean --environment lean-4.31.0
 # Extract to custom directory
-axle extract-theorems combined.lean -o my_theorems/ --environment lean-4.28.0
+axle extract-theorems combined.lean -o my_theorems/ --environment lean-4.31.0
 # Force overwrite
-axle extract-theorems combined.lean -o my_theorems/ -f --environment lean-4.28.0
+axle extract-theorems combined.lean -o my_theorems/ -f --environment lean-4.31.0
 # Pipeline usage
-cat combined.lean | axle extract-theorems - -o output/ --environment lean-4.28.0
+cat combined.lean | axle extract-theorems - -o output/ --environment lean-4.31.0
 ```
 
 ## HTTP API

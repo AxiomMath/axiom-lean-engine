@@ -10,6 +10,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Releases]
 
+## v1.5.0 - July 15, 2026
+
+### Added
+- Added `LeanResourceExceeded` and `LeanTimeout` exceptions. The Lean worker exceeding its memory cap or time budget now raises a distinct, non-retryable exception instead of the generic `AxleRuntimeError`, so callers can record it as a deterministic outcome rather than retrying.
+- `check`, `extract_decls`, and `extract_theorems` now accept optional `names` and `indices` arguments (as `theorem2sorry` and similar tools already do) to select which declarations to process. The returned documents / messages are restricted to them, and elaboration is skipped for the proofs of unselected declarations. This is a speed feature and should be used when elaborating the whole file is too slow. Note that this changes the behavior of the tool: the returned Lean messages will be incomplete, and the per-document `content` field for `extract_decls` and `extract_theorems` is returned empty. See the [`check`](https://axle.axiommath.ai/v1/docs/tools/check) and [`extract_decls`](https://axle.axiommath.ai/v1/docs/tools/extract_decls) pages for more details. Regular users with no speed concerns can disregard these options.
+- `extract_decls` documents now include an `unfolded_type_hash` field: the type hash after unfolding module-local elaboration auxiliaries (e.g. `foo.match_1`), so types differing only by such an auto-generated name deduplicate where `type_hash` would not. See the [`extract_decls` page](https://axle.axiommath.ai/v1/docs/tools/extract_decls) for details. The behavior of the base `type_hash` field is unchanged.
+- `verify_proof` now accepts a `verify_negation` option (default `false`). When set, `verify_proof` additionally checks whether `content` proves the *negation* of `formal_statement` — i.e. whether it disproves the statement — and reports the result in a new `negation` field, which carries the same `okay`, `tool_messages`, and `failed_declarations` as the top-level result. The field is omitted unless `verify_negation` is set. Regular users can ignore this option.
+- `disprove` and `extract_decls` now accept a `verbosity` parameter (0=default, 1=robust, 2=extra robust), which affects the pretty-printed types output by the tools (the `negated` field in `disprove`, and the per-document `type` field in `extract_decls`). Higher verbosity levels make the pretty-printer more explicit, which helps when the default output re-elaborates ambiguously. This is the same behavior as existing tools with the `verbosity` parameter, e.g. `have2lemma`, `sorry2lemma`.
+- Added `AxleClient.get_latest_environment()`, which fetches the available Lean+Mathlib environments and returns the latest one.
+- Added instructions for citing AXLE in the documentation. See [Citing AXLE](https://axle.axiommath.ai/v1/docs/#citing-axle).
+- Added Lean 4.32.0 support.
+
+### Fixed
+- Fixed a bug in tools that analyze term-mode goals (`have2lemma`, `sorry2lemma`, `disprove`) causing goal extraction to silently fail with `include_whole_context=false`. For example, [this request](https://axle.axiommath.ai/sorry2lemma#r=604f708c-99f1-49f0-9c4a-dd987d2ad024) failed in previous versions, leaving the content unchanged.
+- `verify_proof` is now module-aware. Previously, module dependencies would be treated as disallowed axioms when not using the default header. For example, [this request](https://axle.axiommath.ai/verify_proof#r=24ac6a65-5afc-4119-bfb8-a7a1e6af43dd) was wrongfully rejected but now passes.
+
+### Changed
+- Various tools now *skip proof elaboration* for unselected declarations when `names` or `indices` is provided. This is a speed change; however, any outputs pertaining to the unselected declarations (e.g. Lean messages from their proofs) are unreliable and should not be used.
+
+
+
+
 ## v1.4.0 - July 1, 2026
 
 AXLE will be presented at the 3rd AI for Math Workshop at ICML 2026 as a contributed talk! Read the technical report on [arXiv](https://arxiv.org/abs/2606.26442).
