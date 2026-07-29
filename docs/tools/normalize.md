@@ -10,7 +10,7 @@ Standardize Lean file formatting to prepare for other operations, especially `me
     The Lean source code to be processed by this tool.
 
 ??? "`normalizations` · list[str] · List of normalizations to apply"
-    Options: remove_sections, expand_decl_names, expand_scoped_notations, remove_duplicates, split_open_in_commands, normalize_module_comments, normalize_doc_comments. Default: remove_sections, remove_duplicates, split_open_in_commands.
+    Options: remove_sections, remove_opens, expand_decl_names, expand_scoped_notations, remove_duplicates, split_open_in_commands, normalize_module_comments, normalize_doc_comments. Default: remove_sections, remove_duplicates, split_open_in_commands.
 
 ??? "`failsafe` · bool · default: `True` · Return original if normalization fails"
     If true, returns the original content unchanged if normalization introduces errors. Defaults to true.
@@ -75,6 +75,27 @@ Standardize Lean file formatting to prepare for other operations, especially `me
     ```lean
     noncomputable section
     theorem MyNamespace.foo : 1 = 1 := rfl
+    ```
+
+??? "`remove_opens`"
+    Removes `open` commands, both standalone commands and `open ... in` prefixes (including nested chains like `open A in open B in ...`). An `open` that sits behind a non-`open` command (e.g. `def foo := 1 in open A`) is kept unchanged, with a tool warning.
+
+    Removing `open` commands changes how names and notations resolve, so combine this with `expand_decl_names` and `expand_scoped_notations`; a tool warning is emitted when either is missing.
+
+    **Before:**
+    ```lean
+    open Nat
+    theorem foo : Nat.succ 0 = 1 := rfl
+
+    open List in
+    theorem bar : List.isEmpty ([] : List Nat) = Bool.true := rfl
+    ```
+
+    **After:**
+    ```lean
+    theorem foo : Nat.succ 0 = 1 := rfl
+
+    theorem bar : List.isEmpty ([] : List Nat) = Bool.true := rfl
     ```
 
 ??? "`expand_decl_names`"

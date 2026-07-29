@@ -23,6 +23,9 @@ Replace `have` statements in proofs with `sorry`. Useful for creating problem te
 ??? "`theorems_only` · bool · default: `True` · Process theorems/lemmas only"
     If `true` (default), only `theorem`/`lemma` declarations are processed. Set to `false` to process all declaration kinds (`def`/`instance`/`abbrev`/`opaque`/etc). When `false`, `names` and `indices` select over all declarations rather than just theorems.
 
+??? "`reparse` · bool · default: `True` · Re-elaborate the transformed output"
+    If `true` (default), the transformed content is re-elaborated. If `false`, re-elaboration is skipped. The resulting `lean_messages` is then returned empty.
+
 ??? "`ignore_imports` · bool · default: `True` · Ignore import mismatches"
     Controls import statement handling:
 
@@ -46,6 +49,8 @@ Replace `have` statements in proofs with `sorry`. Useful for creating problem te
     Errors here indicate invalid Lean code (syntax errors, type errors, etc.); an empty `errors` list means the code compiles.
 
     If the tool allows declaration selection and a `names`/`indices` selection is given, elaboration is skipped for the proofs of unselected declarations, so this field reflects only the selected declarations and is otherwise incomplete.
+
+    If the request sets `reparse=false`, the transformed output is not re-elaborated and this field is returned empty.
 
 ??? "`tool_messages` · dict · Messages from have2sorry tool"
     Messages from the have2sorry tool with `errors`, `warnings`, and `infos` lists.

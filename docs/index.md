@@ -29,6 +29,7 @@ See the [Quick Start](quickstart.md) tutorial for examples of each method.
 | `check` | Check Lean code for errors |
 | `extract_theorems` | Split file into individual theorems with dependencies |
 | `extract_decls` | Split file into individual declarations with dependencies |
+| `extract_proof_states` | Extract the proof state at each line of a proof |
 | `rename` | Rename declarations |
 | `theorem2lemma` | Convert between `theorem` and `lemma` keywords |
 | `theorem2sorry` | Strip proofs from theorems |

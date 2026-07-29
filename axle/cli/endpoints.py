@@ -142,6 +142,16 @@ THEOREMS_ONLY_NOOP_INPUT: InputField = {
     "default": True,
 }
 
+# Reparse toggle (for transform tools that re-elaborate their output for lean_messages)
+REPARSE_INPUT: InputField = {
+    "name": "reparse",
+    "type": "checkbox",
+    "description": "Re-elaborate the transformed output",
+    "details": """\
+If `true` (default), the transformed content is re-elaborated. If `false`, re-elaboration is skipped. The resulting `lean_messages` is then returned empty.""",
+    "default": True,
+}
+
 VERBOSITY_INPUT: InputField = {
     "name": "verbosity",
     "type": "number",
@@ -150,6 +160,21 @@ VERBOSITY_INPUT: InputField = {
     "required": False,
     "default": 0,
     "placeholder": "0",
+}
+
+# Proof elaboration toggle (extract_decls)
+ELABORATE_PROOFS_INPUT: InputField = {
+    "name": "elaborate_proofs",
+    "type": "checkbox",
+    "description": "Elaborate theorem proofs",
+    "details": """\
+If `true` (default), proofs are fully elaborated. Set to `false` to replace every theorem proof with `sorry` before elaboration (a large speedup on proof-heavy files). Statement-level fields and all fields of non-theorem declarations are unaffected.
+
+When `false`, emits a `tool_messages` warning and:
+
+- These fields are empty — do not use them: `content`; for theorems `is_sorry`, `term_depth`, `local_value_dependencies`, `external_value_dependencies`.
+- These fields are incomplete — use with caution: `lean_messages`, `declaration_messages`; for theorems `local_syntactic_dependencies`, `external_syntactic_dependencies`, `wall_ms`, `heartbeats`.""",
+    "default": True,
 }
 
 # Mathlib options toggle
@@ -171,6 +196,18 @@ LEAN_MESSAGES_OUTPUT: OutputField = {
 Messages from the Lean compiler with `errors`, `warnings`, and `infos` lists.
 Errors here indicate invalid Lean code (syntax errors, type errors, etc.); an empty `errors` list means the code compiles."""
     + DECL_SELECTION_NOTE,
+}
+
+# lean_messages for tools with a `reparse` input
+REPARSE_NOTE = """
+
+If the request sets `reparse=false`, the transformed output is not re-elaborated and this field is returned empty."""
+
+LEAN_MESSAGES_REPARSE_OUTPUT: OutputField = {
+    "name": "lean_messages",
+    "type": "dict",
+    "description": "Messages from Lean compiler",
+    "details": LEAN_MESSAGES_OUTPUT["details"] + REPARSE_NOTE,
 }
 
 TIMINGS_OUTPUT: OutputField = {
@@ -201,6 +238,8 @@ DOCUMENT_FIELDS_BASE = """\
 
     **Empty** when the request specifies `names` or `indices`. In that mode only the selected declarations are returned and the unselected ones are *not* elaborated (a large speedup), so their transitive dependencies can no longer be computed. A `tool_messages` warning is emitted; all other fields (`type`, dependency lists, `is_sorry`, etc.) are still populated. Call the tool without `names`/`indices` to get the self-contained `content`.
 
+    Also empty when the request sets `elaborate_proofs=false`.
+
 ??? "`tokens` · list[str] · Raw tokens from the declaration"
     The declaration's source code split into tokens.
 
@@ -222,8 +261,12 @@ DOCUMENT_FIELDS_BASE = """\
 ??? "`term_depth` · int · Structural depth of the value expression"
     The nesting depth of the declaration's value or proof as a Lean expression, or 0 when the declaration has no value. This field maxes out at 255.
 
+    Always `0` for theorems when `elaborate_proofs=false` — do not use it in that mode.
+
 ??? "`is_sorry` · bool · Whether the declaration contains a sorry"
     True if the declaration contains a `sorry`.
+
+    Always `false` for theorems when `elaborate_proofs=false` — do not use it in that mode.
 
 ??? "`index` · int · 0-based index in original file"
     Position of this declaration in the original file. Note: indices may not be contiguous (mutual definitions share indices).
@@ -243,8 +286,12 @@ DOCUMENT_FIELDS_BASE = """\
 ??? "`wall_ms` · int · Wall-clock milliseconds to elaborate the command"
     How long this command took to elaborate. This field reports wall-clock time, so it can vary from run to run.
 
+    Incomplete for theorems when `elaborate_proofs=false` — use with caution.
+
 ??? "`heartbeats` · int · Heartbeats consumed elaborating the command"
     Lean heartbeats consumed while elaborating this command.
+
+    Incomplete for theorems when `elaborate_proofs=false` — use with caution.
 
 ??? "`local_type_dependencies` · list[str] · Local dependencies of the type"
     Local declarations that the declaration's type depends on (non-transitive).
@@ -252,20 +299,30 @@ DOCUMENT_FIELDS_BASE = """\
 ??? "`local_value_dependencies` · list[str] · Local dependencies of the body"
     Local declarations that the declaration's body/proof depends on (non-transitive).
 
+    Empty for theorems when `elaborate_proofs=false` — do not use it in that mode.
+
 ??? "`external_type_dependencies` · list[str] · Immediate external dependencies of the type"
     External constants (builtins, imports) that appear in the type.
 
 ??? "`external_value_dependencies` · list[str] · Immediate external dependencies of the body"
     External constants (builtins, imports) that appear in the body/proof.
 
+    Empty for theorems when `elaborate_proofs=false` — do not use it in that mode.
+
 ??? "`local_syntactic_dependencies` · list[str] · Local constants explicitly written in source"
     Local constants that appear literally in source (not from notation/macro expansion).
+
+    Incomplete for theorems when `elaborate_proofs=false` — use with caution.
 
 ??? "`external_syntactic_dependencies` · list[str] · External constants explicitly written in source"
     External constants that appear literally in source (not from notation/macro expansion).
 
+    Incomplete for theorems when `elaborate_proofs=false` — use with caution.
+
 ??? "`declaration_messages` · dict · Messages specific to this declaration"
     Lean messages (`errors`, `warnings`, `infos`) specific to this declaration in the original document.
+
+    Incomplete for theorems when `elaborate_proofs=false` — use with caution.
 
 ??? "`theorem_messages` · dict · (Deprecated) Messages specific to this declaration"
     Lean messages (`errors`, `warnings`, `infos`) specific to this declaration. For `extract_theorems`, this contains the same data as `declaration_messages`. For `extract_decls`, this is always empty.
@@ -344,6 +401,39 @@ ENDPOINTS: dict[str, EndpointMetadata] = {
         ],
         "web_ui_example_data": "eyJmb3JtYWxfc3RhdGVtZW50IjoiZGVmIEEgOj0gNFxudGhlb3JlbSBtYWluIDogQSA9IDUgOj0gc29ycnkiLCJjb250ZW50IjoiZGVmIEEgOj0gNVxudGhlb3JlbSBtYWluIDogQSA9IDUgOj0gcmZsIiwibWF0aGxpYl9vcHRpb25zIjpmYWxzZSwidXNlX2RlZl9lcSI6dHJ1ZSwiaWdub3JlX2ltcG9ydHMiOnRydWUsImVudmlyb25tZW50IjoibGVhbi00LjI3LjAiLCJ0aW1lb3V0X3NlY29uZHMiOjEyMH0%3D",
         "sections": {
+            '"Find the Answer" Problems': """\
+The primary use case of `verify_proof` is simple: pass in a formal statement and a candidate solution, and check that the candidate is a valid proof of the formal statement.
+
+However, some questions take a different format, like:
+
+> Find `x` such that `x * x = 4`.
+
+> Prove or disprove that the sum of `1/p` over prime `p` converges.
+
+We call such examples "find the answer" problems. Typically, the way we formalize this in Lean is as follows:
+
+```
+def answer : Nat := sorry
+
+theorem question (n : Nat) : P n ↔ n = answer := sorry
+```
+for some predicate `P`. That is, the formal statement contains a sorried-definition that needs to be filled in, in addition to the main theorem statement. A simple candidate solution might look like this:
+
+```
+def answer : Nat := 3
+
+theorem question (n : Nat) : n = 2 + 1 ↔ n = answer := by grind [answer]
+```
+
+`verify_proof` handles such cases:
+
+1. Definitions that are sorried out in the formal statement can take on any value in the candidate and still pass verification.
+
+2. These definitions will also not be unfolded during reduction if the `use_def_eq` option is toggled. This ensures that the definition does not unfold to `sorry` in the formal statement, in which case the problem statement and solution statement will not match.
+
+3. To disprove such a problem, set `verify_negation`. The disproof must show that no answer satisfies the theorem: the negated theorem universally quantifies over the sorried definitions. See the `verify_negation` parameter for details.
+
+Note that `verify_proof` does not perform any checks on the form of `answer`. This is important because it is easy to find an "answer" that trivially satisfies the theorem statement. The main challenge is in finding a "closed-form solution" to the question statement. But what counts as a "closed-form solution" is ambiguous and perhaps a philosophical question that cannot be answered in Lean, so we do not address it here. This is a common point of discussion among the community, and we recommend visiting the [Lean Zulip](https://leanprover.zulipchat.com) for more information on this point.""",
             "See Also": """\
 In the interest of scalability, `verify_proof` trusts the Lean environment to behave correctly. That's usually fine, but a sufficiently creative adversary can exploit this to make invalid proofs appear valid with Lean metaprogramming.
 
@@ -460,7 +550,8 @@ contains `def foo := 5`, then `content` must define `foo` with the same value.""
                 "description": "Theorems allowed to contain `sorry`",
                 "details": """\
 Use this when your proof relies on helper lemmas you haven't proven yet.
-Theorems listed here won't trigger "uses sorry" errors.
+Theorems listed here won't trigger proof-related errors, so errors and disallowed axioms inside
+them go unnoticed. Their statements are still checked.
 
 ```python
 result = await axle.verify_proof(
@@ -487,10 +578,23 @@ This option is also useful for enabling tactics like `native_decide`, which intr
                 "type": "checkbox",
                 "description": "Use definitional equality for type comparison",
                 "details": """\
-When `true`, types are compared using equality after kernel reduction.
+When `false`, types are compared at face value (faster, but may very rarely reject valid proofs).
 
-When `false`, types are compared at face value, which is faster but may rarely
-reject valid proofs.""",
+When `true`, types are compared after kernel reduction. However, locally-defined `def`s whose body is `sorry` and that appear in the type being compared are **not unfolded** during that reduction (in either file).
+
+If the formal `def` is sorried, its body is not checked; the candidate may supply a concrete definition, provided the type still matches.
+
+For example:
+
+```lean
+-- formal_statement
+def F : Nat → Type := sorry
+theorem T : ∀ n, Nonempty (F n) := sorry
+
+-- content
+def F : Nat → Type := fun _ => Unit
+theorem T : ∀ n, Nonempty (F n) := fun n => ⟨()⟩
+```""",
                 "default": True,
             },
             {
@@ -500,7 +604,21 @@ reject valid proofs.""",
                 "details": """\
 When `true`, AXLE additionally checks whether `content` proves the *negation* of
 `formal_statement` (i.e. disproves it) and reports the result in the `negation`
-field. `negation.okay` is `true` when `content` is a valid proof of the negation.""",
+field. `negation.okay` is `true` when `content` is a valid proof of the negation.
+
+For ["find the answer" problems](#find-the-answer-problems), the sorried `def`s in
+`formal_statement` represent answers the statement claims exist. The negation
+universally quantifies over them: for `def answer : T := sorry` and
+`theorem main : P answer`, the disproof must prove `theorem main : ∀ answer : T, ¬ P answer`.
+The quantifiers appear in the order the sorried defs are declared in `formal_statement`.
+The disproof does not need to declare the sorried defs; they are skipped in the
+negation check (the main verification still requires them).
+
+Limitations:
+
+- A universe-polymorphic sorried def is not quantified over. It remains a constant in the negated type.
+- A sorried def is only quantified over when it appears directly in a theorem's type. If it is reachable only through the body of another local def, it remains a constant in the negated type.
+- When `formal_statement` contains several theorems, each is negated independently. This may be logically inconsistent but is out of the scope of `verify_proof`.""",
                 "default": False,
             },
             IGNORE_IMPORTS_INPUT,
@@ -541,7 +659,10 @@ of the *negation* of `formal_statement` — i.e. whether it disproves the statem
 with the same `okay`, `tool_messages`, and `failed_declarations` fields, computed
 against the negated theorem types.
 
-`negation.okay` is `true` when `content` is a valid proof of the negation.""",
+`negation.okay` is `true` when `content` is a valid proof of the negation.
+For ["find the answer" problems](#find-the-answer-problems), the sorried defs in
+`formal_statement` are universally quantified in the negated theorem types and
+are not required in `content`; see `verify_negation` above.""",
             },
             TIMINGS_OUTPUT,
         ],
@@ -892,6 +1013,7 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/extract_decls \\
             NAMES_INPUT,
             INDICES_INPUT,
             VERBOSITY_INPUT,
+            ELABORATE_PROOFS_INPUT,
             IGNORE_IMPORTS_INPUT,
             ENVIRONMENT_INPUT,
             TIMEOUT_INPUT,
@@ -907,6 +1029,89 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/extract_decls \\
                 "details": """\
 Dictionary mapping declaration names to self-contained Lean code documents. Each key is a declaration name, and the value is a self-contained breakdown of the declaration, including a content field containing that declaration plus all dependencies it needs (imports, definitions, etc.).""",
             },
+            TIMINGS_OUTPUT,
+        ],
+    },
+    "extract_proof_states": {
+        "title": "Extract Proof States",
+        "details": """\
+Extract the tactic proof state at the end of each line of the given Lean code, as shown in a Lean editor's goal panel. Lines with no tactic proof state are omitted.""",
+        "description": "extract the proof state at each line of a proof",
+        "cli_output": {
+            "mode": "json_stdout",
+            "metadata_to_stderr": False,
+        },
+        "cli_examples": [
+            "# Basic usage\naxle extract-proof-states proof.lean --environment lean-4.28.0",
+            "# Pipeline usage\ncat proof.lean | axle extract-proof-states - --environment lean-4.28.0",
+        ],
+        "web_ui_example_data": "eyJjb250ZW50IjogImltcG9ydCBNYXRobGliXG50aGVvcmVtIGZvbyAobiA6IE5hdCkgOiBuICsgMCA9IG4gOj0gYnlcbiAgaW5kdWN0aW9uIG4gd2l0aFxuICB8IHplcm8gPT4gcmZsXG4gIHwgc3VjYyBrIGloID0%2BIHNpbXAiLCAiaWdub3JlX2ltcG9ydHMiOiB0cnVlLCAiZW52aXJvbm1lbnQiOiAibGVhbi00LjI4LjAiLCAidGltZW91dF9zZWNvbmRzIjogMTIwfQ%3D%3D",
+        "python_example": """\
+result = await axle.extract_proof_states(
+    content="import Mathlib\\ntheorem foo (n : Nat) : n + 0 = n := by\\n  induction n with\\n  | zero => rfl\\n  | succ k ih => simp",
+    environment="lean-4.28.0",
+    ignore_imports=True,  # Optional
+    timeout_seconds=120,   # Optional
+)
+
+for state in result.proof_states:
+    print(f"line {state.line}:\\n{state.proof_state}")""",
+        "http_example": """\
+curl -s -X POST https://axle.axiommath.ai/api/v1/extract_proof_states \\
+    -d '{"content": "import Mathlib\\ntheorem foo (n : Nat) : n + 0 = n := by\\n  induction n with\\n  | zero => rfl\\n  | succ k ih => simp", "environment": "lean-4.28.0"}' | jq""",
+        "example_response": """\
+{
+  "proof_states": [
+    {"line": 2, "proof_state": "n : ℕ\\n⊢ n + 0 = n"},
+    {"line": 3, "proof_state": "n : ℕ\\n⊢ n + 0 = n"},
+    {"line": 4, "proof_state": "no goals"},
+    {"line": 5, "proof_state": "no goals"}
+  ],
+  "truncated": false,
+  "content": "import Mathlib\\ntheorem foo (n : Nat) : n + 0 = n := by\\n  induction n with\\n  | zero => rfl\\n  | succ k ih => simp",
+  "lean_messages": {
+    "errors": [],
+    "warnings": [],
+    "infos": []
+  },
+  "tool_messages": {
+    "errors": [],
+    "warnings": [],
+    "infos": []
+  },
+  "timings": {
+    "total_ms": 113,
+    "parse_ms": 112
+  }
+}""",
+        "inputs": [
+            {
+                **CONTENT_INPUT,
+                "placeholder": "theorem foo (n : Nat) : n + 0 = n := by\n  induction n with\n  | zero => rfl\n  | succ k ih => simp",
+            },
+            IGNORE_IMPORTS_INPUT,
+            ENVIRONMENT_INPUT,
+            TIMEOUT_INPUT,
+        ],
+        "outputs": [
+            {
+                "name": "proof_states",
+                "type": "list",
+                "description": "Per-line proof states",
+                "details": """\
+List of `{line, proof_state}` objects, one per line that has a tactic proof state, in file order. `line` is the 1-based line number in `content`. `proof_state` is the pretty-printed goal state at the end of that line — what an editor's goal panel shows with the cursor there.
+
+The total size of this field is capped at 10,000,000 characters. When the cap is reached, proof states for the remaining lines are omitted, `truncated` is set to `true`, and a warning is added to `tool_messages`.""",
+            },
+            {
+                "name": "truncated",
+                "type": "bool",
+                "description": "True if proof states were omitted due to the size cap",
+                "details": "Returns `true` if `proof_states` hit the 10,000,000-character cap and states for the remaining lines were omitted. A warning in `tool_messages` reports the line where truncation occurred.",
+            },
+            CONTENT_OUTPUT,
+            LEAN_MESSAGES_OUTPUT,
+            tool_messages_output("extract_proof_states"),
             TIMINGS_OUTPUT,
         ],
     },
@@ -1038,12 +1243,13 @@ CLI supports `key=val,key=val` format or `--declarations-file mapping.json`.""",
                 "cli_dict_inline": True,
                 "cli_dict_file_flag": "--declarations-file",
             },
+            REPARSE_INPUT,
             IGNORE_IMPORTS_INPUT,
             ENVIRONMENT_INPUT,
             TIMEOUT_INPUT,
         ],
         "outputs": [
-            LEAN_MESSAGES_OUTPUT,
+            LEAN_MESSAGES_REPARSE_OUTPUT,
             tool_messages_output("rename"),
             {
                 "name": "content",
@@ -1135,12 +1341,13 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/theorem2lemma \\
                 "placeholder": "lemma",
             },
             THEOREMS_ONLY_NOOP_INPUT,
+            REPARSE_INPUT,
             IGNORE_IMPORTS_INPUT,
             ENVIRONMENT_INPUT,
             TIMEOUT_INPUT,
         ],
         "outputs": [
-            LEAN_MESSAGES_OUTPUT,
+            LEAN_MESSAGES_REPARSE_OUTPUT,
             tool_messages_output("theorem2lemma"),
             {
                 "name": "content",
@@ -1214,12 +1421,13 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/theorem2sorry \\
             NAMES_INPUT,
             INDICES_INPUT,
             THEOREMS_ONLY_INPUT,
+            REPARSE_INPUT,
             IGNORE_IMPORTS_INPUT,
             ENVIRONMENT_INPUT,
             TIMEOUT_INPUT,
         ],
         "outputs": [
-            LEAN_MESSAGES_OUTPUT,
+            LEAN_MESSAGES_REPARSE_OUTPUT,
             tool_messages_output("theorem2sorry"),
             {
                 "name": "content",
@@ -1456,12 +1664,13 @@ Defaults to true.""",
                 "details": "When deduplicating, preserves all versions of a merged declaration as comments for reference. Defaults to false.",
                 "default": False,
             },
+            REPARSE_INPUT,
             IGNORE_IMPORTS_INPUT,
             ENVIRONMENT_INPUT,
             TIMEOUT_INPUT,
         ],
         "outputs": [
-            LEAN_MESSAGES_OUTPUT,
+            LEAN_MESSAGES_REPARSE_OUTPUT,
             tool_messages_output("merge"),
             {
                 "name": "content",
@@ -1782,6 +1991,8 @@ If `repairs` is omitted, all of the above run. Pass an explicit list to limit wh
       grind
     ```
 
+
+
 ??? "`replace_unsafe_tactics`"
     Replaces unsafe tactics with safer alternatives.
 
@@ -1885,7 +2096,7 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/repair_proofs \\
                 "name": "terminal_tactics",
                 "type": "list",
                 "description": "Tactics to try for closing goals",
-                "details": "Used when 'apply_terminal_tactics' repair is applied. Tactics tried in order; stops on first success. Defaults to 'grind'.",
+                "details": "Used when `apply_terminal_tactics` repair is applied. Tactics tried in order; stops on first success. Defaults to `grind`.",
                 "required": False,
                 "default": ["grind"],
                 "placeholder": "grind, aesop, rfl, simp, decide",
@@ -2189,12 +2400,13 @@ These configuration options provide some flexibility around usage, at the cost o
                 "default": False,
             },
             VERBOSITY_INPUT,
+            REPARSE_INPUT,
             IGNORE_IMPORTS_INPUT,
             ENVIRONMENT_INPUT,
             TIMEOUT_INPUT,
         ],
         "outputs": [
-            LEAN_MESSAGES_OUTPUT,
+            LEAN_MESSAGES_REPARSE_OUTPUT,
             tool_messages_output("have2lemma"),
             {
                 "name": "content",
@@ -2262,12 +2474,13 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/have2sorry \\
             NAMES_INPUT,
             INDICES_INPUT,
             THEOREMS_ONLY_INPUT,
+            REPARSE_INPUT,
             IGNORE_IMPORTS_INPUT,
             ENVIRONMENT_INPUT,
             TIMEOUT_INPUT,
         ],
         "outputs": [
-            LEAN_MESSAGES_OUTPUT,
+            LEAN_MESSAGES_REPARSE_OUTPUT,
             tool_messages_output("have2sorry"),
             {
                 "name": "content",
@@ -2409,12 +2622,13 @@ theorem multiple (n : Nat) : 1 = 1 ∧ 2 = 2 := by constructor <;> (first | exac
             },
             THEOREMS_ONLY_INPUT,
             VERBOSITY_INPUT,
+            REPARSE_INPUT,
             IGNORE_IMPORTS_INPUT,
             ENVIRONMENT_INPUT,
             TIMEOUT_INPUT,
         ],
         "outputs": [
-            LEAN_MESSAGES_OUTPUT,
+            LEAN_MESSAGES_REPARSE_OUTPUT,
             tool_messages_output("sorry2lemma"),
             {
                 "name": "content",
@@ -2498,7 +2712,9 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/disprove \\
                 "name": "terminal_tactics",
                 "type": "list",
                 "description": "Tactics to try when attempting to disprove",
-                "details": "Tactics tried in order to prove the negation. `grind` often works for false statements. Defaults to 'grind'.",
+                "details": """\
+Tactics tried in order to prove the negation. `grind` often works for false statements. Defaults to 'grind'.
+""",
                 "required": False,
                 "default": ["grind"],
                 "placeholder": "grind, aesop, rfl, simp, decide",
@@ -2572,6 +2788,27 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/disprove \\
     ```lean
     noncomputable section
     theorem MyNamespace.foo : 1 = 1 := rfl
+    ```
+
+??? "`remove_opens`"
+    Removes `open` commands, both standalone commands and `open ... in` prefixes (including nested chains like `open A in open B in ...`). An `open` that sits behind a non-`open` command (e.g. `def foo := 1 in open A`) is kept unchanged, with a tool warning.
+
+    Removing `open` commands changes how names and notations resolve, so combine this with `expand_decl_names` and `expand_scoped_notations`; a tool warning is emitted when either is missing.
+
+    **Before:**
+    ```lean
+    open Nat
+    theorem foo : Nat.succ 0 = 1 := rfl
+
+    open List in
+    theorem bar : List.isEmpty ([] : List Nat) = Bool.true := rfl
+    ```
+
+    **After:**
+    ```lean
+    theorem foo : Nat.succ 0 = 1 := rfl
+
+    theorem bar : List.isEmpty ([] : List Nat) = Bool.true := rfl
     ```
 
 ??? "`expand_decl_names`"
@@ -2702,7 +2939,7 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/normalize \\
                 "name": "normalizations",
                 "type": "list",
                 "description": "List of normalizations to apply",
-                "details": """Options: remove_sections, expand_decl_names, expand_scoped_notations, remove_duplicates, split_open_in_commands, normalize_module_comments, normalize_doc_comments. Default: remove_sections, remove_duplicates, split_open_in_commands.""",
+                "details": """Options: remove_sections, remove_opens, expand_decl_names, expand_scoped_notations, remove_duplicates, split_open_in_commands, normalize_module_comments, normalize_doc_comments. Default: remove_sections, remove_duplicates, split_open_in_commands.""",
                 "required": False,
                 "placeholder": "remove_sections, remove_duplicates, split_open_in_commands",
             },

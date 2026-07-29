@@ -37,6 +37,7 @@ from axle.types import (
     CheckResponse,
     DisproveResponse,
     ExtractDeclsResponse,
+    ExtractProofStatesResponse,
     ExtractTheoremsResponse,
     Have2LemmaResponse,
     Have2SorryResponse,
@@ -261,6 +262,7 @@ class AxleClient:
         names: list[str] | None = None,
         indices: list[int] | None = None,
         verbosity: int | None = None,
+        elaborate_proofs: bool | None = None,
         ignore_imports: bool | None = None,
         timeout_seconds: float | None = None,
     ) -> ExtractDeclsResponse:
@@ -273,6 +275,27 @@ class AxleClient:
                     names=names,
                     indices=indices,
                     verbosity=verbosity,
+                    elaborate_proofs=elaborate_proofs,
+                    ignore_imports=ignore_imports,
+                    environment=environment,
+                    timeout_seconds=timeout_seconds,
+                ),
+            )
+        )
+
+    async def extract_proof_states(
+        self,
+        content: str,
+        environment: str,
+        ignore_imports: bool | None = None,
+        timeout_seconds: float | None = None,
+    ) -> ExtractProofStatesResponse:
+        """Extract the proof state at the end of each line of Lean code."""
+        return ExtractProofStatesResponse.from_response(
+            await self.run_one(
+                "extract_proof_states",
+                _to_request(
+                    content=content,
                     ignore_imports=ignore_imports,
                     environment=environment,
                     timeout_seconds=timeout_seconds,
@@ -286,6 +309,7 @@ class AxleClient:
         environment: str,
         use_def_eq: bool | None = None,
         include_alts_as_comments: bool | None = None,
+        reparse: bool | None = None,
         ignore_imports: bool | None = None,
         timeout_seconds: float | None = None,
     ) -> MergeResponse:
@@ -297,6 +321,7 @@ class AxleClient:
                     documents=documents,
                     use_def_eq=use_def_eq,
                     include_alts_as_comments=include_alts_as_comments,
+                    reparse=reparse,
                     ignore_imports=ignore_imports,
                     environment=environment,
                     timeout_seconds=timeout_seconds,
@@ -311,6 +336,7 @@ class AxleClient:
         names: list[str] | None = None,
         indices: list[int] | None = None,
         theorems_only: bool | None = None,
+        reparse: bool | None = None,
         ignore_imports: bool | None = None,
         timeout_seconds: float | None = None,
     ) -> Theorem2SorryResponse:
@@ -323,6 +349,7 @@ class AxleClient:
                     names=names,
                     indices=indices,
                     theorems_only=theorems_only,
+                    reparse=reparse,
                     ignore_imports=ignore_imports,
                     environment=environment,
                     timeout_seconds=timeout_seconds,
@@ -335,6 +362,7 @@ class AxleClient:
         content: str,
         declarations: dict[str, str],
         environment: str,
+        reparse: bool | None = None,
         ignore_imports: bool | None = None,
         timeout_seconds: float | None = None,
     ) -> RenameResponse:
@@ -345,6 +373,7 @@ class AxleClient:
                 _to_request(
                     content=content,
                     declarations=declarations,
+                    reparse=reparse,
                     ignore_imports=ignore_imports,
                     environment=environment,
                     timeout_seconds=timeout_seconds,
@@ -360,6 +389,7 @@ class AxleClient:
         indices: list[int] | None = None,
         target: str | None = None,
         theorems_only: bool | None = None,
+        reparse: bool | None = None,
         ignore_imports: bool | None = None,
         timeout_seconds: float | None = None,
     ) -> Theorem2LemmaResponse:
@@ -373,6 +403,7 @@ class AxleClient:
                     indices=indices,
                     target=target,
                     theorems_only=theorems_only,
+                    reparse=reparse,
                     ignore_imports=ignore_imports,
                     environment=environment,
                     timeout_seconds=timeout_seconds,
@@ -477,6 +508,7 @@ class AxleClient:
         reconstruct_callsite: bool | None = None,
         verbosity: int | None = None,
         theorems_only: bool | None = None,
+        reparse: bool | None = None,
         ignore_imports: bool | None = None,
         timeout_seconds: float | None = None,
     ) -> Have2LemmaResponse:
@@ -493,6 +525,7 @@ class AxleClient:
                     reconstruct_callsite=reconstruct_callsite,
                     verbosity=verbosity,
                     theorems_only=theorems_only,
+                    reparse=reparse,
                     ignore_imports=ignore_imports,
                     environment=environment,
                     timeout_seconds=timeout_seconds,
@@ -507,6 +540,7 @@ class AxleClient:
         names: list[str] | None = None,
         indices: list[int] | None = None,
         theorems_only: bool | None = None,
+        reparse: bool | None = None,
         ignore_imports: bool | None = None,
         timeout_seconds: float | None = None,
     ) -> Have2SorryResponse:
@@ -519,6 +553,7 @@ class AxleClient:
                     names=names,
                     indices=indices,
                     theorems_only=theorems_only,
+                    reparse=reparse,
                     ignore_imports=ignore_imports,
                     environment=environment,
                     timeout_seconds=timeout_seconds,
@@ -539,6 +574,7 @@ class AxleClient:
         merge_duplicates: bool | None = None,
         theorems_only: bool | None = None,
         verbosity: int | None = None,
+        reparse: bool | None = None,
         ignore_imports: bool | None = None,
         timeout_seconds: float | None = None,
     ) -> Sorry2LemmaResponse:
@@ -557,6 +593,7 @@ class AxleClient:
                     merge_duplicates=merge_duplicates,
                     theorems_only=theorems_only,
                     verbosity=verbosity,
+                    reparse=reparse,
                     ignore_imports=ignore_imports,
                     environment=environment,
                     timeout_seconds=timeout_seconds,

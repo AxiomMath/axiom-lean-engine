@@ -39,6 +39,9 @@ This tool is partially powered by [`extract_goal`](https://leanprover-community.
 ??? "`verbosity` · float · default: `0` · Pretty-printer verbosity level (0-2)"
     0=default, 1=robust, 2=extra robust. Higher levels produce more explicit type annotations. Use when default output has ambiguity errors.
 
+??? "`reparse` · bool · default: `True` · Re-elaborate the transformed output"
+    If `true` (default), the transformed content is re-elaborated. If `false`, re-elaboration is skipped. The resulting `lean_messages` is then returned empty.
+
 ??? "`ignore_imports` · bool · default: `True` · Ignore import mismatches"
     Controls import statement handling:
 
@@ -62,6 +65,8 @@ This tool is partially powered by [`extract_goal`](https://leanprover-community.
     Errors here indicate invalid Lean code (syntax errors, type errors, etc.); an empty `errors` list means the code compiles.
 
     If the tool allows declaration selection and a `names`/`indices` selection is given, elaboration is skipped for the proofs of unselected declarations, so this field reflects only the selected declarations and is otherwise incomplete.
+
+    If the request sets `reparse=false`, the transformed output is not re-elaborated and this field is returned empty.
 
 ??? "`tool_messages` · dict · Messages from have2lemma tool"
     Messages from the have2lemma tool with `errors`, `warnings`, and `infos` lists.

@@ -171,6 +171,42 @@ class ExtractDeclsResponse:
 
 
 @dataclass
+class ProofState:
+    line: int
+    proof_state: str
+
+    @classmethod
+    def from_response(cls, response: dict) -> "ProofState":
+        return cls(
+            line=response.get("line", 0),
+            proof_state=response.get("proof_state", ""),
+        )
+
+
+@dataclass
+class ExtractProofStatesResponse:
+    content: str
+    lean_messages: Messages
+    tool_messages: Messages
+    proof_states: list[ProofState]
+    truncated: bool
+    timings: dict[str, int]
+    info: dict | None
+
+    @classmethod
+    def from_response(cls, response: dict) -> "ExtractProofStatesResponse":
+        return cls(
+            content=response.get("content", ""),
+            lean_messages=Messages.from_response(response.get("lean_messages", {})),
+            tool_messages=Messages.from_response(response.get("tool_messages", {})),
+            proof_states=[ProofState.from_response(s) for s in response.get("proof_states", [])],
+            truncated=response.get("truncated", False),
+            timings=response.get("timings", {}),
+            info=response.get("info"),
+        )
+
+
+@dataclass
 class RenameResponse:
     lean_messages: Messages
     tool_messages: Messages

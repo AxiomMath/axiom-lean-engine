@@ -7,6 +7,13 @@ Homepage: https://axle.axiommath.ai/
 ## Recent Announcements
 
 <details open>
+<summary><strong>July 29, 2026 - v1.6.0</strong></summary>
+
+This update ships three sets of features. First, a new tool, [`extract_proof_states`](https://axle.axiommath.ai/v1/docs/tools/extract_proof_states), for proof state analysis in bulk. Second, better support for "find-the-answer"-style problems, e.g. problems where the candidate solution must provide an explicit answer in addition to the formal proof; you can read more about such problems [here](https://axle.axiommath.ai/v1/docs/tools/verify_proof#find-the-answer-problems). Third, various fine-tuned efficiency improvements that customize elaboration to skip unnecessary work. Most users can ignore these settings, but instructions are available on the [troubleshooting page](https://axle.axiommath.ai/v1/docs/troubleshooting/#slow-lean-execution). See the [changelog](https://axle.axiommath.ai/v1/docs/changelog/) for details.
+
+</details>
+
+<details>
 <summary><strong>July 15, 2026 - v1.5.0</strong></summary>
 
 New `LeanTimeout`/`LeanResourceExceeded` exceptions, `names`/`indices` selection on `check` and `extract_decls`/`extract_theorems` (to skip elaboration for faster runs), and new fields and options (`unfolded_type_hash`, `verify_negation`, `verbosity`). See the [changelog](https://axle.axiommath.ai/v1/docs/changelog/) for details.

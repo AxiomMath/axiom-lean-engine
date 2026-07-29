@@ -4,6 +4,41 @@ Validate a candidate Lean theorem and check that it conforms to the given formal
 
 [Try this example in the web UI](https://axle.axiommath.ai/verify_proof#data=eyJmb3JtYWxfc3RhdGVtZW50IjoiZGVmIEEgOj0gNFxudGhlb3JlbSBtYWluIDogQSA9IDUgOj0gc29ycnkiLCJjb250ZW50IjoiZGVmIEEgOj0gNVxudGhlb3JlbSBtYWluIDogQSA9IDUgOj0gcmZsIiwibWF0aGxpYl9vcHRpb25zIjpmYWxzZSwidXNlX2RlZl9lcSI6dHJ1ZSwiaWdub3JlX2ltcG9ydHMiOnRydWUsImVudmlyb25tZW50IjoibGVhbi00LjI3LjAiLCJ0aW1lb3V0X3NlY29uZHMiOjEyMH0%3D)
 
+## "Find the Answer" Problems
+
+The primary use case of `verify_proof` is simple: pass in a formal statement and a candidate solution, and check that the candidate is a valid proof of the formal statement.
+
+However, some questions take a different format, like:
+
+> Find `x` such that `x * x = 4`.
+
+> Prove or disprove that the sum of `1/p` over prime `p` converges.
+
+We call such examples "find the answer" problems. Typically, the way we formalize this in Lean is as follows:
+
+```
+def answer : Nat := sorry
+
+theorem question (n : Nat) : P n ↔ n = answer := sorry
+```
+for some predicate `P`. That is, the formal statement contains a sorried-definition that needs to be filled in, in addition to the main theorem statement. A simple candidate solution might look like this:
+
+```
+def answer : Nat := 3
+
+theorem question (n : Nat) : n = 2 + 1 ↔ n = answer := by grind [answer]
+```
+
+`verify_proof` handles such cases:
+
+1. Definitions that are sorried out in the formal statement can take on any value in the candidate and still pass verification.
+
+2. These definitions will also not be unfolded during reduction if the `use_def_eq` option is toggled. This ensures that the definition does not unfold to `sorry` in the formal statement, in which case the problem statement and solution statement will not match.
+
+3. To disprove such a problem, set `verify_negation`. The disproof must show that no answer satisfies the theorem: the negated theorem universally quantifies over the sorried definitions. See the `verify_negation` parameter for details.
+
+Note that `verify_proof` does not perform any checks on the form of `answer`. This is important because it is easy to find an "answer" that trivially satisfies the theorem statement. The main challenge is in finding a "closed-form solution" to the question statement. But what counts as a "closed-form solution" is ambiguous and perhaps a philosophical question that cannot be answered in Lean, so we do not address it here. This is a common point of discussion among the community, and we recommend visiting the [Lean Zulip](https://leanprover.zulipchat.com) for more information on this point.
+
 ## See Also
 
 In the interest of scalability, `verify_proof` trusts the Lean environment to behave correctly. That's usually fine, but a sufficiently creative adversary can exploit this to make invalid proofs appear valid with Lean metaprogramming.
@@ -47,7 +82,8 @@ See the corresponding [Github issue](https://github.com/AxiomMath/axiom-lean-eng
 
 ??? "`permitted_sorries` · list[str] · Theorems allowed to contain `sorry`"
     Use this when your proof relies on helper lemmas you haven't proven yet.
-    Theorems listed here won't trigger "uses sorry" errors.
+    Theorems listed here won't trigger proof-related errors, so errors and disallowed axioms inside
+    them go unnoticed. Their statements are still checked.
 
     ```python
     result = await axle.verify_proof(
@@ -70,15 +106,42 @@ See the corresponding [Github issue](https://github.com/AxiomMath/axiom-lean-eng
     If true, enables conventional Mathlib options. This toggle sets `linter.mathlibStandardSet` to true, `autoImplicit` to false, `relaxedAutoImplicit` to false, and `pp.unicode.fun` to true.
 
 ??? "`use_def_eq` · bool · default: `True` · Use definitional equality for type comparison"
-    When `true`, types are compared using equality after kernel reduction.
+    When `false`, types are compared at face value (faster, but may very rarely reject valid proofs).
 
-    When `false`, types are compared at face value, which is faster but may rarely
-    reject valid proofs.
+    When `true`, types are compared after kernel reduction. However, locally-defined `def`s whose body is `sorry` and that appear in the type being compared are **not unfolded** during that reduction (in either file).
+
+    If the formal `def` is sorried, its body is not checked; the candidate may supply a concrete definition, provided the type still matches.
+
+    For example:
+
+    ```lean
+    -- formal_statement
+    def F : Nat → Type := sorry
+    theorem T : ∀ n, Nonempty (F n) := sorry
+
+    -- content
+    def F : Nat → Type := fun _ => Unit
+    theorem T : ∀ n, Nonempty (F n) := fun n => ⟨()⟩
+    ```
 
 ??? "`verify_negation` · bool · default: `False` · Also check whether `content` proves the negation of the statement"
     When `true`, AXLE additionally checks whether `content` proves the *negation* of
     `formal_statement` (i.e. disproves it) and reports the result in the `negation`
     field. `negation.okay` is `true` when `content` is a valid proof of the negation.
+
+    For ["find the answer" problems](#find-the-answer-problems), the sorried `def`s in
+    `formal_statement` represent answers the statement claims exist. The negation
+    universally quantifies over them: for `def answer : T := sorry` and
+    `theorem main : P answer`, the disproof must prove `theorem main : ∀ answer : T, ¬ P answer`.
+    The quantifiers appear in the order the sorried defs are declared in `formal_statement`.
+    The disproof does not need to declare the sorried defs; they are skipped in the
+    negation check (the main verification still requires them).
+
+    Limitations:
+
+    - A universe-polymorphic sorried def is not quantified over. It remains a constant in the negated type.
+    - A sorried def is only quantified over when it appears directly in a theorem's type. If it is reachable only through the body of another local def, it remains a constant in the negated type.
+    - When `formal_statement` contains several theorems, each is negated independently. This may be logically inconsistent but is out of the scope of `verify_proof`.
 
 ??? "`ignore_imports` · bool · default: `True` · Ignore import mismatches"
     Controls import statement handling:
@@ -126,6 +189,9 @@ See the corresponding [Github issue](https://github.com/AxiomMath/axiom-lean-eng
     against the negated theorem types.
 
     `negation.okay` is `true` when `content` is a valid proof of the negation.
+    For ["find the answer" problems](#find-the-answer-problems), the sorried defs in
+    `formal_statement` are universally quantified in the negated theorem types and
+    are not required in `content`; see `verify_negation` above.
 
 ??? "`timings` · dict · Execution timing breakdown"
     Timing information in milliseconds for various stages of processing.

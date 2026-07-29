@@ -28,6 +28,9 @@ Convert between `theorem` and `lemma` declaration keywords.
 
     Note: on this tool, operations on non-theorem kinds are a no-op.
 
+??? "`reparse` · bool · default: `True` · Re-elaborate the transformed output"
+    If `true` (default), the transformed content is re-elaborated. If `false`, re-elaboration is skipped. The resulting `lean_messages` is then returned empty.
+
 ??? "`ignore_imports` · bool · default: `True` · Ignore import mismatches"
     Controls import statement handling:
 
@@ -51,6 +54,8 @@ Convert between `theorem` and `lemma` declaration keywords.
     Errors here indicate invalid Lean code (syntax errors, type errors, etc.); an empty `errors` list means the code compiles.
 
     If the tool allows declaration selection and a `names`/`indices` selection is given, elaboration is skipped for the proofs of unselected declarations, so this field reflects only the selected declarations and is otherwise incomplete.
+
+    If the request sets `reparse=false`, the transformed output is not re-elaborated and this field is returned empty.
 
 ??? "`tool_messages` · dict · Messages from theorem2lemma tool"
     Messages from the theorem2lemma tool with `errors`, `warnings`, and `infos` lists.

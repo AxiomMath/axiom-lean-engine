@@ -44,8 +44,7 @@ If `repairs` is omitted, all of the above run. Pass an explicit list to limit wh
     If not specified, all repairs are applied. See below for available repairs.
 
 ??? "`terminal_tactics` · list[str] · default: `['grind']` · Tactics to try for closing goals"
-    Used when 'apply_terminal_tactics' repair is applied. Tactics tried in order; stops on first success. Defaults to 'grind'.
-
+    Used when `apply_terminal_tactics` repair is applied. Tactics tried in order; stops on first success. Defaults to `grind`.
 ??? "`ignore_imports` · bool · default: `True` · Ignore import mismatches"
     Controls import statement handling:
 
@@ -180,6 +179,8 @@ If `repairs` is omitted, all of the above run. Pass an explicit list to limit wh
     theorem simple_eq : 1 + 1 = 2 := by
       grind
     ```
+
+
 
 ??? "`replace_unsafe_tactics`"
     Replaces unsafe tactics with safer alternatives.

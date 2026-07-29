@@ -132,7 +132,7 @@ Try simplifying your input or breaking it into smaller pieces.
 
 1. **Get and set an API key.** Authenticated requests have higher rate limits. See [Configuration](configuration.md) for details.
 
-2. **Increase client-side concurrency.** Set the `AXLE_MAX_CONCURRENCY` environment variable to allow more concurrent requests from your client.
+2. **Increase client-side concurrency.** Set the `AXLE_MAX_CONCURRENCY` environment variable to allow more concurrent requests from your client. See [Configuration](configuration.md) for details.
 
 3. **Request more capacity.** If you need higher rate limits, you can [request more capacity](https://forms.gle/CdLKu45tEsRXtFQ29).
 
@@ -148,9 +148,36 @@ Try simplifying your input or breaking it into smaller pieces.
 
 **Note:** The request timeout does not necessarily correspond to end-to-end delay. Server-reported timings reflect processing time, not total round-trip time including queue wait.
 
+If Lean execution time itself is too slow, you may need to consult the next section.
+
+### Slow Lean Execution
+
+This section addresses issues with Lean execution time itself being too slow. You can view more detailed timing information in the returned `info` and `timings` field returned by each tool.
+
+1. **Use the default header.** The default header (typically `import Mathlib`) is cached, so files using that header are significantly faster than reloading imports from scratch.
+
+2. **Turn off the `reparse` option.** Some transformations come with a `reparse` toggle (default: `true`) that re-elaborates the file to return fresh Lean messages. If you don't need those messages, there is no point in reparsing, so you can cut the parse time in half by skipping it.
+
+3. **Use the `names` and `indices` fields.** If you only need to check / transform some declarations, you can specify them in the `names` or `indices` field. This skips proof elaboration for any unselected declarations, which can greatly increase execution speed.
+
+4. **Use `permitted_sorries`.** Proof elaboration is skipped for `permitted_sorries` (default: empty), so skipping checks for trusted parts of the file can lead to significant improvements. Use this option with caution -- errors or disallowed axioms inside those proofs now go unnoticed as well, not just explicit sorries. Any final verification should always be done with this field empty. See the [`verify_proof` page](tools/verify_proof.md) for details.
+
+5. **Turn off the `elab_proofs` option.** `extract_decls` comes with the `elab_proofs` option (default: `true`). If you only need to inspect theorem statements and not the proofs, you can turn this toggle off to skip processing proofs. Note that this will break any proof-dependent fields, such as `content`, any `value` dependencies, `proof_length`, etc. Statement-level fields (`type`, `type_hash`, `signature`, type dependencies, positions) are still computed, and non-theorem declarations are unaffected. Use this to cheaply list a file's declarations (e.g. to feed the `names`/`indices` parameters of other tools). See the [`extract_decls` page](tools/extract_decls.md) for details.
+
+
 ### Tool-Specific Issues
 
 For troubleshooting specific to individual tools, see the documentation for that tool in the [Tools](tools/verify_proof.md) section.
 
 ### HTTP 302 to a browser sign-in (`AxleBrowserLoginRequiredError`)
 You may be attempting to access a forbidden internal tier.
+
+### `verify_proof` rejects a proof with a user-provided answer
+
+Some questions take the following format:
+
+> Find `x` such that `x * x = 4`.
+
+> Prove or disprove that the sum of `1/p` over prime `p` converges.
+
+We call such examples "find the answer" problems. `verify_proof` has special handling for such cases; see the [`verify_proof` page](tools/verify_proof.md#find-the-answer-problems) for details.

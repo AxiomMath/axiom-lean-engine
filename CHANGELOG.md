@@ -10,7 +10,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Releases]
 
+## v1.6.0 - July 29, 2026
+
+This update ships three sets of features: first, a new tool, [`extract_proof_states`](https://axle.axiommath.ai/v1/docs/tools/extract_proof_states), for proof state analysis in bulk. Second, better support for "find-the-answer"-style problems, e.g. problems where the candidate solution must provide an explicit answer in addition to the formal proof; you can read more about such problems [here](https://axle.axiommath.ai/v1/docs/tools/verify_proof#find-the-answer-problems). Third, various fine-tuned efficiency improvements that customize elaboration to skip unnecessary work. Most users can ignore these settings, but instructions are available on the [troubleshooting page](https://axle.axiommath.ai/v1/docs/troubleshooting/#slow-lean-execution).
+
+### Added
+- Added a new tool: `extract_proof_states`, which returns the tactic proof state at the end of each line of the given Lean code, as shown in an editor's goal panel, as a list of `{line, proof_state}` objects. Output is capped at 10,000,000 characters; past the cap, states are omitted and the `truncated` field is set. See the [`extract_proof_states` page](https://axle.axiommath.ai/v1/docs/tools/extract_proof_states) for details.
+- `extract_decls` now accepts an `elaborate_proofs` option (default `true`). When set to `false`, every theorem proof is replaced with `sorry` before elaboration, which is much faster on proof-heavy files. Statement-level fields (`type`, `type_hash`, `signature`, type dependencies, positions) are still computed, and non-theorem declarations are unaffected. Some fields are empty in this mode, and others are incomplete, so use with caution. Use this to cheaply list a file's declarations (e.g. to feed the `names`/`indices` parameters of other tools). See the [`extract_decls` page](https://axle.axiommath.ai/v1/docs/tools/extract_decls) for details. Regular users can safely disregard this option.
+- Various transformation tools (`theorem2sorry`, `theorem2lemma`, `rename`, `merge`, `have2sorry`, `have2lemma`, `sorry2lemma`) now accept a `reparse` option (default `true`). These tools re-elaborate their output to report fresh `lean_messages`; setting `reparse` to `false` skips that step (often the most expensive part of the request) and returns empty `lean_messages`. Use it when you don't need compiler feedback on the transformed output. Regular users can safely disregard this option.
+- Added a `remove_opens` pass to `normalize`. It removes `open` commands, including `open ... in` prefixes. Combine it with `expand_decl_names` and `expand_scoped_notations` so that names and notations no longer rely on the removed `open`s; a tool warning is emitted otherwise. See the [`normalize` page](https://axle.axiommath.ai/v1/docs/tools/normalize) for details.
+
+### Changed
+- `verify_proof` no longer elaborates the proofs of declarations listed in `permitted_sorries`, which is faster but means errors or disallowed axioms inside those proofs now go unnoticed instead of failing verification. This is a change from before, when only explicit sorries are permitted but errors/disallowed axioms are still registered as failures.
+- When `verify_negation` is set, sorried `def`s in `formal_statement` are now universally quantified in the negated theorem types: for `def answer : T := sorry` and `theorem main : P answer`, the disproof must prove `∀ answer : T, ¬ P answer` instead of `¬ P answer`. The quantifiers follow the declaration order of the sorried defs, and the disproof no longer needs to declare them. See the `verify_negation` parameter documentation for details and limitations. This affects ["find the answer"-style problems](https://axle.axiommath.ai/v1/docs/tools/verify_proof#find-the-answer-problems).
+
+### Fixed
+- Fixed proofs containing `bv_decide`, which previously failed with an unintelligible message. Now supported as in vanilla Lean.
+- Sorried-out definitions in formal statements are no longer unfolded in `verify_proof`. For example, [this case](https://axle.axiommath.ai/verify_proof#r=c46426e9-365d-4238-b585-d60a4484a49b) used to fail because with `use_def_eq=True`, the `answer` would be unfolded into different values in the formal statement and the candidate solution, causing `verify_proof` to reject the proof with the message "Theorem 'problem' does not match expected signature". This affects ["find the answer"-style problems](https://axle.axiommath.ai/v1/docs/tools/verify_proof#find-the-answer-problems).
+- Fixed two bugs affecting the `normalize` tool:
+  - The `expand_scoped_notations` option incorrectly failed to expand notations added to the namespace via the `open scoped` command, and sometimes incorrectly expanded namespaced global notations.
+  - The `expand_decl_names` option sometimes incorrectly expanded synthetic identifiers that were attached to the same source range as an identifier.
+
+
+
+
 ## v1.5.0 - July 15, 2026
+
+This update comes with new `LeanTimeout`/`LeanResourceExceeded` exceptions, `names`/`indices` selection on `check` and `extract_decls`/`extract_theorems` (to skip elaboration for faster runs), and new fields and options (`unfolded_type_hash`, `verify_negation`, `verbosity`).
 
 ### Added
 - Added `LeanResourceExceeded` and `LeanTimeout` exceptions. The Lean worker exceeding its memory cap or time budget now raises a distinct, non-retryable exception instead of the generic `AxleRuntimeError`, so callers can record it as a deterministic outcome rather than retrying.
@@ -35,6 +61,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## v1.4.0 - July 1, 2026
 
 AXLE will be presented at the 3rd AI for Math Workshop at ICML 2026 as a contributed talk! Read the technical report on [arXiv](https://arxiv.org/abs/2606.26442).
+
+This update comes with two notable changes to `ignore_imports` and the `okay`/`tool_messages` fields, and a variety of additional features:
 
 ### Changed
 
@@ -76,6 +104,8 @@ Thanks to @SSingh-07 on Github for submitting a few issues, which we have fixed 
 
 ## v1.3.0 - June 3, 2026
 
+This update comes with support for all declaration kinds, a reworked `repair_proofs`, link shortening, and broader MCP support.
+
 ### Added
 
 - Added *link shortening* to the gateway. The web UI has been updated correspondingly. Try it out: [https://axle.axiommath.ai/check#r=7d70453f-813f-4d19-8de9-44793dafa835](https://axle.axiommath.ai/check#r=7d70453f-813f-4d19-8de9-44793dafa835)
@@ -112,6 +142,8 @@ Thanks to @SSingh-07 on Github for submitting a few issues, which we have fixed 
 
 ## v1.2.1 - April 29, 2026
 
+This is a minor update deprecating `extract_theorems`, switching to HTTP/2, and adding an extra pass to `normalize`.
+
 ### Deprecated
 
 - `extract_theorems` has been deprecated and will no longer be updated. Please use `extract_decls` instead, which supports all declaration kinds (def, theorem, lemma, abbrev, instance, structure, etc.).
@@ -130,6 +162,8 @@ Thanks to @SSingh-07 on Github for submitting a few issues, which we have fixed 
 
 ## v1.2.0 - April 15, 2026
 
+New `extract_decls` tool for extracting all declaration kinds, and corresponding updates to `extract_theorems`. Users using `extract_theorems` (which will be deprecated in a future update) should migrate to `extract_decls`.
+
 ### Added
 
 - Added two new fields in `extract_theorems` to be consistent with `extract_decls` (see below):
@@ -147,6 +181,8 @@ Thanks to @SSingh-07 on Github for submitting a few issues, which we have fixed 
 
 ## v1.1.1 - April 8, 2026
 
+This is a minor update coming with default option changes, a Lean version bump, and bug fixes.
+
 ### Changed
 
 - [!] We are turning *on* the `autoImplicit` and turning *off* the `pp.unicode.fun` Lean options. AXLE will now automatically insert implicit variables when they are missing. **This is a significant behavioral change, check your code!** These settings are consistent with Lean's default. The previous options were remnants from internal use preferences.
@@ -162,6 +198,8 @@ Thanks to @SSingh-07 on Github for submitting a few issues, which we have fixed 
 - Fixed a bug causing timeouts to be capped at 10 minutes. All requests now max out at 15 minutes (with documentation updated correspondingly).
 
 ## v1.1.0 - April 1, 2026
+
+🎉 After mass feedback from the public, we're excited to announce that AXLE is switching from Lean to Rocq. The new name will be **AXRE** (Axiom Rocq Engine). All existing Lean proofs will be automatically translated using GPT-2. 🚀
 
 ### Changed
 
@@ -185,9 +223,11 @@ This change affects all tools with Lean messages.
 
 ## v1.0.2 - March 18, 2026
 
+This is a minor patch improving some return values / error messages and shipping efficiency speedups.
+
 ### Added
 
-- Added explicit `okay` return value to `repair_proofs`
+- Added explicit `okay` return value to `repair_proofs`.
 
 ### Changed
 
@@ -197,6 +237,8 @@ This change affects all tools with Lean messages.
 
 
 ## v1.0.1 - March 11, 2026
+
+This is a minor patch with new documentation pages, increased rate limits, and bug fixes.
 
 ### Added
 
@@ -211,6 +253,12 @@ This change affects all tools with Lean messages.
 
 
 ## v1.0.0 - March 4, 2026
+
+We're excited to release AXLE to the public! AXLE provides proof verification and manipulation primitives we've used across all of our research efforts, including training AI models and AxiomProver's 12/12 on Putnam 2025.
+
+[Playground](https://axle.axiommath.ai) | [API docs](https://axle.axiommath.ai/v1/docs/) | [Why we built AXLE](https://axiommath.ai/territory/releasing-axle) | [Request more capacity](https://forms.gle/CdLKu45tEsRXtFQ29) | axle@axiommath.ai
+
+Join the discussion, ask questions, and share feedback on the [Lean Zulip](https://leanprover.zulipchat.com/#narrow/channel/113486-announce/topic/Axiom.20Lean.20Engine/with/577609358).
 
 ### Added
 

@@ -19,6 +19,9 @@ Combine multiple Lean files into a single file.
 ??? "`include_alts_as_comments` · bool · default: `False` · Preserve alternate versions as comments"
     When deduplicating, preserves all versions of a merged declaration as comments for reference. Defaults to false.
 
+??? "`reparse` · bool · default: `True` · Re-elaborate the transformed output"
+    If `true` (default), the transformed content is re-elaborated. If `false`, re-elaboration is skipped. The resulting `lean_messages` is then returned empty.
+
 ??? "`ignore_imports` · bool · default: `True` · Ignore import mismatches"
     Controls import statement handling:
 
@@ -42,6 +45,8 @@ Combine multiple Lean files into a single file.
     Errors here indicate invalid Lean code (syntax errors, type errors, etc.); an empty `errors` list means the code compiles.
 
     If the tool allows declaration selection and a `names`/`indices` selection is given, elaboration is skipped for the proofs of unselected declarations, so this field reflects only the selected declarations and is otherwise incomplete.
+
+    If the request sets `reparse=false`, the transformed output is not re-elaborated and this field is returned empty.
 
 ??? "`tool_messages` · dict · Messages from merge tool"
     Messages from the merge tool with `errors`, `warnings`, and `infos` lists.

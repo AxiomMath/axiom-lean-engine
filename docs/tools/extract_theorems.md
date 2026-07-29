@@ -78,6 +78,8 @@ Each document in the `documents` dictionary contains:
 
     **Empty** when the request specifies `names` or `indices`. In that mode only the selected declarations are returned and the unselected ones are *not* elaborated (a large speedup), so their transitive dependencies can no longer be computed. A `tool_messages` warning is emitted; all other fields (`type`, dependency lists, `is_sorry`, etc.) are still populated. Call the tool without `names`/`indices` to get the self-contained `content`.
 
+    Also empty when the request sets `elaborate_proofs=false`.
+
 ??? "`tokens` · list[str] · Raw tokens from the declaration"
     The declaration's source code split into tokens.
 
@@ -99,8 +101,12 @@ Each document in the `documents` dictionary contains:
 ??? "`term_depth` · int · Structural depth of the value expression"
     The nesting depth of the declaration's value or proof as a Lean expression, or 0 when the declaration has no value. This field maxes out at 255.
 
+    Always `0` for theorems when `elaborate_proofs=false` — do not use it in that mode.
+
 ??? "`is_sorry` · bool · Whether the declaration contains a sorry"
     True if the declaration contains a `sorry`.
+
+    Always `false` for theorems when `elaborate_proofs=false` — do not use it in that mode.
 
 ??? "`index` · int · 0-based index in original file"
     Position of this declaration in the original file. Note: indices may not be contiguous (mutual definitions share indices).
@@ -120,8 +126,12 @@ Each document in the `documents` dictionary contains:
 ??? "`wall_ms` · int · Wall-clock milliseconds to elaborate the command"
     How long this command took to elaborate. This field reports wall-clock time, so it can vary from run to run.
 
+    Incomplete for theorems when `elaborate_proofs=false` — use with caution.
+
 ??? "`heartbeats` · int · Heartbeats consumed elaborating the command"
     Lean heartbeats consumed while elaborating this command.
+
+    Incomplete for theorems when `elaborate_proofs=false` — use with caution.
 
 ??? "`local_type_dependencies` · list[str] · Local dependencies of the type"
     Local declarations that the declaration's type depends on (non-transitive).
@@ -129,20 +139,30 @@ Each document in the `documents` dictionary contains:
 ??? "`local_value_dependencies` · list[str] · Local dependencies of the body"
     Local declarations that the declaration's body/proof depends on (non-transitive).
 
+    Empty for theorems when `elaborate_proofs=false` — do not use it in that mode.
+
 ??? "`external_type_dependencies` · list[str] · Immediate external dependencies of the type"
     External constants (builtins, imports) that appear in the type.
 
 ??? "`external_value_dependencies` · list[str] · Immediate external dependencies of the body"
     External constants (builtins, imports) that appear in the body/proof.
 
+    Empty for theorems when `elaborate_proofs=false` — do not use it in that mode.
+
 ??? "`local_syntactic_dependencies` · list[str] · Local constants explicitly written in source"
     Local constants that appear literally in source (not from notation/macro expansion).
+
+    Incomplete for theorems when `elaborate_proofs=false` — use with caution.
 
 ??? "`external_syntactic_dependencies` · list[str] · External constants explicitly written in source"
     External constants that appear literally in source (not from notation/macro expansion).
 
+    Incomplete for theorems when `elaborate_proofs=false` — use with caution.
+
 ??? "`declaration_messages` · dict · Messages specific to this declaration"
     Lean messages (`errors`, `warnings`, `infos`) specific to this declaration in the original document.
+
+    Incomplete for theorems when `elaborate_proofs=false` — use with caution.
 
 ??? "`theorem_messages` · dict · (Deprecated) Messages specific to this declaration"
     Lean messages (`errors`, `warnings`, `infos`) specific to this declaration. For `extract_theorems`, this contains the same data as `declaration_messages`. For `extract_decls`, this is always empty.
