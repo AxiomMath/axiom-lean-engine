@@ -1,0 +1,2635 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Python client and CLI for the Axiom Lean Engine API">
+      
+      
+      
+        <link rel="canonical" href="https://axle.axiommath.ai/v1/docs/changelog/">
+      
+      
+        <link rel="prev" href="../cli-reference/">
+      
+      
+        <link rel="next" href="../tools/verify_proof/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>Changelog - AXLE Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  <!-- Additional favicon formats -->
+  <link rel="icon" href="../assets/favicon.ico" sizes="any">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#changelog" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+  <header class="md-header" data-md-component="header">
+    <nav class="md-header__inner md-grid">
+      <!-- Logo -->
+      <a href="https://axiommath.ai/" class="md-header__button md-logo">
+        <img src="../assets/logo.svg" alt="Axiom">
+      </a>
+
+      <!-- Spacer -->
+      <div style="flex-grow:1;"></div>
+
+      <!-- Nav links -->
+      <nav class="md-header__nav">
+        <a href="/" class="md-header__link">AXLE</a>
+        <a href="https://github.com/AxiomMath/axiom-lean-engine" target="_blank" rel="noopener" class="md-header__link">GitHub</a>
+        <a href="/v1/docs/" class="md-header__link">Docs</a>
+        <a href="/app/console" class="md-header__link">Console</a>
+      </nav>
+
+      <!-- Search -->
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/>
+        </svg>
+      </label>
+
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    </nav>
+  </header>
+
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="AXLE Documentation" class="md-nav__button md-logo" aria-label="AXLE Documentation" data-md-component="logo">
+      
+  <img src="../assets/logo.svg" alt="logo">
+
+    </a>
+    AXLE Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/AxiomMath/axiom-lean-engine" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    axiom-lean-engine
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick Start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../python-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Release Notes
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Release Notes
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#releases" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [Releases]
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v170-august-12-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.7.0 - August 12, 2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.7.0 - August 12, 2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#removed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Removed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#added" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v160-july-29-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.6.0 - July 29, 2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.6.0 - July 29, 2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v150-july-15-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.5.0 - July 15, 2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.5.0 - July 15, 2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v140-july-1-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.4.0 - July 1, 2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.4.0 - July 1, 2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#added_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#removed_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Removed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v130-june-3-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.3.0 - June 3, 2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.3.0 - June 3, 2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v121-april-29-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.2.1 - April 29, 2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.2.1 - April 29, 2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#deprecated" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deprecated
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#added_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v120-april-15-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.2.0 - April 15, 2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.2.0 - April 15, 2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v111-april-8-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.1.1 - April 8, 2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.1.1 - April 8, 2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#added_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v110-april-1-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.1.0 - April 1, 2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.1.0 - April 1, 2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v102-march-18-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.0.2 - March 18, 2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.0.2 - March 18, 2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v101-march-11-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.0.1 - March 11, 2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.0.1 - March 11, 2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v100-march-4-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.0.0 - March 4, 2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.0.0 - March 4, 2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tools
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Tools
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/verify_proof/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    verify_proof
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/check/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    check
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/extract_theorems/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    extract_theorems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/extract_decls/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    extract_decls
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/extract_proof_states/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    extract_proof_states
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/rename/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rename
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/theorem2lemma/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    theorem2lemma
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/theorem2sorry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    theorem2sorry
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/merge/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    merge
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/simplify_theorems/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    simplify_theorems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/repair_proofs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    repair_proofs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/have2lemma/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    have2lemma
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/have2sorry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    have2sorry
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/sorry2lemma/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    sorry2lemma
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/disprove/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    disprove
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/normalize/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    normalize
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#releases" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [Releases]
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v170-august-12-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.7.0 - August 12, 2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.7.0 - August 12, 2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#removed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Removed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#added" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v160-july-29-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.6.0 - July 29, 2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.6.0 - July 29, 2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v150-july-15-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.5.0 - July 15, 2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.5.0 - July 15, 2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v140-july-1-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.4.0 - July 1, 2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.4.0 - July 1, 2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#added_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#removed_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Removed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v130-june-3-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.3.0 - June 3, 2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.3.0 - June 3, 2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v121-april-29-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.2.1 - April 29, 2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.2.1 - April 29, 2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#deprecated" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deprecated
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#added_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v120-april-15-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.2.0 - April 15, 2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.2.0 - April 15, 2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v111-april-8-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.1.1 - April 8, 2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.1.1 - April 8, 2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#added_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v110-april-1-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.1.0 - April 1, 2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.1.0 - April 1, 2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v102-march-18-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.0.2 - March 18, 2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.0.2 - March 18, 2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#changed_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Changed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v101-march-11-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.0.1 - March 11, 2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.0.1 - March 11, 2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixed
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v100-march-4-2026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v1.0.0 - March 4, 2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.0.0 - March 4, 2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Added
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="changelog">Changelog<a class="headerlink" href="#changelog" title="Permanent link">&para;</a></h1>
+<p>All notable changes to this project will be documented in this file.</p>
+<p>The format is based on <a href="https://keepachangelog.com/en/1.0.0/">Keep a Changelog</a>,
+and this project adheres to <a href="https://semver.org/spec/v2.0.0.html">Semantic Versioning</a>.</p>
+<h2 id="releases">[Releases]<a class="headerlink" href="#releases" title="Permanent link">&para;</a></h2>
+<h2 id="v170-august-12-2026">v1.7.0 - August 12, 2026<a class="headerlink" href="#v170-august-12-2026" title="Permanent link">&para;</a></h2>
+<p>This update reworks how global Lean options are handled in the (new) <code>global_options</code>, <code>delab_options</code>, <code>mathlib_options</code>, and <code>verbosity</code> fields. It also comes with new machine-readable docs endpoints under <a href="https://axle.axiommath.ai/v1/docs"><code>/v1/docs</code></a>, which the MCP server uses to pull instructions for tools before using them.</p>
+<h3 id="removed">Removed<a class="headerlink" href="#removed" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Removed Lean 4.32.0 due to a <a href="https://leodemoura.github.io/blog/2026-8-1-postmortem-for-kernel-soundness-bug-14576/">kernel soundness bug</a> in Lean and replaced with Lean 4.32.2, which patches the bug. Note that although we only remove Lean 4.32.0, this bug affects all prior versions as well.</li>
+</ul>
+<h3 id="added">Added<a class="headerlink" href="#added" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Added Lean 4.33.0, and added Lean 4.32.2 as a replacement for Lean 4.32.0.</li>
+<li>
+<p>Various additions to options configurations across all tools:</p>
+<ul>
+<li>The <code>mathlib_options</code> field (previously only on <code>check</code>, <code>verify_proof</code>, and <code>highlight</code>) is now accepted by every tool. It applies to everything the request elaborates. Note that this can change tool behavior; for example, the <code>enable_autoImplicit</code> pass in <code>repair_proofs</code> is mostly inert with Lean's defaults, but relevant with Mathlib options enabled.</li>
+<li>The pretty-printing tools (<code>normalize</code>, <code>extract_decls</code>, <code>extract_theorems</code>, <code>have2lemma</code>, <code>sorry2lemma</code>, <code>disprove</code>) now accept a <code>delab_options</code> field: Lean pretty-printer options, e.g. <code>{"pp.fieldNotation": false}</code>, applied on top of the options that tool pretty-prints with. Only <code>pp.*</code> options are accepted. See the <code>delab_options</code> and <code>verbosity</code> field documentation for each tool for more details.</li>
+<li>Every tool now accepts a <code>global_options</code> field: Lean options, e.g. <code>{"maxHeartbeats": 400000}</code>, applied to everything the request parses and elaborates, on top of the defaults and the <code>mathlib_options</code> preset. The format is the same as <code>delab_options</code>, but any registered option can be set, and values may be booleans, integers, or strings to match the type the option was declared with.</li>
+</ul>
+</li>
+<li>
+<p>This documentation is now also served in machine-readable form under <a href="https://axle.axiommath.ai/v1/docs"><code>/v1/docs</code></a>: <code>pages.json</code> (a page manifest in navigation order), <code>all.json</code> (the manifest with each page's source markdown inlined), and <code>raw/{slug}.md</code> (one page's source markdown). See the documentation homepage for examples.</p>
+</li>
+</ul>
+<h3 id="fixed">Fixed<a class="headerlink" href="#fixed" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>verify_proof</code> with <code>mathlib_options</code> enabled now parses <code>formal_statement</code> with Mathlib settings as well; previously they only applied to <code>content</code>.</li>
+<li><code>repair_proofs</code> now properly counts all time dedicated to file elaboration in the <code>parse_ms</code> timing field, not just the initial parse.</li>
+<li>Stray, ambiguous warnings are no longer emitted when a <code>simplify_theorems</code> iteration fails and falls back to the last stable version of the file.</li>
+<li>Fixed a rare case in <code>simplify_theorems</code> where removing an entire unused tactic sequence could cause the simplification pass to fail in older Lean versions. For example, <a href="https://axle.axiommath.ai/simplify_theorems#r=5acc9f84-6d3b-4e6d-ac51-241b28f2f624">this request</a> used to fail and return the original content unchanged, because removing <code>norm_num</code> is invalid. Now, a synthetic <code>skip</code> tactic is inserted to ensure the content re-elaborates cleanly.</li>
+<li>Fixed a set of redundant reparses in <code>extract_decls</code> when computing each document's <code>content</code> field. Files containing many declarations should now expect a significant speed increase. (Up to 10x faster!)</li>
+</ul>
+<h2 id="v160-july-29-2026">v1.6.0 - July 29, 2026<a class="headerlink" href="#v160-july-29-2026" title="Permanent link">&para;</a></h2>
+<p>This update ships three sets of features: first, a new tool, <a href="https://axle.axiommath.ai/v1/docs/tools/extract_proof_states"><code>extract_proof_states</code></a>, for proof state analysis in bulk. Second, better support for "find-the-answer"-style problems, e.g. problems where the candidate solution must provide an explicit answer in addition to the formal proof; you can read more about such problems <a href="https://axle.axiommath.ai/v1/docs/tools/verify_proof#find-the-answer-problems">here</a>. Third, various fine-tuned efficiency improvements that customize elaboration to skip unnecessary work. Most users can ignore these settings, but instructions are available on the <a href="https://axle.axiommath.ai/v1/docs/troubleshooting/#slow-lean-execution">troubleshooting page</a>.</p>
+<h3 id="added_1">Added<a class="headerlink" href="#added_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Added a new tool: <code>extract_proof_states</code>, which returns the tactic proof state at the end of each line of the given Lean code, as shown in an editor's goal panel, as a list of <code>{line, proof_state}</code> objects. Output is capped at 10,000,000 characters; past the cap, states are omitted and the <code>truncated</code> field is set. See the <a href="https://axle.axiommath.ai/v1/docs/tools/extract_proof_states"><code>extract_proof_states</code> page</a> for details.</li>
+<li><code>extract_decls</code> now accepts an <code>elaborate_proofs</code> option (default <code>true</code>). When set to <code>false</code>, every theorem proof is replaced with <code>sorry</code> before elaboration, which is much faster on proof-heavy files. Statement-level fields (<code>type</code>, <code>type_hash</code>, <code>signature</code>, type dependencies, positions) are still computed, and non-theorem declarations are unaffected. Some fields are empty in this mode, and others are incomplete, so use with caution. Use this to cheaply list a file's declarations (e.g. to feed the <code>names</code>/<code>indices</code> parameters of other tools). See the <a href="https://axle.axiommath.ai/v1/docs/tools/extract_decls"><code>extract_decls</code> page</a> for details. Regular users can safely disregard this option.</li>
+<li>Various transformation tools (<code>theorem2sorry</code>, <code>theorem2lemma</code>, <code>rename</code>, <code>merge</code>, <code>have2sorry</code>, <code>have2lemma</code>, <code>sorry2lemma</code>) now accept a <code>reparse</code> option (default <code>true</code>). These tools re-elaborate their output to report fresh <code>lean_messages</code>; setting <code>reparse</code> to <code>false</code> skips that step (often the most expensive part of the request) and returns empty <code>lean_messages</code>. Use it when you don't need compiler feedback on the transformed output. Regular users can safely disregard this option.</li>
+<li>Added a <code>remove_opens</code> pass to <code>normalize</code>. It removes <code>open</code> commands, including <code>open ... in</code> prefixes. Combine it with <code>expand_decl_names</code> and <code>expand_scoped_notations</code> so that names and notations no longer rely on the removed <code>open</code>s; a tool warning is emitted otherwise. See the <a href="https://axle.axiommath.ai/v1/docs/tools/normalize"><code>normalize</code> page</a> for details.</li>
+</ul>
+<h3 id="changed">Changed<a class="headerlink" href="#changed" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>verify_proof</code> no longer elaborates the proofs of declarations listed in <code>permitted_sorries</code>, which is faster but means errors or disallowed axioms inside those proofs now go unnoticed instead of failing verification. This is a change from before, when only explicit sorries are permitted but errors/disallowed axioms are still registered as failures.</li>
+<li>When <code>verify_negation</code> is set, sorried <code>def</code>s in <code>formal_statement</code> are now universally quantified in the negated theorem types: for <code>def answer : T := sorry</code> and <code>theorem main : P answer</code>, the disproof must prove <code>∀ answer : T, ¬ P answer</code> instead of <code>¬ P answer</code>. The quantifiers follow the declaration order of the sorried defs, and the disproof no longer needs to declare them. See the <code>verify_negation</code> parameter documentation for details and limitations. This affects <a href="https://axle.axiommath.ai/v1/docs/tools/verify_proof#find-the-answer-problems">"find the answer"-style problems</a>.</li>
+</ul>
+<h3 id="fixed_1">Fixed<a class="headerlink" href="#fixed_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Fixed proofs containing <code>bv_decide</code>, which previously failed with an unintelligible message. Now supported as in vanilla Lean.</li>
+<li>Sorried-out definitions in formal statements are no longer unfolded in <code>verify_proof</code>. For example, <a href="https://axle.axiommath.ai/verify_proof#r=c46426e9-365d-4238-b585-d60a4484a49b">this case</a> used to fail because with <code>use_def_eq=True</code>, the <code>answer</code> would be unfolded into different values in the formal statement and the candidate solution, causing <code>verify_proof</code> to reject the proof with the message "Theorem 'problem' does not match expected signature". This affects <a href="https://axle.axiommath.ai/v1/docs/tools/verify_proof#find-the-answer-problems">"find the answer"-style problems</a>.</li>
+<li>
+<p>Fixed two bugs affecting the <code>normalize</code> tool:</p>
+</li>
+<li>
+<p>The <code>expand_scoped_notations</code> option incorrectly failed to expand notations added to the namespace via the <code>open scoped</code> command, and sometimes incorrectly expanded namespaced global notations.</p>
+</li>
+<li>The <code>expand_decl_names</code> option sometimes incorrectly expanded synthetic identifiers that were attached to the same source range as an identifier.</li>
+</ul>
+<h2 id="v150-july-15-2026">v1.5.0 - July 15, 2026<a class="headerlink" href="#v150-july-15-2026" title="Permanent link">&para;</a></h2>
+<p>This update comes with new <code>LeanTimeout</code>/<code>LeanResourceExceeded</code> exceptions, <code>names</code>/<code>indices</code> selection on <code>check</code> and <code>extract_decls</code>/<code>extract_theorems</code> (to skip elaboration for faster runs), and new fields and options (<code>unfolded_type_hash</code>, <code>verify_negation</code>, <code>verbosity</code>).</p>
+<h3 id="added_2">Added<a class="headerlink" href="#added_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Added <code>LeanResourceExceeded</code> and <code>LeanTimeout</code> exceptions. The Lean worker exceeding its memory cap or time budget now raises a distinct, non-retryable exception instead of the generic <code>AxleRuntimeError</code>, so callers can record it as a deterministic outcome rather than retrying.</li>
+<li><code>check</code>, <code>extract_decls</code>, and <code>extract_theorems</code> now accept optional <code>names</code> and <code>indices</code> arguments (as <code>theorem2sorry</code> and similar tools already do) to select which declarations to process. The returned documents / messages are restricted to them, and elaboration is skipped for the proofs of unselected declarations. This is a speed feature and should be used when elaborating the whole file is too slow. Note that this changes the behavior of the tool: the returned Lean messages will be incomplete, and the per-document <code>content</code> field for <code>extract_decls</code> and <code>extract_theorems</code> is returned empty. See the <a href="https://axle.axiommath.ai/v1/docs/tools/check"><code>check</code></a> and <a href="https://axle.axiommath.ai/v1/docs/tools/extract_decls"><code>extract_decls</code></a> pages for more details. Regular users with no speed concerns can disregard these options.</li>
+<li><code>extract_decls</code> documents now include an <code>unfolded_type_hash</code> field: the type hash after unfolding module-local elaboration auxiliaries (e.g. <code>foo.match_1</code>), so types differing only by such an auto-generated name deduplicate where <code>type_hash</code> would not. See the <a href="https://axle.axiommath.ai/v1/docs/tools/extract_decls"><code>extract_decls</code> page</a> for details. The behavior of the base <code>type_hash</code> field is unchanged.</li>
+<li><code>verify_proof</code> now accepts a <code>verify_negation</code> option (default <code>false</code>). When set, <code>verify_proof</code> additionally checks whether <code>content</code> proves the <em>negation</em> of <code>formal_statement</code> — i.e. whether it disproves the statement — and reports the result in a new <code>negation</code> field, which carries the same <code>okay</code>, <code>tool_messages</code>, and <code>failed_declarations</code> as the top-level result. The field is omitted unless <code>verify_negation</code> is set. Regular users can ignore this option.</li>
+<li><code>disprove</code> and <code>extract_decls</code> now accept a <code>verbosity</code> parameter (0=default, 1=robust, 2=extra robust), which affects the pretty-printed types output by the tools (the <code>negated</code> field in <code>disprove</code>, and the per-document <code>type</code> field in <code>extract_decls</code>). Higher verbosity levels make the pretty-printer more explicit, which helps when the default output re-elaborates ambiguously. This is the same behavior as existing tools with the <code>verbosity</code> parameter, e.g. <code>have2lemma</code>, <code>sorry2lemma</code>.</li>
+<li>Added <code>AxleClient.get_latest_environment()</code>, which fetches the available Lean+Mathlib environments and returns the latest one.</li>
+<li>Added instructions for citing AXLE in the documentation. See <a href="https://axle.axiommath.ai/v1/docs/#citing-axle">Citing AXLE</a>.</li>
+<li>Added Lean 4.32.0 support.</li>
+</ul>
+<h3 id="fixed_2">Fixed<a class="headerlink" href="#fixed_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Fixed a bug in tools that analyze term-mode goals (<code>have2lemma</code>, <code>sorry2lemma</code>, <code>disprove</code>) causing goal extraction to silently fail with <code>include_whole_context=false</code>. For example, <a href="https://axle.axiommath.ai/sorry2lemma#r=604f708c-99f1-49f0-9c4a-dd987d2ad024">this request</a> failed in previous versions, leaving the content unchanged.</li>
+<li><code>verify_proof</code> is now module-aware. Previously, module dependencies would be treated as disallowed axioms when not using the default header. For example, <a href="https://axle.axiommath.ai/verify_proof#r=24ac6a65-5afc-4119-bfb8-a7a1e6af43dd">this request</a> was wrongfully rejected but now passes.</li>
+</ul>
+<h3 id="changed_1">Changed<a class="headerlink" href="#changed_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Various tools now <em>skip proof elaboration</em> for unselected declarations when <code>names</code> or <code>indices</code> is provided. This is a speed change; however, any outputs pertaining to the unselected declarations (e.g. Lean messages from their proofs) are unreliable and should not be used.</li>
+</ul>
+<h2 id="v140-july-1-2026">v1.4.0 - July 1, 2026<a class="headerlink" href="#v140-july-1-2026" title="Permanent link">&para;</a></h2>
+<p>AXLE will be presented at the 3rd AI for Math Workshop at ICML 2026 as a contributed talk! Read the technical report on <a href="https://arxiv.org/abs/2606.26442">arXiv</a>.</p>
+<p>This update comes with two notable changes to <code>ignore_imports</code> and the <code>okay</code>/<code>tool_messages</code> fields, and a variety of additional features:</p>
+<h3 id="changed_2">Changed<a class="headerlink" href="#changed_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p><code>ignore_imports</code> now defaults to <code>true</code>. When your code's imports don't match the environment's default header, AXLE substitutes the default header (reusing the cached environment) instead of raising an error. Setting <code>ignore_imports=false</code> no longer errors on a mismatch; instead AXLE processes your imports as written, which is significantly slower and may give incorrect results if a required dependency such as <code>Mathlib.Tactic</code> is missing (a warning is returned in these cases). See <a href="https://axle.axiommath.ai/v1/docs/troubleshooting/#import-mismatches">Import Mismatches</a> for details.</p>
+</li>
+<li>
+<p>Reworked the <code>tool_messages</code> and <code>okay</code> fields for a few tools. See <a href="https://axle.axiommath.ai/v1/docs/troubleshooting/#interpreting-the-okay-field">Interpreting the <code>okay</code> field</a> for details.</p>
+<ul>
+<li><code>check</code> now reports validation findings (<code>sorry</code>, disallowed axioms, unsafe definitions) as <code>tool_messages</code> warnings instead of errors. <code>okay</code> continues to reflect compilation only, and the offending declarations remain listed in <code>failed_declarations</code>.</li>
+<li><code>repair_proofs</code> now reports failed repairs (e.g. terminal tactics that fail to prove a <code>sorry</code>) as <code>tool_messages</code> errors instead of warnings, so <code>okay</code> is <code>True</code> only when the repaired code compiles <em>and</em> all repairs succeed.</li>
+</ul>
+</li>
+<li>
+<p>Many tools now inspect values of opaques: <code>opaque</code> and <code>partial def</code> (and <code>theorem</code> in 4.30+).</p>
+<ul>
+<li><code>merge</code> now considers opaque bodies, not just types, when de-duplicating.</li>
+<li><code>extract_decls</code> now populates value fields for opaques.</li>
+</ul>
+</li>
+<li>
+<p>In <code>check</code> and <code>verify_proof</code>, file-level validation errors now invalidate all contained declarations — e.g. use of <code>open private</code> results in every declaration being added to <code>failed_declarations</code>.</p>
+</li>
+<li>
+<p>Reworded one of the <code>verify_proof</code>/<code>check</code> error messages to be more descriptive.</p>
+<ul>
+<li>Before: <code>Declaration '{name}' uses 'sorry' which is not allowed in a valid proof</code></li>
+<li>After: <code>Declaration '{name}' is incomplete (uses 'sorry' or has errors)</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="added_3">Added<a class="headerlink" href="#added_3" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Added Lean 4.30.0 and 4.31.0 support.</li>
+<li>Added a <code>relax_defeq_transparency</code> repair pass to <code>repair_proofs</code> (on by default). Lean 4.29's <code>backward.isDefEq.respectTransparency</code> (default <code>true</code>) keeps <code>isDefEq</code> from unfolding reducible/instance definitions when unifying implicit arguments, breaking proofs that relied on it. Mathlib turns it off per-theorem. This repair prepends <code>set_option backward.isDefEq.respectTransparency false in</code> when the fix gets the proof further (all errors resolved, or the first error appears later in the source). On environments without the option, the repair is a no-op.</li>
+<li><code>extract_decls</code> and <code>extract_theorems</code> report four new per-declaration fields: <code>type_depth</code>, <code>term_depth</code>, <code>wall_ms</code>, and <code>heartbeats</code>. See the <a href="https://axle.axiommath.ai/v1/docs/tools/extract_decls"><code>extract_decls</code> page</a> for more details.</li>
+</ul>
+<h3 id="removed_1">Removed<a class="headerlink" href="#removed_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Removed the <code>http2</code> parameter from the <code>AxleClient</code> constructor, which was slowing the client down. The client now uses HTTP/1.1 exclusively (via <code>aiohttp</code>); the optional HTTP/2 transport and its <code>httpx</code> dependency have been dropped. Code that passed <code>http2=...</code> should remove that argument.</li>
+</ul>
+<h3 id="fixed_3">Fixed<a class="headerlink" href="#fixed_3" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Fixed <code>extract_decls</code> bug for opaques where value dependencies were misclassified as type dependencies.</li>
+<li>Fixed <code>disprove</code> bug negating only the goal instead of negating the entire declaration type. The negated goal is now returned in a new <code>negated</code> field (a map from theorem name to negated goal) instead of being appended to each <code>results</code> message.</li>
+<li>Browser-based clients (web apps, extensions, in-page demos) can call AXLE directly! The HTTP API now supports cross-origin (CORS) requests: <code>OPTIONS</code> preflights return <code>204</code> with <code>Access-Control-Allow-*</code> headers, and every <code>/api/v1/</code> response carries <code>Access-Control-Allow-Origin</code>.</li>
+<li>Fixed HTTP status codes on <code>/api/v1/</code> endpoints: an unknown tool name now returns <code>404</code> (previously <code>200</code> with a <code>user_error</code> body), and methods other than <code>POST</code> return <code>405</code> with an <code>Allow</code> header (previously <code>422</code>).</li>
+<li>Fixed a rare bug resulting in lost executor slots. This bug used to cause a rare user-side failure or, more commonly, very high latency for some requests.</li>
+</ul>
+<p>Thanks to @SSingh-07 on Github for submitting a few issues, which we have fixed in this update!!</p>
+<h2 id="v130-june-3-2026">v1.3.0 - June 3, 2026<a class="headerlink" href="#v130-june-3-2026" title="Permanent link">&para;</a></h2>
+<p>This update comes with support for all declaration kinds, a reworked <code>repair_proofs</code>, link shortening, and broader MCP support.</p>
+<h3 id="added_4">Added<a class="headerlink" href="#added_4" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Added <em>link shortening</em> to the gateway. The web UI has been updated correspondingly. Try it out: <a href="https://axle.axiommath.ai/check#r=7d70453f-813f-4d19-8de9-44793dafa835">https://axle.axiommath.ai/check#r=7d70453f-813f-4d19-8de9-44793dafa835</a></li>
+<li>Added Claude web, desktop, and mobile support to the <a href="https://pypi.org/project/axiom-axle-mcp/"><code>axiom-axle-mcp</code></a> MCP server via a hosted endpoint at <code>https://mcp.axiommath.ai/mcp</code>. See the <a href="https://axle.axiommath.ai/v1/docs/quickstart/#mcp-server">Quick Start</a> for details. Thanks to Andrew Sutherland for suggestions on setting up this hosted instance.</li>
+<li>Added three new fields to the <code>info</code> field of every response to identify the executor version your request was handled on: <code>_executor_commit_sha</code>, <code>_executor_docker_image_id</code>, and <code>_executor_artifact_sha256</code>.</li>
+</ul>
+<h3 id="changed_3">Changed<a class="headerlink" href="#changed_3" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p>Added a new option <code>theorems_only</code> (default <code>true</code>) to all tools that select over theorems/lemmas. These tools now have the ability to select over <strong>all declaration kinds</strong>: <code>theorem2lemma</code>, <code>theorem2sorry</code>, <code>simplify_theorems</code>, <code>repair_proofs</code>, <code>have2lemma</code>, <code>have2sorry</code>, <code>sorry2lemma</code>, <code>disprove</code>:</p>
+<ul>
+<li>To use this feature, set <code>theorems_only</code> to <code>false</code>. For backwards compatibility (default), keep <code>theorems_only</code> set to <code>true</code>.</li>
+<li>You can now sorry out any declaration body, simplify/repair any declaration containing a proof, and extract lemmas from any <code>sorry</code> locations and any <code>have</code> statement locations in any declarations, including definitions, opaques, instances, etc.</li>
+<li>For <code>theorem2lemma</code> and <code>disprove</code>, the new setting is a no-op on non-theorem kinds.</li>
+<li>Note that the value of <code>theorems_only</code> affects what the <code>names</code> and <code>indices</code> fields select over. When <code>theorems_only</code> is <code>false</code>, names and indices refer to <strong>all</strong> declarations, not just theorem kinds.</li>
+</ul>
+</li>
+<li>
+<p>Reworked <code>repair_proofs</code> (the first of several planned changes):</p>
+<ul>
+<li>Added two new passes to <code>repair_proofs</code>: <code>remove_unknown_options</code>, which strips unknown options both at the command-level and within proofs/terms, and <code>enable_autoImplicit</code>, which restores the <code>autoImplicit</code> option at the beginning of a theorem if an unknown identifier error occurs in a theorem's type signature.</li>
+<li>Added command-level re-elaboration to <code>repair_proofs</code>, allowing repairs to stack (for example, when applying terminal tactics reveals another error to fix).</li>
+<li><code>replace_unsafe_tactics</code> now warns the user when replacing <code>native_decide</code> with <code>decide +kernel</code> fails. The tactic location is now left untouched.</li>
+<li><code>apply_terminal_tactics</code> now warns when no terminal tactics could be successfully applied at a given location in <code>repair_proofs</code>.</li>
+<li>Fixed a bug in <code>apply_terminal_tactics</code> allowing malformed proofs with metavariables to be counted as successes in <code>repair_proofs</code>.</li>
+</ul>
+</li>
+<li>
+<p><code>verify_proof</code> now permits <code>partial def</code> and <code>opaque</code>. These checks were overly strict previously and do not raise soundness concerns.</p>
+</li>
+<li><code>merge</code> now deduplicates other declaration kinds: axioms, opaques, inductives, classes, structures, etc. Previously, only theorems and definitions were eligible for deduplication.</li>
+<li><code>extract_decls</code> now names anonymous declarations (examples, anonymous instances) by their start position, line then column (e.g. <code>_example_12_0</code>), rather than a running counter (e.g. <code>_example_0</code>), so the placeholder is stable and remains unique across a file even when several share a line.</li>
+<li>Added the <code>merge_duplicates</code> (default <code>false</code>) option to <code>sorry2lemma</code>, which merges extracted lemmas that are duplicates (either with other lemmas, or to the existing top-level theorem/lemma from which they are extracted) by definitional equality into a single lemma with all callsites pointing at it. Existing behavior can be retained with the default setting <code>merge_duplicates=false</code>.</li>
+</ul>
+<h3 id="fixed_4">Fixed<a class="headerlink" href="#fixed_4" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Added faster, more graceful retries on certain classes of connection errors. Minor change.</li>
+</ul>
+<h2 id="v121-april-29-2026">v1.2.1 - April 29, 2026<a class="headerlink" href="#v121-april-29-2026" title="Permanent link">&para;</a></h2>
+<p>This is a minor update deprecating <code>extract_theorems</code>, switching to HTTP/2, and adding an extra pass to <code>normalize</code>.</p>
+<h3 id="deprecated">Deprecated<a class="headerlink" href="#deprecated" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>extract_theorems</code> has been deprecated and will no longer be updated. Please use <code>extract_decls</code> instead, which supports all declaration kinds (def, theorem, lemma, abbrev, instance, structure, etc.).</li>
+</ul>
+<h3 id="changed_4">Changed<a class="headerlink" href="#changed_4" title="Permanent link">&para;</a></h3>
+<ul>
+<li>The AXLE client now uses HTTP/2 by default. We don't expect any significant performance differences from this change, but feel free to file a bug report if this is not the case. Users may set the <code>http2</code> parameter to false in the client constructor to revert back to the original HTTP/1.1 settings.</li>
+</ul>
+<h3 id="added_5">Added<a class="headerlink" href="#added_5" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Added a new option <code>expand_scoped_notations</code> to the <code>normalize</code> tool, which delaborates scoped notations into their expanded forms. See the <a href="https://axle.axiommath.ai/v1/docs/tools/normalize/#available-normalizations"><code>normalize</code> documentation page</a> for details.</li>
+</ul>
+<h3 id="fixed_5">Fixed<a class="headerlink" href="#fixed_5" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Fixed a bug in the executors causing requests to hang, occasionally resulting in abnormally high latencies.</li>
+</ul>
+<h2 id="v120-april-15-2026">v1.2.0 - April 15, 2026<a class="headerlink" href="#v120-april-15-2026" title="Permanent link">&para;</a></h2>
+<p>New <code>extract_decls</code> tool for extracting all declaration kinds, and corresponding updates to <code>extract_theorems</code>. Users using <code>extract_theorems</code> (which will be deprecated in a future update) should migrate to <code>extract_decls</code>.</p>
+<h3 id="added_6">Added<a class="headerlink" href="#added_6" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Added two new fields in <code>extract_theorems</code> to be consistent with <code>extract_decls</code> (see below):<ul>
+<li><code>kind</code>: always <code>theorem</code> for <code>extract_theorems</code>.</li>
+<li><code>declaration_messages</code>: same content as <code>theorem_messages</code>. <code>theorem_messages</code> is now deprecated and will be removed in a future update.</li>
+</ul>
+</li>
+<li>Added <code>extract_decls</code>, an upgraded version of <code>extract_theorems</code> that extracts all declaration kinds.<ul>
+<li>New <code>kind</code> field in each document. Possible values: <code>theorem</code>, <code>def</code>, <code>abbrev</code>, <code>axiom</code>, <code>opaque</code>, <code>structure</code>, <code>class</code>, <code>class inductive</code>, <code>inductive</code>, <code>instance</code>, <code>example</code>, <code>unknown</code></li>
+<li>Note: Not all fields are meaningful for all declaration kinds (e.g., <code>proof_length</code>/<code>tactic_counts</code> only apply to theorems/lemmas with tactic proofs.)</li>
+<li>This tool should be used instead of <code>extract_theorems</code> as it is a strict superset of functionality. <code>extract_theorems</code> will be deprecated in a future update.</li>
+</ul>
+</li>
+</ul>
+<h3 id="fixed_6">Fixed<a class="headerlink" href="#fixed_6" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Added "Last Used" and "Requests (24h)" columns to the API key console page for better visibility into API key usage.</li>
+</ul>
+<h2 id="v111-april-8-2026">v1.1.1 - April 8, 2026<a class="headerlink" href="#v111-april-8-2026" title="Permanent link">&para;</a></h2>
+<p>This is a minor update coming with default option changes, a Lean version bump, and bug fixes.</p>
+<h3 id="changed_5">Changed<a class="headerlink" href="#changed_5" title="Permanent link">&para;</a></h3>
+<ul>
+<li>[!] We are turning <em>on</em> the <code>autoImplicit</code> and turning <em>off</em> the <code>pp.unicode.fun</code> Lean options. AXLE will now automatically insert implicit variables when they are missing. <strong>This is a significant behavioral change, check your code!</strong> These settings are consistent with Lean's default. The previous options were remnants from internal use preferences.</li>
+<li>[!] <strong>We have renamed <code>mathlib_linter</code> to <code>mathlib_options</code></strong>, which now sets <code>linter.mathlibStandardSet</code> to true, <code>autoImplicit</code> to false, <code>relaxedAutoImplicit</code> to false, and <code>pp.unicode.fun</code> to true. Use this toggle to enable the stricter defaults that Mathlib uses by convention.</li>
+</ul>
+<h3 id="added_7">Added<a class="headerlink" href="#added_7" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Added Lean 4.29.0 support.</li>
+<li>Added support for glob patterns in the <code>permitted_sorries</code> field for <code>verify_proof</code>. See the <code>verify_proof</code> documentation page under the <code>permitted_sorries</code> field for example use cases.</li>
+</ul>
+<h3 id="fixed_7">Fixed<a class="headerlink" href="#fixed_7" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Fixed a bug causing timeouts to be capped at 10 minutes. All requests now max out at 15 minutes (with documentation updated correspondingly).</li>
+</ul>
+<h2 id="v110-april-1-2026">v1.1.0 - April 1, 2026<a class="headerlink" href="#v110-april-1-2026" title="Permanent link">&para;</a></h2>
+<p>🎉 After mass feedback from the public, we're excited to announce that AXLE is switching from Lean to Rocq. The new name will be <strong>AXRE</strong> (Axiom Rocq Engine). All existing Lean proofs will be automatically translated using GPT-2. 🚀</p>
+<h3 id="changed_6">Changed<a class="headerlink" href="#changed_6" title="Permanent link">&para;</a></h3>
+<ul>
+<li>[!] Removed <code>document_messages</code> from the response of <code>extract_theorems</code> — to replicate old behavior, run the <code>content</code> field of the resulting documents through the <code>check</code> tool. This change significantly improves the speed of <code>extract_theorems</code>.</li>
+<li>[!] <code>includeEndPos</code> has been turned on for Lean messages. This changes the format from:
+<code>-:4:38: error: Function expected at...</code>
+to (when endPos is available):
+<code>-:4:38-4:43: error: Function expected at...</code>
+This change affects all tools with Lean messages.</li>
+<li>Significantly reworked the Lean executor pool backend.<ul>
+<li>Latency has been decreased by 50% in most cases. For longer requests, the new executors can be more than 5 times faster!</li>
+<li>Previously, the first request to each environment required a ~10s warmup. This is no longer the case, and so requests will be more faithful to their Lean timeout limits (not including queueing / waiting for available slots).</li>
+<li>Eliminates a security risk involving persistent Lean workers.</li>
+</ul>
+</li>
+<li>Improved the Lean worker warm-up pipeline. Worker scale-up is also more aggressive than before. In the worst case, when all workers are completely occupied / offline, users should expect no more than a 2-3 minute delay before more worker capacity spins up.</li>
+</ul>
+<h3 id="fixed_8">Fixed<a class="headerlink" href="#fixed_8" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Removed redundant parsing resulting in occasional speedups in <code>repair_proofs</code>, <code>normalize</code>, etc. when content does not change.</li>
+<li>Pruned missing executors from the gateway registry. Fixes a bug with autoscaling improperly triggering.</li>
+</ul>
+<h2 id="v102-march-18-2026">v1.0.2 - March 18, 2026<a class="headerlink" href="#v102-march-18-2026" title="Permanent link">&para;</a></h2>
+<p>This is a minor patch improving some return values / error messages and shipping efficiency speedups.</p>
+<h3 id="added_8">Added<a class="headerlink" href="#added_8" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Added explicit <code>okay</code> return value to <code>repair_proofs</code>.</li>
+</ul>
+<h3 id="changed_7">Changed<a class="headerlink" href="#changed_7" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Improved error messages for unknown options in <code>simplify_theorems</code>, <code>repair_proofs</code>, <code>normalize</code></li>
+<li>Improved error messages for <code>ignore_imports</code> error (with links to relevant docs)</li>
+<li>Improved the efficiency of <code>merge</code>, bringing down the time spent on large requests by 20-30%.</li>
+</ul>
+<h2 id="v101-march-11-2026">v1.0.1 - March 11, 2026<a class="headerlink" href="#v101-march-11-2026" title="Permanent link">&para;</a></h2>
+<p>This is a minor patch with new documentation pages, increased rate limits, and bug fixes.</p>
+<h3 id="added_9">Added<a class="headerlink" href="#added_9" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Added <a href="https://axle.axiommath.ai/v1/docs/changelog/">Changelog</a> and <a href="https://axle.axiommath.ai/v1/docs/troubleshooting/">Troubleshooting</a> to the documentation pages.</li>
+</ul>
+<h3 id="fixed_9">Fixed<a class="headerlink" href="#fixed_9" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Increased request limits and fixed a typo in the documentation. Users with an API key are now limited to 20 active requests, and anonymous users are limited to 10 active requests.</li>
+<li>Increased maximum timeout to 15 minutes (from 5 minutes).</li>
+<li>Environments are now sorted by prefix (alphabetically) and then by version number (more recent versions first)</li>
+<li>Fixed a bug with <code>disprove</code> failing to recognize implicit local variables. This bug was <a href="https://leanprover.zulipchat.com/#narrow/channel/219941-Machine-Learning-for-Theorem-Proving/topic/Axiom.20Lean.20Engine/near/578064991">found by Bulhwi Cha</a> on Lean Zulip.</li>
+</ul>
+<h2 id="v100-march-4-2026">v1.0.0 - March 4, 2026<a class="headerlink" href="#v100-march-4-2026" title="Permanent link">&para;</a></h2>
+<p>We're excited to release AXLE to the public! AXLE provides proof verification and manipulation primitives we've used across all of our research efforts, including training AI models and AxiomProver's 12/12 on Putnam 2025.</p>
+<p><a href="https://axle.axiommath.ai">Playground</a> | <a href="https://axle.axiommath.ai/v1/docs/">API docs</a> | <a href="https://axiommath.ai/territory/releasing-axle">Why we built AXLE</a> | <a href="https://forms.gle/CdLKu45tEsRXtFQ29">Request more capacity</a> | axle@axiommath.ai</p>
+<p>Join the discussion, ask questions, and share feedback on the <a href="https://leanprover.zulipchat.com/#narrow/channel/113486-announce/topic/Axiom.20Lean.20Engine/with/577609358">Lean Zulip</a>.</p>
+<h3 id="added_10">Added<a class="headerlink" href="#added_10" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Initial release of AXLE Python client</li>
+<li>Async client (<code>AxleClient</code>) with all 14 API tools:<ul>
+<li><code>verify_proof</code> - Verify proofs against formal statements</li>
+<li><code>check</code> - Check Lean code for errors</li>
+<li><code>extract_theorems</code> - Extract theorems with dependencies</li>
+<li><code>rename</code> - Rename declarations</li>
+<li><code>theorem2lemma</code> - Convert theorem/lemma keywords</li>
+<li><code>theorem2sorry</code> - Replace proofs with sorry</li>
+<li><code>merge</code> - Combine multiple Lean files</li>
+<li><code>simplify_theorems</code> - Simplify proofs</li>
+<li><code>repair_proofs</code> - Repair broken proofs</li>
+<li><code>have2lemma</code> - Extract have statements to lemmas</li>
+<li><code>have2sorry</code> - Replace have statements with sorry</li>
+<li><code>sorry2lemma</code> - Extract sorries and errors to lemmas</li>
+<li><code>disprove</code> - Attempt to disprove theorems</li>
+<li><code>normalize</code> - Standardize formatting</li>
+</ul>
+</li>
+<li>CLI tool with commands for all tools</li>
+<li>Helper functions for string manipulation</li>
+<li>Configuration via environment variables</li>
+<li>Type hints and PEP 561 compliance</li>
+<li>Comprehensive documentation</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.sections", "navigation.expand", "search.suggest", "content.code.copy", "header.autohide"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

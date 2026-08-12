@@ -1,0 +1,1683 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Python client and CLI for the Axiom Lean Engine API">
+      
+      
+      
+        <link rel="canonical" href="https://axle.axiommath.ai/v1/docs/tools/extract_decls/">
+      
+      
+        <link rel="prev" href="../extract_theorems/">
+      
+      
+        <link rel="next" href="../extract_proof_states/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>extract_decls - AXLE Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  <!-- Additional favicon formats -->
+  <link rel="icon" href="../../assets/favicon.ico" sizes="any">
+  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#extract_decls" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+  <header class="md-header" data-md-component="header">
+    <nav class="md-header__inner md-grid">
+      <!-- Logo -->
+      <a href="https://axiommath.ai/" class="md-header__button md-logo">
+        <img src="../../assets/logo.svg" alt="Axiom">
+      </a>
+
+      <!-- Spacer -->
+      <div style="flex-grow:1;"></div>
+
+      <!-- Nav links -->
+      <nav class="md-header__nav">
+        <a href="/" class="md-header__link">AXLE</a>
+        <a href="https://github.com/AxiomMath/axiom-lean-engine" target="_blank" rel="noopener" class="md-header__link">GitHub</a>
+        <a href="/v1/docs/" class="md-header__link">Docs</a>
+        <a href="/app/console" class="md-header__link">Console</a>
+      </nav>
+
+      <!-- Search -->
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/>
+        </svg>
+      </label>
+
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    </nav>
+  </header>
+
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="AXLE Documentation" class="md-nav__button md-logo" aria-label="AXLE Documentation" data-md-component="logo">
+      
+  <img src="../../assets/logo.svg" alt="logo">
+
+    </a>
+    AXLE Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/AxiomMath/axiom-lean-engine" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    axiom-lean-engine
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick Start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Release Notes
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Release Notes
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tools
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Tools
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../verify_proof/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    verify_proof
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../check/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    check
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../extract_theorems/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    extract_theorems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    extract_decls
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    extract_decls
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#input-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Input Parameters
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#output-fields" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output Fields
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#document-fields" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Document Fields
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#python-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Python API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#http-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HTTP API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-response" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example Response
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../extract_proof_states/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    extract_proof_states
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rename/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rename
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../theorem2lemma/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    theorem2lemma
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../theorem2sorry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    theorem2sorry
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../merge/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    merge
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../simplify_theorems/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    simplify_theorems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../repair_proofs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    repair_proofs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../have2lemma/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    have2lemma
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../have2sorry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    have2sorry
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sorry2lemma/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    sorry2lemma
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../disprove/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    disprove
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../normalize/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    normalize
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#input-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Input Parameters
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#output-fields" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output Fields
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#document-fields" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Document Fields
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#python-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Python API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cli" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CLI
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#http-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HTTP API
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-response" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example Response
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="extract_decls">extract_decls<a class="headerlink" href="#extract_decls" title="Permanent link">&para;</a></h1>
+<p>Split a file containing one or more declarations into smaller units, each containing a single declaration along with any required dependencies. This is the replacement for the deprecated <a href="../extract_theorems/"><code>extract_theorems</code></a> tool, and works for all declaration kinds (def, theorem, lemma, abbrev, instance, structure, etc.).</p>
+<p><a href="https://axle.axiommath.ai/extract_decls#data=eyJjb250ZW50Ijoic3RydWN0dXJlIFdlaWdodCB3aGVyZVxuICB2YWwgOiBOYXRcbiAgcG9zIDogdmFsID4gMCA6PSBieSBvbWVnYVxuXG5jbGFzcyBXZWlnaHRlZCAozrEgOiBUeXBlKSB3aGVyZVxuICB3ZWlnaHQgOiDOsSDihpIgV2VpZ2h0XG5cbmRlZiB0cml2aWFsV2VpZ2h0IDogV2VpZ2h0IDo9IOKfqDEsIGJ5IG9tZWdh4p+pXG5cbmluc3RhbmNlIDogV2VpZ2h0ZWQgTmF0IHdoZXJlXG4gIHdlaWdodCBfIDo9IHRyaXZpYWxXZWlnaHQiLCJpZ25vcmVfaW1wb3J0cyI6dHJ1ZSwiZW52aXJvbm1lbnQiOiJsZWFuLTQuMjguMCIsInRpbWVvdXRfc2Vjb25kcyI6MTIwfQ%3D%3D">Try this example in the web UI</a></p>
+<h2 id="input-parameters">Input Parameters<a class="headerlink" href="#input-parameters" title="Permanent link">&para;</a></h2>
+<details>
+<summary><code>content</code> · str · required · Lean source code</summary>
+<p>The Lean source code to be processed by this tool.</p>
+</details>
+<details>
+<summary><code>names</code> · list[str] · Theorem names to process</summary>
+<p>Optional list of theorem names to process. If not specified, all theorems are processed.
+Requesting a name not found in the code returns an error.
+When <code>theorems_only</code> is <code>false</code>, these select over all declarations (not just theorems).</p>
+</details>
+<details>
+<summary><code>indices</code> · list[int] · Theorem indices to process</summary>
+<p>Optional list of theorem indices to process (0-based). Supports negative indices:
+<code>-1</code> is the last theorem, <code>-2</code> is second-to-last, etc.
+If not specified, all theorems are processed.
+When <code>theorems_only</code> is <code>false</code>, these select over all declarations (not just theorems).</p>
+</details>
+<details>
+<summary><code>verbosity</code> · float · default: <code>0</code> · Pretty-printer verbosity level (0-2)</summary>
+<p>Preset buckets of pretty-printer options, addressing the ambiguity problem described under <code>delab_options</code>:</p>
+<ul>
+<li><code>verbosity=0</code> (default): Standard pretty-printing options</li>
+<li><code>verbosity=1</code>: Robust options with additional explicitness</li>
+<li><code>verbosity=2</code>: Extra robust options with maximum explicitness (e.g. <code>pp.explicit=true</code>)</li>
+</ul>
+<p><strong>Rule of thumb:</strong> If you encounter type inference errors in the output—especially involving coercions, casts, or polymorphic functions—try increasing the verbosity level. Do note that at <code>verbosity=2</code>, type signatures may become incredibly complex and unreadable, so it should be used sparingly.</p>
+<p>For finer-grained control over individual pretty-printer options, see <code>delab_options</code>, whose overrides apply on top of this preset.</p>
+</details>
+<details>
+<summary><code>delab_options</code> · dict · Pretty-printer option overrides</summary>
+<p>A dictionary of Lean pretty-printer options (JSON format), applied on top of the options this tool pretty-prints with. Only <code>pp.*</code> options are accepted.</p>
+<p><strong>Why override pretty-printer options?</strong> Pretty-printed output can be ambiguous: the printed form loses information and fails to re-elaborate. Consider this example involving coercions:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>theorem explicit_coercion_test (n : ℕ) (hn : n &gt; 0) : True := by
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  have h : (∑ i : Fin n, (1 : ℝ) / (i.val + 1)) ≤ (harmonic n : ℝ) + 1 := by
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    sorry
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>  trivial
+</code></pre></div></p>
+<p>With default options, the coercion <code>(harmonic n : ℝ)</code> may be pretty-printed as <code>Rat.cast (harmonic n)</code>, losing the target type <code>ℝ</code>. This causes Lean to fail with errors like "failed to synthesize RatCast ℕ" because it can't infer the correct target type for the coercion. Setting <code>{"pp.explicit": true}</code> preserves the target type information and produces valid output.</p>
+<p>This is a known limitation of the Lean pretty-printer (for more details, see <a href="https://leanprover.zulipchat.com/#narrow/stream/113488-general/topic/RFC.3A.20printing.20coercions.20with.20type.20ascriptions">this Zulip thread</a>).</p>
+<p>For preset buckets of suggested options, see the <code>verbosity</code> field (available on some tools).</p>
+</details>
+<details>
+<summary><code>elaborate_proofs</code> · bool · default: <code>True</code> · Elaborate theorem proofs</summary>
+<p>If <code>true</code> (default), proofs are fully elaborated. Set to <code>false</code> to replace every theorem proof with <code>sorry</code> before elaboration (a large speedup on proof-heavy files). Statement-level fields and all fields of non-theorem declarations are unaffected.</p>
+<p>When <code>false</code>, emits a <code>tool_messages</code> warning and:</p>
+<ul>
+<li>These fields are empty — do not use them: <code>content</code>; for theorems <code>is_sorry</code>, <code>term_depth</code>, <code>local_value_dependencies</code>, <code>external_value_dependencies</code>.</li>
+<li>These fields are incomplete — use with caution: <code>lean_messages</code>, <code>declaration_messages</code>; for theorems <code>local_syntactic_dependencies</code>, <code>external_syntactic_dependencies</code>, <code>wall_ms</code>, <code>heartbeats</code>.</li>
+</ul>
+</details>
+<details>
+<summary><code>mathlib_options</code> · bool · default: <code>False</code> · Enable Mathlib options</summary>
+<p>If true, enables conventional Mathlib options. This toggle sets <code>linter.mathlibStandardSet</code> to true, <code>autoImplicit</code> to false, <code>relaxedAutoImplicit</code> to false, and <code>pp.unicode.fun</code> to true. It also runs the <code>#lint</code> environment linters and reports their findings in <code>lean_messages</code>.</p>
+</details>
+<details>
+<summary><code>global_options</code> · dict · Lean option overrides</summary>
+<p>A dictionary of Lean options (JSON format), applied to everything the request parses and elaborates, on top of the defaults and the <code>mathlib_options</code> preset. For example, <code>{"maxHeartbeats": 400000}</code> raises the elaboration heartbeats budget.</p>
+<p>Each name must be a registered Lean option, and its value must match the type the option was declared with: a boolean, an integer, or a string.</p>
+<p>For pretty-printer overrides on the tools that pretty-print output, see <code>delab_options</code>.</p>
+</details>
+<details>
+<summary><code>ignore_imports</code> · bool · default: <code>True</code> · Ignore import mismatches</summary>
+<p>Controls import statement handling:</p>
+<ul>
+<li><code>true</code> (default): Ignore the imports in <code>content</code> and substitute the environment's default header. This uses the pre-built cached environment, so it is fast. The substituted code is returned in the <code>content</code> field.</li>
+<li><code>false</code>: Process the imports in <code>content</code> exactly as written. This is significantly slower (the cached environment cannot be reused) and may produce inconsistent or incorrect results if a required dependency such as <code>Mathlib.Tactic</code> is missing. A warning is returned in these cases. See the troubleshooting page for more details.</li>
+</ul>
+</details>
+<details>
+<summary><code>environment</code> · str · required · Lean environment or version</summary>
+<p>The Lean environment to use for evaluation. Each environment includes a specific
+Lean version and pre-built dependencies (typically Mathlib).</p>
+<p>Available environments: <code>lean-4.28.0</code>, <code>lean-4.27.0</code>, <code>lean-4.26.0</code>, etc.</p>
+</details>
+<details>
+<summary><code>timeout_seconds</code> · float · default: <code>120</code> · Max execution time in seconds</summary>
+<p>Maximum execution time in seconds. Requests exceeding this limit return a timeout error. Note that end-to-end request latency may exceed this timeout due to queue time and other overhead. Additionally, all non-admin requests are subject to an absolute maximum timeout of 900 seconds (15 minutes).</p>
+</details>
+<h2 id="output-fields">Output Fields<a class="headerlink" href="#output-fields" title="Permanent link">&para;</a></h2>
+<details>
+<summary><code>content</code> · string · Processed Lean code</summary>
+<p>The Lean code that was actually processed. May differ from input if <code>ignore_imports=true</code> caused header injection.</p>
+</details>
+<details>
+<summary><code>lean_messages</code> · dict · Messages from Lean compiler</summary>
+<p>Messages from the Lean compiler with <code>errors</code>, <code>warnings</code>, and <code>infos</code> lists.
+Errors here indicate invalid Lean code (syntax errors, type errors, etc.); an empty <code>errors</code> list means the code compiles.</p>
+<p>If the tool allows declaration selection and a <code>names</code>/<code>indices</code> selection is given, elaboration is skipped for the proofs of unselected declarations, so this field reflects only the selected declarations and is otherwise incomplete.</p>
+</details>
+<details>
+<summary><code>tool_messages</code> · dict · Messages from extraction tool</summary>
+<p>Messages from the extraction tool with <code>errors</code>, <code>warnings</code>, and <code>infos</code> lists.
+Errors here indicate tool-specific issues (not Lean compilation errors).</p>
+<p>If the tool allows declaration selection and a <code>names</code>/<code>indices</code> selection is given, elaboration is skipped for the proofs of unselected declarations, so this field reflects only the selected declarations and is otherwise incomplete.</p>
+</details>
+<details>
+<summary><code>documents</code> · dict · Declaration names mapped to self-contained documents</summary>
+<p>Dictionary mapping declaration names to self-contained Lean code documents. Each key is a declaration name, and the value is a self-contained breakdown of the declaration, including a content field containing that declaration plus all dependencies it needs (imports, definitions, etc.).</p>
+</details>
+<details>
+<summary><code>timings</code> · dict · Execution timing breakdown</summary>
+<p>Timing information in milliseconds for various stages of processing.</p>
+</details>
+<h2 id="document-fields">Document Fields<a class="headerlink" href="#document-fields" title="Permanent link">&para;</a></h2>
+<p>Each document in the <code>documents</code> dictionary contains:</p>
+<div class="admonition note">
+<p class="admonition-title">Field applicability</p>
+<p>Not all fields are meaningful for all declaration kinds. For example, <code>proof_length</code> and <code>tactic_counts</code> are only relevant for theorems/lemmas with tactic proofs. For other declaration kinds (def, abbrev, structure, class, inductive, etc.), these fields may be empty or zero.</p>
+</div>
+<details>
+<summary><code>kind</code> · str · The kind of declaration</summary>
+<p>The kind of the declaration. For <code>extract_theorems</code>, this is always <code>"theorem"</code>. For <code>extract_decls</code>, possible values are: <code>theorem</code>, <code>def</code>, <code>abbrev</code>, <code>axiom</code>, <code>opaque</code>, <code>structure</code>, <code>class</code>, <code>class inductive</code>, <code>inductive</code>, <code>instance</code>, <code>example</code>, <code>unknown</code>.</p>
+</details>
+<details>
+<summary><code>declaration</code> · str · The declaration source code</summary>
+<p>The raw source code of this declaration.</p>
+</details>
+<details>
+<summary><code>content</code> · str · Standalone content including declaration and dependencies</summary>
+<p>Complete, self-contained Lean code that includes the declaration and all its local dependencies. Can be compiled independently.</p>
+<p><strong>Empty</strong> when the request specifies <code>names</code> or <code>indices</code>. In that mode only the selected declarations are returned and the unselected ones are <em>not</em> elaborated (a large speedup), so their transitive dependencies can no longer be computed. A <code>tool_messages</code> warning is emitted; all other fields (<code>type</code>, dependency lists, <code>is_sorry</code>, etc.) are still populated. Call the tool without <code>names</code>/<code>indices</code> to get the self-contained <code>content</code>.</p>
+<p>Also empty when the request sets <code>elaborate_proofs=false</code>.</p>
+</details>
+<details>
+<summary><code>tokens</code> · list[str] · Raw tokens from the declaration</summary>
+<p>The declaration's source code split into tokens.</p>
+</details>
+<details>
+<summary><code>signature</code> · str · Declaration signature (everything before the body)</summary>
+<p>The declaration signature, e.g., <code>theorem foo (x : Nat) : x = x</code> or <code>def bar : Nat</code>.</p>
+</details>
+<details>
+<summary><code>type</code> · str · Pretty-printed type of the declaration</summary>
+<p>The type of the declaration as pretty-printed by Lean.</p>
+</details>
+<details>
+<summary><code>type_hash</code> · int · Hash of the canonical type expression</summary>
+<p>Hash of the canonical, alpha-invariant type expression. Useful for deduplication.</p>
+</details>
+<details>
+<summary><code>unfolded_type_hash</code> · int · Hash after unfolding local elaboration auxiliaries</summary>
+<p>Hash of the type after unfolding module-local elaboration auxiliaries; useful for deduplication.</p>
+</details>
+<details>
+<summary><code>type_depth</code> · int · Structural depth of the type expression</summary>
+<p>The nesting depth of the declaration's type as a Lean expression. This field maxes out at 255.</p>
+</details>
+<details>
+<summary><code>term_depth</code> · int · Structural depth of the value expression</summary>
+<p>The nesting depth of the declaration's value or proof as a Lean expression, or 0 when the declaration has no value. This field maxes out at 255.</p>
+<p>Always <code>0</code> for theorems when <code>elaborate_proofs=false</code> — do not use it in that mode.</p>
+</details>
+<details>
+<summary><code>is_sorry</code> · bool · Whether the declaration contains a sorry</summary>
+<p>True if the declaration contains a <code>sorry</code>.</p>
+<p>Always <code>false</code> for theorems when <code>elaborate_proofs=false</code> — do not use it in that mode.</p>
+</details>
+<details>
+<summary><code>index</code> · int · 0-based index in original file</summary>
+<p>Position of this declaration in the original file. Note: indices may not be contiguous (mutual definitions share indices).</p>
+</details>
+<details>
+<summary><code>line_pos</code> · int · 1-based line number where declaration starts</summary>
+<p>Line number where the declaration begins.</p>
+</details>
+<details>
+<summary><code>end_line_pos</code> · int · 1-based line number where declaration ends</summary>
+<p>Line number where the declaration ends.</p>
+</details>
+<details>
+<summary><code>proof_length</code> · int · Approximate number of tactics in proof</summary>
+<p>Rough measure of proof complexity based on tactic count. Only meaningful for theorems/lemmas with tactic proofs.</p>
+</details>
+<details>
+<summary><code>tactic_counts</code> · dict[str, int] · Map of tactic names to occurrence counts</summary>
+<p>Breakdown of which tactics are used and how often. Only meaningful for theorems/lemmas with tactic proofs.</p>
+</details>
+<details>
+<summary><code>wall_ms</code> · int · Wall-clock milliseconds to elaborate the command</summary>
+<p>How long this command took to elaborate. This field reports wall-clock time, so it can vary from run to run.</p>
+<p>Incomplete for theorems when <code>elaborate_proofs=false</code> — use with caution.</p>
+</details>
+<details>
+<summary><code>heartbeats</code> · int · Heartbeats consumed elaborating the command</summary>
+<p>Lean heartbeats consumed while elaborating this command.</p>
+<p>Incomplete for theorems when <code>elaborate_proofs=false</code> — use with caution.</p>
+</details>
+<details>
+<summary><code>local_type_dependencies</code> · list[str] · Local dependencies of the type</summary>
+<p>Local declarations that the declaration's type depends on (non-transitive).</p>
+</details>
+<details>
+<summary><code>local_value_dependencies</code> · list[str] · Local dependencies of the body</summary>
+<p>Local declarations that the declaration's body/proof depends on (non-transitive).</p>
+<p>Empty for theorems when <code>elaborate_proofs=false</code> — do not use it in that mode.</p>
+</details>
+<details>
+<summary><code>external_type_dependencies</code> · list[str] · Immediate external dependencies of the type</summary>
+<p>External constants (builtins, imports) that appear in the type.</p>
+</details>
+<details>
+<summary><code>external_value_dependencies</code> · list[str] · Immediate external dependencies of the body</summary>
+<p>External constants (builtins, imports) that appear in the body/proof.</p>
+<p>Empty for theorems when <code>elaborate_proofs=false</code> — do not use it in that mode.</p>
+</details>
+<details>
+<summary><code>local_syntactic_dependencies</code> · list[str] · Local constants explicitly written in source</summary>
+<p>Local constants that appear literally in source (not from notation/macro expansion).</p>
+<p>Incomplete for theorems when <code>elaborate_proofs=false</code> — use with caution.</p>
+</details>
+<details>
+<summary><code>external_syntactic_dependencies</code> · list[str] · External constants explicitly written in source</summary>
+<p>External constants that appear literally in source (not from notation/macro expansion).</p>
+<p>Incomplete for theorems when <code>elaborate_proofs=false</code> — use with caution.</p>
+</details>
+<details>
+<summary><code>declaration_messages</code> · dict · Messages specific to this declaration</summary>
+<p>Lean messages (<code>errors</code>, <code>warnings</code>, <code>infos</code>) specific to this declaration in the original document.</p>
+<p>Incomplete for theorems when <code>elaborate_proofs=false</code> — use with caution.</p>
+</details>
+<details>
+<summary><code>theorem_messages</code> · dict · (Deprecated) Messages specific to this declaration</summary>
+<p>Lean messages (<code>errors</code>, <code>warnings</code>, <code>infos</code>) specific to this declaration. For <code>extract_theorems</code>, this contains the same data as <code>declaration_messages</code>. For <code>extract_decls</code>, this is always empty.</p>
+<div class="admonition warning">
+<p class="admonition-title">Deprecated</p>
+<p>This field is deprecated. Use <code>declaration_messages</code> instead for new code.</p>
+</div>
+</details>
+<h2 id="python-api">Python API<a class="headerlink" href="#python-api" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">axle</span><span class="o">.</span><span class="n">extract_decls</span><span class="p">(</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="n">content</span><span class="o">=</span><span class="s2">&quot;import Mathlib</span><span class="se">\n</span><span class="s2">def foo : Nat := 1</span><span class="se">\n</span><span class="s2">theorem bar : foo = 1 := rfl&quot;</span><span class="p">,</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="n">environment</span><span class="o">=</span><span class="s2">&quot;lean-4.28.0&quot;</span><span class="p">,</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    <span class="n">ignore_imports</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># Optional</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="n">timeout_seconds</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span>   <span class="c1"># Optional</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="p">)</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>  <span class="c1"># The processed Lean code</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">documents</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">doc</span><span class="o">.</span><span class="n">declaration</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="cli">CLI<a class="headerlink" href="#cli" title="Permanent link">&para;</a></h2>
+<p><strong>Usage:</strong> <code>axle extract-decls CONTENT [OPTIONS]</code></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Extract to default directory</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>axle<span class="w"> </span>extract-decls<span class="w"> </span>combined.lean<span class="w"> </span>--environment<span class="w"> </span>lean-4.31.0
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="c1"># Extract to custom directory</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>axle<span class="w"> </span>extract-decls<span class="w"> </span>combined.lean<span class="w"> </span>-o<span class="w"> </span>my_decls/<span class="w"> </span>--environment<span class="w"> </span>lean-4.31.0
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1"># Force overwrite</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>axle<span class="w"> </span>extract-decls<span class="w"> </span>combined.lean<span class="w"> </span>-o<span class="w"> </span>my_decls/<span class="w"> </span>-f<span class="w"> </span>--environment<span class="w"> </span>lean-4.31.0
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="c1"># Pipeline usage</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>cat<span class="w"> </span>combined.lean<span class="w"> </span><span class="p">|</span><span class="w"> </span>axle<span class="w"> </span>extract-decls<span class="w"> </span>-<span class="w"> </span>-o<span class="w"> </span>output/<span class="w"> </span>--environment<span class="w"> </span>lean-4.31.0
+</code></pre></div>
+<h2 id="http-api">HTTP API<a class="headerlink" href="#http-api" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>curl<span class="w"> </span>-s<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>https://axle.axiommath.ai/api/v1/extract_decls<span class="w"> </span><span class="se">\</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">    </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;content&quot;: &quot;import Mathlib\ndef foo : Nat := 1\ntheorem bar : foo = 1 := rfl&quot;, &quot;environment&quot;: &quot;lean-4.28.0&quot;}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq
+</code></pre></div>
+<h2 id="example-response">Example Response<a class="headerlink" href="#example-response" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="p">{</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;import Mathlib\ndef foo : Nat := 1\ntheorem bar : foo = 1 := rfl&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span><span class="nt">&quot;lean_messages&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span><span class="nt">&quot;errors&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">    </span><span class="nt">&quot;warnings&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">    </span><span class="nt">&quot;infos&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">  </span><span class="p">},</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">  </span><span class="nt">&quot;tool_messages&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">    </span><span class="nt">&quot;errors&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">    </span><span class="nt">&quot;warnings&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="w">    </span><span class="nt">&quot;infos&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span>
+<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="w">  </span><span class="p">},</span>
+<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="w">  </span><span class="nt">&quot;timings&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="w">    </span><span class="nt">&quot;total_ms&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">92</span><span class="p">,</span>
+<a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="w">    </span><span class="nt">&quot;parse_ms&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">87</span>
+<a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a><span class="w">  </span><span class="p">},</span>
+<a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a><span class="w">  </span><span class="nt">&quot;documents&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a><span class="w">    </span><span class="nt">&quot;foo&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a><span class="w">      </span><span class="nt">&quot;kind&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;def&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-20" name="__codelineno-4-20" href="#__codelineno-4-20"></a><span class="w">      </span><span class="nt">&quot;declaration&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;def foo : Nat := 1&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-21" name="__codelineno-4-21" href="#__codelineno-4-21"></a><span class="w">      </span><span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;import Mathlib\n\ndef foo : Nat := 1&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-22" name="__codelineno-4-22" href="#__codelineno-4-22"></a><span class="w">      </span><span class="nt">&quot;tokens&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;def&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;:&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Nat&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;:=&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;1&quot;</span><span class="p">],</span>
+<a id="__codelineno-4-23" name="__codelineno-4-23" href="#__codelineno-4-23"></a><span class="w">      </span><span class="nt">&quot;signature&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;def foo : Nat&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-24" name="__codelineno-4-24" href="#__codelineno-4-24"></a><span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ℕ&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-25" name="__codelineno-4-25" href="#__codelineno-4-25"></a><span class="w">      </span><span class="nt">&quot;type_hash&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">421340980</span><span class="p">,</span>
+<a id="__codelineno-4-26" name="__codelineno-4-26" href="#__codelineno-4-26"></a><span class="w">      </span><span class="nt">&quot;type_depth&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<a id="__codelineno-4-27" name="__codelineno-4-27" href="#__codelineno-4-27"></a><span class="w">      </span><span class="nt">&quot;term_depth&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
+<a id="__codelineno-4-28" name="__codelineno-4-28" href="#__codelineno-4-28"></a><span class="w">      </span><span class="nt">&quot;is_sorry&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<a id="__codelineno-4-29" name="__codelineno-4-29" href="#__codelineno-4-29"></a><span class="w">      </span><span class="nt">&quot;index&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<a id="__codelineno-4-30" name="__codelineno-4-30" href="#__codelineno-4-30"></a><span class="w">      </span><span class="nt">&quot;line_pos&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span>
+<a id="__codelineno-4-31" name="__codelineno-4-31" href="#__codelineno-4-31"></a><span class="w">      </span><span class="nt">&quot;end_line_pos&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span>
+<a id="__codelineno-4-32" name="__codelineno-4-32" href="#__codelineno-4-32"></a><span class="w">      </span><span class="nt">&quot;proof_length&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<a id="__codelineno-4-33" name="__codelineno-4-33" href="#__codelineno-4-33"></a><span class="w">      </span><span class="nt">&quot;tactic_counts&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
+<a id="__codelineno-4-34" name="__codelineno-4-34" href="#__codelineno-4-34"></a><span class="w">      </span><span class="nt">&quot;wall_ms&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<a id="__codelineno-4-35" name="__codelineno-4-35" href="#__codelineno-4-35"></a><span class="w">      </span><span class="nt">&quot;heartbeats&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
+<a id="__codelineno-4-36" name="__codelineno-4-36" href="#__codelineno-4-36"></a><span class="w">      </span><span class="nt">&quot;local_value_dependencies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<a id="__codelineno-4-37" name="__codelineno-4-37" href="#__codelineno-4-37"></a><span class="w">      </span><span class="nt">&quot;local_type_dependencies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<a id="__codelineno-4-38" name="__codelineno-4-38" href="#__codelineno-4-38"></a><span class="w">      </span><span class="nt">&quot;external_value_dependencies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;OfNat.ofNat&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Nat&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;instOfNatNat&quot;</span><span class="p">],</span>
+<a id="__codelineno-4-39" name="__codelineno-4-39" href="#__codelineno-4-39"></a><span class="w">      </span><span class="nt">&quot;external_type_dependencies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;Nat&quot;</span><span class="p">],</span>
+<a id="__codelineno-4-40" name="__codelineno-4-40" href="#__codelineno-4-40"></a><span class="w">      </span><span class="nt">&quot;local_syntactic_dependencies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span>
+<a id="__codelineno-4-41" name="__codelineno-4-41" href="#__codelineno-4-41"></a><span class="w">      </span><span class="nt">&quot;external_syntactic_dependencies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;Nat&quot;</span><span class="p">],</span>
+<a id="__codelineno-4-42" name="__codelineno-4-42" href="#__codelineno-4-42"></a><span class="w">      </span><span class="nt">&quot;theorem_messages&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;errors&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w"> </span><span class="nt">&quot;warnings&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w"> </span><span class="nt">&quot;infos&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[]},</span>
+<a id="__codelineno-4-43" name="__codelineno-4-43" href="#__codelineno-4-43"></a><span class="w">      </span><span class="nt">&quot;declaration_messages&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;errors&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w"> </span><span class="nt">&quot;warnings&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w"> </span><span class="nt">&quot;infos&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[]}</span>
+<a id="__codelineno-4-44" name="__codelineno-4-44" href="#__codelineno-4-44"></a><span class="w">    </span><span class="p">},</span>
+<a id="__codelineno-4-45" name="__codelineno-4-45" href="#__codelineno-4-45"></a><span class="w">    </span><span class="nt">&quot;bar&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-4-46" name="__codelineno-4-46" href="#__codelineno-4-46"></a><span class="w">      </span><span class="nt">&quot;kind&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;theorem&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-47" name="__codelineno-4-47" href="#__codelineno-4-47"></a><span class="w">      </span><span class="nt">&quot;declaration&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;theorem bar : foo = 1 := rfl&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-48" name="__codelineno-4-48" href="#__codelineno-4-48"></a><span class="w">      </span><span class="nt">&quot;content&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;import Mathlib\n\ndef foo : Nat := 1\n\ntheorem bar : foo = 1 := rfl&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-49" name="__codelineno-4-49" href="#__codelineno-4-49"></a><span class="w">      </span><span class="nt">&quot;tokens&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;theorem&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;bar&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;:&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;foo&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;=&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;:=&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;rfl&quot;</span><span class="p">],</span>
+<a id="__codelineno-4-50" name="__codelineno-4-50" href="#__codelineno-4-50"></a><span class="w">      </span><span class="nt">&quot;signature&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;theorem bar : foo = 1&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-51" name="__codelineno-4-51" href="#__codelineno-4-51"></a><span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;foo = 1&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-52" name="__codelineno-4-52" href="#__codelineno-4-52"></a><span class="w">      </span><span class="nt">&quot;type_hash&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">254164366</span><span class="p">,</span>
+<a id="__codelineno-4-53" name="__codelineno-4-53" href="#__codelineno-4-53"></a><span class="w">      </span><span class="nt">&quot;type_depth&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
+<a id="__codelineno-4-54" name="__codelineno-4-54" href="#__codelineno-4-54"></a><span class="w">      </span><span class="nt">&quot;term_depth&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
+<a id="__codelineno-4-55" name="__codelineno-4-55" href="#__codelineno-4-55"></a><span class="w">      </span><span class="nt">&quot;is_sorry&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<a id="__codelineno-4-56" name="__codelineno-4-56" href="#__codelineno-4-56"></a><span class="w">      </span><span class="nt">&quot;index&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<a id="__codelineno-4-57" name="__codelineno-4-57" href="#__codelineno-4-57"></a><span class="w">      </span><span class="nt">&quot;line_pos&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
+<a id="__codelineno-4-58" name="__codelineno-4-58" href="#__codelineno-4-58"></a><span class="w">      </span><span class="nt">&quot;end_line_pos&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
+<a id="__codelineno-4-59" name="__codelineno-4-59" href="#__codelineno-4-59"></a><span class="w">      </span><span class="nt">&quot;proof_length&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<a id="__codelineno-4-60" name="__codelineno-4-60" href="#__codelineno-4-60"></a><span class="w">      </span><span class="nt">&quot;tactic_counts&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
+<a id="__codelineno-4-61" name="__codelineno-4-61" href="#__codelineno-4-61"></a><span class="w">      </span><span class="nt">&quot;wall_ms&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<a id="__codelineno-4-62" name="__codelineno-4-62" href="#__codelineno-4-62"></a><span class="w">      </span><span class="nt">&quot;heartbeats&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span>
+<a id="__codelineno-4-63" name="__codelineno-4-63" href="#__codelineno-4-63"></a><span class="w">      </span><span class="nt">&quot;local_value_dependencies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;foo&quot;</span><span class="p">],</span>
+<a id="__codelineno-4-64" name="__codelineno-4-64" href="#__codelineno-4-64"></a><span class="w">      </span><span class="nt">&quot;local_type_dependencies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;foo&quot;</span><span class="p">],</span>
+<a id="__codelineno-4-65" name="__codelineno-4-65" href="#__codelineno-4-65"></a><span class="w">      </span><span class="nt">&quot;external_value_dependencies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;rfl&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Nat&quot;</span><span class="p">],</span>
+<a id="__codelineno-4-66" name="__codelineno-4-66" href="#__codelineno-4-66"></a><span class="w">      </span><span class="nt">&quot;external_type_dependencies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;Eq&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Nat&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;OfNat.ofNat&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;instOfNatNat&quot;</span><span class="p">],</span>
+<a id="__codelineno-4-67" name="__codelineno-4-67" href="#__codelineno-4-67"></a><span class="w">      </span><span class="nt">&quot;local_syntactic_dependencies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;foo&quot;</span><span class="p">],</span>
+<a id="__codelineno-4-68" name="__codelineno-4-68" href="#__codelineno-4-68"></a><span class="w">      </span><span class="nt">&quot;external_syntactic_dependencies&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;rfl&quot;</span><span class="p">],</span>
+<a id="__codelineno-4-69" name="__codelineno-4-69" href="#__codelineno-4-69"></a><span class="w">      </span><span class="nt">&quot;theorem_messages&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;errors&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w"> </span><span class="nt">&quot;warnings&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w"> </span><span class="nt">&quot;infos&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[]},</span>
+<a id="__codelineno-4-70" name="__codelineno-4-70" href="#__codelineno-4-70"></a><span class="w">      </span><span class="nt">&quot;declaration_messages&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;errors&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w"> </span><span class="nt">&quot;warnings&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[],</span><span class="w"> </span><span class="nt">&quot;infos&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[]}</span>
+<a id="__codelineno-4-71" name="__codelineno-4-71" href="#__codelineno-4-71"></a><span class="w">    </span><span class="p">}</span>
+<a id="__codelineno-4-72" name="__codelineno-4-72" href="#__codelineno-4-72"></a><span class="w">  </span><span class="p">}</span>
+<a id="__codelineno-4-73" name="__codelineno-4-73" href="#__codelineno-4-73"></a><span class="p">}</span>
+</code></pre></div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.sections", "navigation.expand", "search.suggest", "content.code.copy", "header.autohide"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

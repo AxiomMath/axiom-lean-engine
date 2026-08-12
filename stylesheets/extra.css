@@ -1,0 +1,414 @@
+/* ProverTools color palette applied to MkDocs Material */
+
+:root {
+  /* Brand Blues */
+  --brand-blue-20: #00297a;
+  --brand-blue-30: #0036a3;
+  --brand-blue-40: #0044cc;
+  --brand-blue-50: #0052f5;
+  --brand-blue-60: #1f69ff;
+  --brand-blue-70: #4785ff;
+  --brand-blue-80: #70a0ff;
+  --brand-blue-90: #99bbff;
+  --brand-blue-100: #c2d6ff;
+  --brand-blue-110: #ebf1ff;
+
+  /* System Greys */
+  --grey-50: #666666;
+  --grey-60: #7a7a7a;
+  --grey-70: #8f8f8f;
+  --grey-120: #f5f5f5;
+
+  /* Material Theme Color Overrides */
+  --md-primary-fg-color: var(--brand-blue-30);
+  --md-primary-fg-color--light: var(--brand-blue-90);
+  --md-primary-fg-color--dark: var(--brand-blue-20);
+  --md-accent-fg-color: var(--brand-blue-50);
+  --md-accent-fg-color--transparent: rgba(0, 82, 245, 0.1);
+}
+
+/* ============================================
+   HEADER - Force exact ProverTools sizing
+   ============================================ */
+
+/* Reset all Material header styles */
+.md-header {
+  background-color: #F5F5F5 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  min-height: auto !important;
+  height: auto !important;
+  left: 0 !important;
+  right: 0 !important;
+  position: sticky !important;
+}
+
+.md-header__inner {
+  display: flex !important;
+  align-items: center !important;
+  padding: 8px 24px !important;
+  margin: 0 !important;
+  max-width: none !important;
+  gap: 16px !important;
+}
+
+/* Remove padding from search in header */
+.md-header .md-search {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Force logo to be exactly 64px tall */
+.md-header .md-logo {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.md-header .md-logo img {
+  height: 64px !important;
+  width: auto !important;
+  max-height: none !important;
+  min-height: 64px !important;
+}
+
+/* Nav links container */
+.md-header__nav {
+  display: flex !important;
+  align-items: center !important;
+  gap: 16px !important;
+}
+
+/* Nav link styling */
+.md-header__link {
+  color: #141414 !important;
+  text-decoration: none !important;
+  font-size: 16px !important;
+  line-height: 24px !important;
+}
+
+.md-header__link:hover {
+  color: #141414 !important;
+  text-decoration: none !important;
+}
+
+/* Search icon */
+.md-header__button.md-icon {
+  display: flex !important;
+  align-items: center !important;
+  cursor: pointer !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.md-header__button.md-icon svg {
+  width: 20px !important;
+  height: 20px !important;
+  fill: #141414 !important;
+  display: block !important;
+}
+
+/* ============================================
+   SEARCH - Modal overlay style
+   ============================================ */
+
+/* Search container - hidden by default */
+.md-search {
+  display: none !important;
+}
+
+/* Show search as modal overlay when active */
+[data-md-toggle="search"]:checked ~ .md-header .md-search {
+  display: flex !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 100 !important;
+  background: transparent !important;
+  justify-content: center !important;
+  padding-top: 80px !important;
+}
+
+/* Grey out the page behind search */
+.md-search__overlay {
+  background: rgba(0, 0, 0, 0.4) !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: -1 !important;
+}
+
+/* Search inner container */
+.md-search__inner {
+  width: 100% !important;
+  max-width: 600px !important;
+  height: auto !important;
+  max-height: calc(100vh - 120px) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Search input */
+.md-search__input {
+  color: #141414 !important;
+  background-color: white !important;
+  border-radius: 8px 8px 0 0 !important;
+}
+
+.md-search__input::placeholder {
+  color: #666666 !important;
+}
+
+/* Search form */
+.md-search__form {
+  background: white !important;
+  border-radius: 8px 8px 0 0 !important;
+  overflow: hidden !important;
+}
+
+/* Search output area */
+.md-search__output {
+  background: white !important;
+  border-radius: 0 0 8px 8px !important;
+}
+
+.md-search__scrollwrap {
+  background: white !important;
+}
+
+/* Search result meta (e.g., "5 matching documents") */
+.md-search-result__meta {
+  color: #666666 !important;
+  background: white !important;
+}
+
+/* Search result items */
+.md-search-result__list {
+  background: white !important;
+}
+
+.md-search-result__item {
+  background: white !important;
+  border-bottom: 1px solid #e0e0e0 !important;
+}
+
+.md-search-result__link {
+  color: #141414 !important;
+  display: block !important;
+}
+
+.md-search-result__link:hover,
+.md-search-result__item:hover {
+  background-color: var(--brand-blue-110) !important;
+}
+
+.md-search-result__article {
+  background: inherit !important;
+}
+
+.md-search-result__title {
+  color: var(--brand-blue-30) !important;
+}
+
+.md-search-result__teaser {
+  color: #666666 !important;
+}
+
+/* Search highlight */
+.md-search-result__teaser mark {
+  background: #fff59d !important;
+  color: #141414 !important;
+}
+
+/* ============================================
+   CONTENT STYLING
+   ============================================ */
+
+/* Headings - blue accent on h2 */
+.md-typeset h2 {
+  border-bottom: 2px solid var(--brand-blue-90);
+  padding-bottom: 0.4em;
+}
+
+/* Code blocks - subtle blue border */
+.md-typeset pre > code {
+  border: 1px solid var(--brand-blue-90);
+  border-radius: 2px;
+}
+
+/* Copy button - always visible (override Material's faint default) */
+.md-clipboard {
+  color: #888888 !important;
+}
+
+.md-clipboard:hover,
+.md-clipboard:focus {
+  color: var(--brand-blue-40) !important;
+}
+
+/* Inline code */
+.md-typeset code {
+  background-color: var(--brand-blue-110);
+  color: var(--brand-blue-30);
+  border-radius: 2px;
+  padding: 0 0.3em;
+}
+
+.md-typeset pre code {
+  background-color: transparent;
+  color: inherit;
+  padding: 0;
+  border: none;
+}
+
+/* Tables - blue accents */
+.md-typeset table:not([class]) {
+  border: 1px solid var(--brand-blue-90);
+}
+
+.md-typeset table:not([class]) th {
+  background-color: var(--brand-blue-110);
+  border-bottom: 1px solid var(--brand-blue-90);
+}
+
+.md-typeset table:not([class]) tr:hover td {
+  background-color: var(--brand-blue-110);
+}
+
+/* Admonitions */
+.md-typeset .admonition,
+.md-typeset details {
+  border-width: 1px;
+  border-radius: 2px;
+}
+
+/* Details/collapsible blocks - remove icon, minimal styling */
+.md-typeset details > summary::before {
+  display: none !important;
+  width: 0 !important;
+  content: none !important;
+}
+
+.md-typeset details {
+  border: none !important;
+  border-left: 2px solid var(--brand-blue-90) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  margin: 0.5em 0 !important;
+  padding: 0 !important;
+}
+
+.md-typeset details > summary {
+  background: transparent !important;
+  padding: 0.4em 0 0.4em 0.6em !important;
+  margin: 0 !important;
+  min-height: 0 !important;
+  font-weight: normal !important;
+}
+
+.md-typeset details[open] {
+  background: transparent !important;
+}
+
+.md-typeset details[open] > summary {
+  background: transparent !important;
+}
+
+.md-typeset details > *:not(summary) {
+  margin-left: 0.6em;
+}
+
+/* Links */
+.md-typeset a {
+  color: var(--brand-blue-40);
+}
+
+.md-typeset a:hover {
+  color: var(--brand-blue-60);
+}
+
+/* Navigation */
+.md-nav__link--active {
+  color: var(--brand-blue-30);
+}
+
+/* Footer */
+.md-footer {
+  background-color: var(--brand-blue-110);
+}
+
+.md-footer-meta {
+  background-color: var(--brand-blue-110);
+}
+
+/* Buttons */
+.md-typeset .md-button {
+  border-radius: 2px;
+}
+
+/* Tabs */
+.md-typeset .tabbed-labels > label.tabbed-label--active {
+  color: var(--brand-blue-30);
+}
+
+/* Blockquotes */
+.md-typeset blockquote {
+  border-left-color: var(--brand-blue-90);
+}
+
+/* HR */
+.md-typeset hr {
+  border-color: var(--brand-blue-90);
+}
+
+/* File a Bug button */
+.md-typeset .file-bug-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: fit-content;
+  padding: 12px 24px;
+  background-color: #dc2626;
+  color: white !important;
+  font-size: 14px;
+  line-height: 1;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-decoration: none !important;
+  text-transform: uppercase;
+  transition: background-color 0.15s ease;
+}
+
+.md-typeset .file-bug-btn:hover {
+  background-color: #b91c1c;
+  color: white !important;
+}
+
+.md-typeset .file-bug-btn svg {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+}
+
+/* Copy button - three states */
+.md-code__button {
+  color: rgba(0,0,0,0.35) !important;
+  transition: color 0.2s !important;
+}
+
+:hover > .md-code__button,
+:hover > * > .md-code__button {
+  color: rgba(0,0,0,0.6) !important;
+}
+
+.md-code__button:hover {
+  color: var(--brand-blue-40) !important;
+}

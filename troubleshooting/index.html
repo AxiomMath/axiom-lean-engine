@@ -1,0 +1,1763 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Python client and CLI for the Axiom Lean Engine API">
+      
+      
+      
+        <link rel="canonical" href="https://axle.axiommath.ai/v1/docs/troubleshooting/">
+      
+      
+        <link rel="prev" href="../configuration/">
+      
+      
+        <link rel="next" href="../python-api/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>Troubleshooting - AXLE Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+    
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  <!-- Additional favicon formats -->
+  <link rel="icon" href="../assets/favicon.ico" sizes="any">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#troubleshooting" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+  <header class="md-header" data-md-component="header">
+    <nav class="md-header__inner md-grid">
+      <!-- Logo -->
+      <a href="https://axiommath.ai/" class="md-header__button md-logo">
+        <img src="../assets/logo.svg" alt="Axiom">
+      </a>
+
+      <!-- Spacer -->
+      <div style="flex-grow:1;"></div>
+
+      <!-- Nav links -->
+      <nav class="md-header__nav">
+        <a href="/" class="md-header__link">AXLE</a>
+        <a href="https://github.com/AxiomMath/axiom-lean-engine" target="_blank" rel="noopener" class="md-header__link">GitHub</a>
+        <a href="/v1/docs/" class="md-header__link">Docs</a>
+        <a href="/app/console" class="md-header__link">Console</a>
+      </nav>
+
+      <!-- Search -->
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/>
+        </svg>
+      </label>
+
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    </nav>
+  </header>
+
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="AXLE Documentation" class="md-nav__button md-logo" aria-label="AXLE Documentation" data-md-component="logo">
+      
+  <img src="../assets/logo.svg" alt="logo">
+
+    </a>
+    AXLE Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/AxiomMath/axiom-lean-engine" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    axiom-lean-engine
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick Start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#reading-error-messages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reading Error Messages
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Reading Error Messages">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fatal-errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fatal Errors
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resource-limits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resource Limits
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#non-fatal-errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Non-Fatal Errors
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Issues
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Common Issues">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tool-not-working-as-expected" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tool Not Working As Expected
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#import-mismatches" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Import Mismatches
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unsupported-lean-constructs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Unsupported Lean Constructs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#interpreting-the-okay-field" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interpreting the okay Field
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#all-executors-failed-after-n-attempts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        "All Executors Failed After N Attempts"
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#limited-concurrency" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Limited Concurrency
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#slow-requests-timing-mismatches" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Slow Requests / Timing Mismatches
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#slow-lean-execution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Slow Lean Execution
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tool-specific-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tool-Specific Issues
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#http-302-to-a-browser-sign-in-axlebrowserloginrequirederror" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HTTP 302 to a browser sign-in (AxleBrowserLoginRequiredError)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verify_proof-rejects-a-proof-with-a-user-provided-answer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        verify_proof rejects a proof with a user-provided answer
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../python-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cli-reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Release Notes
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Release Notes
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tools
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Tools
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/verify_proof/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    verify_proof
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/check/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    check
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/extract_theorems/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    extract_theorems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/extract_decls/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    extract_decls
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/extract_proof_states/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    extract_proof_states
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/rename/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rename
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/theorem2lemma/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    theorem2lemma
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/theorem2sorry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    theorem2sorry
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/merge/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    merge
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/simplify_theorems/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    simplify_theorems
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/repair_proofs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    repair_proofs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/have2lemma/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    have2lemma
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/have2sorry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    have2sorry
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/sorry2lemma/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    sorry2lemma
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/disprove/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    disprove
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/normalize/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    normalize
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#reading-error-messages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reading Error Messages
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Reading Error Messages">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fatal-errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fatal Errors
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resource-limits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resource Limits
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#non-fatal-errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Non-Fatal Errors
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common Issues
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Common Issues">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tool-not-working-as-expected" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tool Not Working As Expected
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#import-mismatches" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Import Mismatches
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unsupported-lean-constructs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Unsupported Lean Constructs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#interpreting-the-okay-field" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interpreting the okay Field
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#all-executors-failed-after-n-attempts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        "All Executors Failed After N Attempts"
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#limited-concurrency" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Limited Concurrency
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#slow-requests-timing-mismatches" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Slow Requests / Timing Mismatches
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#slow-lean-execution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Slow Lean Execution
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tool-specific-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tool-Specific Issues
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#http-302-to-a-browser-sign-in-axlebrowserloginrequirederror" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HTTP 302 to a browser sign-in (AxleBrowserLoginRequiredError)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verify_proof-rejects-a-proof-with-a-user-provided-answer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        verify_proof rejects a proof with a user-provided answer
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h1>
+<p>Common issues when working with AXLE and how to resolve them.</p>
+<h2 id="reading-error-messages">Reading Error Messages<a class="headerlink" href="#reading-error-messages" title="Permanent link">&para;</a></h2>
+<h3 id="fatal-errors">Fatal Errors<a class="headerlink" href="#fatal-errors" title="Permanent link">&para;</a></h3>
+<p>When a request fails entirely, the response includes an error type at the top level:</p>
+<table>
+<thead>
+<tr>
+<th>Error Type</th>
+<th>Meaning</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>user_error</code></td>
+<td>Invalid request (missing parameters, bad arguments, import mismatch)</td>
+<td>Fix the request—check your inputs</td>
+</tr>
+<tr>
+<td><code>internal_error</code></td>
+<td>Server bug</td>
+<td><a href="https://github.com/AxiomMath/axiom-lean-engine/issues">Report it</a></td>
+</tr>
+<tr>
+<td><code>error</code></td>
+<td>Runtime failure that exhausted internal retries (executor crash)</td>
+<td>Rarely worth retrying—AXLE already retried internally</td>
+</tr>
+<tr>
+<td><code>error</code> + <code>error_type: LeanResourceExceeded</code></td>
+<td>Lean worker hit a resource cap (e.g. memory) for this input</td>
+<td>Reduce the problem's memory allocation</td>
+</tr>
+<tr>
+<td><code>error</code> + <code>error_type: LeanTimeout</code></td>
+<td>Lean worker exceeded its time budget for this input</td>
+<td>Simplify the input or raise the timeout</td>
+</tr>
+</tbody>
+</table>
+<p>In the Python client, these map to exceptions: <code>AxleInvalidArgument</code>, <code>AxleInternalError</code>, <code>AxleRuntimeError</code>, <code>LeanResourceExceeded</code>, and <code>LeanTimeout</code>. See <a href="../python-api/#error-handling">Error Handling</a> for details on catching and handling these exceptions, and for an exhaustive list of all AXLE exceptions, including networking errors.</p>
+<h3 id="resource-limits">Resource Limits<a class="headerlink" href="#resource-limits" title="Permanent link">&para;</a></h3>
+<p>Each request runs in a worker with a default time budget of <strong>120 seconds</strong> and a cap of <strong>16 GB</strong> on allocatable working memory. Exceeding the time budget yields a <code>LeanTimeout</code>; exceeding the memory cap yields a <code>LeanResourceExceeded</code>. The timeout is configurable per request via the <code>timeout_seconds</code> parameter, up to a maximum of 900 seconds (15 minutes).</p>
+<h3 id="non-fatal-errors">Non-Fatal Errors<a class="headerlink" href="#non-fatal-errors" title="Permanent link">&para;</a></h3>
+<p>When troubleshooting, start by examining the messages in the response. AXLE responses include two message fields, each containing <code>errors</code>, <code>warnings</code>, and <code>infos</code> arrays:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Contents</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>lean_messages</code></td>
+<td>Output from the Lean compiler itself; an empty <code>errors</code> list means the code compiles</td>
+</tr>
+<tr>
+<td><code>tool_messages</code></td>
+<td>AXLE-specific logs and validation results</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Message severity:</strong></p>
+<ul>
+<li><strong>errors</strong> — Something is wrong; the result may be unusable</li>
+<li><strong>warnings</strong> — Something is suspicious but not fatal</li>
+<li><strong>infos</strong> — Informational output (timing, debug info, etc.)</li>
+</ul>
+<p>For most tools, <code>tool_messages.errors</code> is empty; fatal issues are raised at the response level (see above). The exceptions are <code>verify_proof</code>, which uses <code>tool_messages.errors</code> to report strict proof verification failures, and <code>repair_proofs</code>, which uses it to report failed repairs.</p>
+<h2 id="common-issues">Common Issues<a class="headerlink" href="#common-issues" title="Permanent link">&para;</a></h2>
+<h3 id="tool-not-working-as-expected">Tool Not Working As Expected<a class="headerlink" href="#tool-not-working-as-expected" title="Permanent link">&para;</a></h3>
+<p><strong>Symptom:</strong> A tool returns unexpected results, fails to transform code correctly, or produces output with errors.</p>
+<p><strong>Cause:</strong> AXLE was built to handle certain categories of errors—particularly those restricted to the proof body (e.g., failed tactics, <code>sorry</code>). Errors outside the proof body (malformed declarations, syntax errors, unresolved imports) may cause tools to behave unexpectedly.</p>
+<p><strong>What AXLE handles well:</strong></p>
+<ul>
+<li>Code that compiles cleanly</li>
+<li>Proofs with localized errors (e.g., a tactic that doesn't close the goal)</li>
+</ul>
+<p><strong>What may cause issues:</strong></p>
+<ul>
+<li>Syntax errors or malformed declarations</li>
+<li>Unresolved identifiers outside proof bodies</li>
+<li>Unsupported constructs (see <a href="#unsupported-lean-constructs">Unsupported Constructs</a>)</li>
+</ul>
+<p><strong>Rule of thumb:</strong> If the input compiles, the output should compile. For best results, use AXLE with code that already compiles.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">axle</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">content</span><span class="o">=</span><span class="n">code</span><span class="p">,</span> <span class="n">declarations</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;old&quot;</span><span class="p">:</span> <span class="s2">&quot;new&quot;</span><span class="p">},</span> <span class="n">environment</span><span class="o">=</span><span class="s2">&quot;lean-4.28.0&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">lean_messages</span><span class="o">.</span><span class="n">errors</span><span class="p">:</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Output has compilation errors:&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">lean_messages</span><span class="o">.</span><span class="n">errors</span><span class="p">:</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="k">else</span><span class="p">:</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="import-mismatches">Import Mismatches<a class="headerlink" href="#import-mismatches" title="Permanent link">&para;</a></h3>
+<p><strong>Symptom:</strong> Your code's imports don't match the environment's default header, and you get an info/warning message or unexpectedly slow (or incorrect) results.</p>
+<p><strong>Cause:</strong> Every environment has a default header derived from its <code>imports</code> field. AXLE keeps a pre-built environment for that header so requests run fast. When your code's imports differ from it, AXLE's behavior depends on the <code>ignore_imports</code> flag.</p>
+<p><strong>Behavior:</strong></p>
+<ul>
+<li>
+<p><strong><code>ignore_imports=True</code> (default):</strong> AXLE ignores the imports in your <code>content</code> and substitutes the environment's default header. This reuses the cached environment, so it is fast. The substituted code is returned in the <code>content</code> field, and an info message notes the override.</p>
+</li>
+<li>
+<p><strong><code>ignore_imports=False</code>:</strong> AXLE processes your imports exactly as written. This is <em>significantly slower</em> because the cached environment cannot be reused, and it may produce <strong>inconsistent or incorrect results</strong> if a required dependency (such as <code>Mathlib.Tactic</code>) is missing. AXLE returns a warning in these cases.</p>
+</li>
+</ul>
+<p><strong>Recommendation:</strong> Leave <code>ignore_imports</code> at its default (<code>True</code>) unless you specifically need custom imports. To discover the expected imports for an environment, query the <a href="../configuration/#discovering-available-environments">environments endpoint</a>.</p>
+<h3 id="unsupported-lean-constructs">Unsupported Lean Constructs<a class="headerlink" href="#unsupported-lean-constructs" title="Permanent link">&para;</a></h3>
+<p><strong>Symptom:</strong> Unexpected behavior or errors with certain Lean code patterns.</p>
+<p><strong>Cause:</strong> AXLE was designed with simple imports, theorems, and definitions in mind.</p>
+<p><strong>Potentially unsupported constructs:</strong></p>
+<ul>
+<li>Non-standard declaration types</li>
+<li><code>open</code> commands</li>
+<li><code>section</code>/<code>namespace</code> blocks</li>
+<li>Complex macro usage</li>
+</ul>
+<p><strong>Resolution:</strong> Use the <a href="../tools/normalize/"><code>normalize</code></a> tool to detect unsupported constructs early. We attempt to support these patterns and fail fast when we can't, but we make no guarantees about stability.</p>
+<h3 id="interpreting-the-okay-field">Interpreting the <code>okay</code> Field<a class="headerlink" href="#interpreting-the-okay-field" title="Permanent link">&para;</a></h3>
+<p>For every tool, <code>okay</code> is <code>true</code> exactly when <code>lean_messages.errors</code> is empty (the code compiles) and <code>tool_messages.errors</code> is empty (no tool-specific errors). What differs is what each tool reports as a tool error:</p>
+<ul>
+<li><strong><code>check</code></strong> — compilation only. It produces no tool errors: validation findings (a declaration that uses <code>sorry</code>, a disallowed axiom, or an unsafe definition) are reported as <code>tool_messages</code> warnings, with the offending names in <code>failed_declarations</code>, and do <strong>not</strong> move <code>okay</code>. To treat <code>check</code> as a pass/fail for a real proof, require <code>result.okay and not result.failed_declarations</code>, or better yet, use <code>verify_proof</code>.</li>
+<li><strong><code>verify_proof</code></strong> — compilation + strict proof verification. Tool errors are verification failures: the findings above, plus a signature mismatch or a missing declaration. Any of them sets <code>okay: false</code>.</li>
+<li><strong><code>repair_proofs</code></strong> — compilation + no failed repairs. A failed repair — a repair was detected as necessary, but no successful change could fix it (e.g. a <code>sorry</code> that no terminal tactic could prove, or a <code>native_decide</code> that can't be safely replaced) — is a tool error and sets <code>okay: false</code>.</li>
+</ul>
+<p>If you just want a single "is this a complete, valid proof" answer, use <code>verify_proof</code>.</p>
+<h3 id="all-executors-failed-after-n-attempts">"All Executors Failed After N Attempts"<a class="headerlink" href="#all-executors-failed-after-n-attempts" title="Permanent link">&para;</a></h3>
+<p><strong>Symptom:</strong> Request fails with an error like <code>all executors failed after N attempts</code>.</p>
+<p><strong>Cause:</strong> This indicates a runtime error or crash on the server side. The most likely cause is an out-of-memory (OOM) condition, where the server kills runaway Lean processes that exceed memory limits.</p>
+<p><strong>Resolution:</strong> Check your input for patterns that might cause excessive memory usage:</p>
+<ul>
+<li>Very large files or deeply nested expressions</li>
+<li>Proofs that trigger expensive elaboration</li>
+<li>Tactics that generate large proof terms</li>
+</ul>
+<p>Try simplifying your input or breaking it into smaller pieces.</p>
+<h3 id="limited-concurrency">Limited Concurrency<a class="headerlink" href="#limited-concurrency" title="Permanent link">&para;</a></h3>
+<p><strong>Symptom:</strong> Requests are being throttled or you're hitting concurrency limits.</p>
+<p><strong>Resolution:</strong></p>
+<ol>
+<li>
+<p><strong>Get and set an API key.</strong> Authenticated requests have higher rate limits. See <a href="../configuration/">Configuration</a> for details.</p>
+</li>
+<li>
+<p><strong>Increase client-side concurrency.</strong> Set the <code>AXLE_MAX_CONCURRENCY</code> environment variable to allow more concurrent requests from your client. See <a href="../configuration/">Configuration</a> for details.</p>
+</li>
+<li>
+<p><strong>Request more capacity.</strong> If you need higher rate limits, you can <a href="https://forms.gle/CdLKu45tEsRXtFQ29">request more capacity</a>.</p>
+</li>
+</ol>
+<h3 id="slow-requests-timing-mismatches">Slow Requests / Timing Mismatches<a class="headerlink" href="#slow-requests-timing-mismatches" title="Permanent link">&para;</a></h3>
+<p><strong>Symptom:</strong> Requests take longer than expected, or reported timings don't match end-to-end latency.</p>
+<p><strong>Cause:</strong> Several server-side factors can affect request duration:</p>
+<ul>
+<li><strong>Warmup time</strong> — Cold environments need initialization</li>
+<li><strong>Queue delays</strong> — Requests may wait for available executors or hit rate limits</li>
+<li><strong>Server load</strong> — Shared infrastructure can experience slowdowns</li>
+</ul>
+<p><strong>Note:</strong> The request timeout does not necessarily correspond to end-to-end delay. Server-reported timings reflect processing time, not total round-trip time including queue wait.</p>
+<p>If Lean execution time itself is too slow, you may need to consult the next section.</p>
+<h3 id="slow-lean-execution">Slow Lean Execution<a class="headerlink" href="#slow-lean-execution" title="Permanent link">&para;</a></h3>
+<p>This section addresses issues with Lean execution time itself being too slow. You can view more detailed timing information in the returned <code>info</code> and <code>timings</code> field returned by each tool.</p>
+<ol>
+<li>
+<p><strong>Use the default header.</strong> The default header (typically <code>import Mathlib</code>) is cached, so files using that header are significantly faster than reloading imports from scratch.</p>
+</li>
+<li>
+<p><strong>Turn off the <code>reparse</code> option.</strong> Some transformations come with a <code>reparse</code> toggle (default: <code>true</code>) that re-elaborates the file to return fresh Lean messages. If you don't need those messages, there is no point in reparsing, so you can cut the parse time in half by skipping it.</p>
+</li>
+<li>
+<p><strong>Use the <code>names</code> and <code>indices</code> fields.</strong> If you only need to check / transform some declarations, you can specify them in the <code>names</code> or <code>indices</code> field. This skips proof elaboration for any unselected declarations, which can greatly increase execution speed.</p>
+</li>
+<li>
+<p><strong>Use <code>permitted_sorries</code>.</strong> Proof elaboration is skipped for <code>permitted_sorries</code> (default: empty), so skipping checks for trusted parts of the file can lead to significant improvements. Use this option with caution -- errors or disallowed axioms inside those proofs now go unnoticed as well, not just explicit sorries. Any final verification should always be done with this field empty. See the <a href="../tools/verify_proof/"><code>verify_proof</code> page</a> for details.</p>
+</li>
+<li>
+<p><strong>Turn off the <code>elab_proofs</code> option.</strong> <code>extract_decls</code> comes with the <code>elab_proofs</code> option (default: <code>true</code>). If you only need to inspect theorem statements and not the proofs, you can turn this toggle off to skip processing proofs. Note that this will break any proof-dependent fields, such as <code>content</code>, any <code>value</code> dependencies, <code>proof_length</code>, etc. Statement-level fields (<code>type</code>, <code>type_hash</code>, <code>signature</code>, type dependencies, positions) are still computed, and non-theorem declarations are unaffected. Use this to cheaply list a file's declarations (e.g. to feed the <code>names</code>/<code>indices</code> parameters of other tools). See the <a href="../tools/extract_decls/"><code>extract_decls</code> page</a> for details.</p>
+</li>
+</ol>
+<h3 id="tool-specific-issues">Tool-Specific Issues<a class="headerlink" href="#tool-specific-issues" title="Permanent link">&para;</a></h3>
+<p>For troubleshooting specific to individual tools, see the documentation for that tool in the <a href="../tools/verify_proof/">Tools</a> section.</p>
+<h3 id="http-302-to-a-browser-sign-in-axlebrowserloginrequirederror">HTTP 302 to a browser sign-in (<code>AxleBrowserLoginRequiredError</code>)<a class="headerlink" href="#http-302-to-a-browser-sign-in-axlebrowserloginrequirederror" title="Permanent link">&para;</a></h3>
+<p>You may be attempting to access a forbidden internal tier.</p>
+<h3 id="verify_proof-rejects-a-proof-with-a-user-provided-answer"><code>verify_proof</code> rejects a proof with a user-provided answer<a class="headerlink" href="#verify_proof-rejects-a-proof-with-a-user-provided-answer" title="Permanent link">&para;</a></h3>
+<p>Some questions take the following format:</p>
+<blockquote>
+<p>Find <code>x</code> such that <code>x * x = 4</code>.</p>
+<p>Prove or disprove that the sum of <code>1/p</code> over prime <code>p</code> converges.</p>
+</blockquote>
+<p>We call such examples "find the answer" problems. <code>verify_proof</code> has special handling for such cases; see the <a href="../tools/verify_proof/#find-the-answer-problems"><code>verify_proof</code> page</a> for details.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.sections", "navigation.expand", "search.suggest", "content.code.copy", "header.autohide"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
