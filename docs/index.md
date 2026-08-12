@@ -99,3 +99,17 @@ If you encounter bugs, unexpected behavior, or have feature requests:
 - [AXLE on Zulip](https://leanprover.zulipchat.com/#narrow/channel/219941-Machine-Learning-for-Theorem-Proving/topic/Axiom.20Lean.20Engine/with/577859288) - Discussion thread for AXLE
 - [axiom-axle-mcp](https://pypi.org/project/axiom-axle-mcp/) - MCP server for AXLE
 - [Pantograph](https://github.com/lenianiva/Pantograph) - Machine-to-machine interaction interface for Lean
+
+## Machine-Readable Docs
+
+This documentation is also served in machine-readable form:
+
+| Endpoint | Description |
+|----------|-------------|
+| [`/v1/docs/pages.json`](https://axle.axiommath.ai/v1/docs/pages.json) | Page manifest in navigation order: slug, title, and HTML URL for every page |
+| [`/v1/docs/all.json`](https://axle.axiommath.ai/v1/docs/all.json) | The same manifest with each page's source markdown inlined |
+| `/v1/docs/raw/{slug}.md` | One page's source markdown, e.g. [`/v1/docs/raw/quickstart.md`](https://axle.axiommath.ai/v1/docs/raw/quickstart.md) |
+
+```bash
+curl -s https://axle.axiommath.ai/v1/docs/pages.json | jq
+```

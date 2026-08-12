@@ -10,6 +10,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Releases]
 
+## v1.7.0 - August 12, 2026
+
+This update reworks how global Lean options are handled in the (new) `global_options`, `delab_options`, `mathlib_options`, and `verbosity` fields. It also comes with new machine-readable docs endpoints under [`/v1/docs`](https://axle.axiommath.ai/v1/docs), which the MCP server uses to pull instructions for tools before using them.
+
+### Removed
+- Removed Lean 4.32.0 due to a [kernel soundness bug](https://leodemoura.github.io/blog/2026-8-1-postmortem-for-kernel-soundness-bug-14576/) in Lean and replaced with Lean 4.32.2, which patches the bug. Note that although we only remove Lean 4.32.0, this bug affects all prior versions as well.
+### Added
+- Added Lean 4.33.0, and added Lean 4.32.2 as a replacement for Lean 4.32.0.
+- Various additions to options configurations across all tools:
+
+    - The `mathlib_options` field (previously only on `check`, `verify_proof`, and `highlight`) is now accepted by every tool. It applies to everything the request elaborates. Note that this can change tool behavior; for example, the `enable_autoImplicit` pass in `repair_proofs` is mostly inert with Lean's defaults, but relevant with Mathlib options enabled.
+    - The pretty-printing tools (`normalize`, `extract_decls`, `extract_theorems`, `have2lemma`, `sorry2lemma`, `disprove`) now accept a `delab_options` field: Lean pretty-printer options, e.g. `{"pp.fieldNotation": false}`, applied on top of the options that tool pretty-prints with. Only `pp.*` options are accepted. See the `delab_options` and `verbosity` field documentation for each tool for more details.
+    - Every tool now accepts a `global_options` field: Lean options, e.g. `{"maxHeartbeats": 400000}`, applied to everything the request parses and elaborates, on top of the defaults and the `mathlib_options` preset. The format is the same as `delab_options`, but any registered option can be set, and values may be booleans, integers, or strings to match the type the option was declared with.
+
+- This documentation is now also served in machine-readable form under [`/v1/docs`](https://axle.axiommath.ai/v1/docs): `pages.json` (a page manifest in navigation order), `all.json` (the manifest with each page's source markdown inlined), and `raw/{slug}.md` (one page's source markdown). See the documentation homepage for examples.
+
+### Fixed
+- `verify_proof` with `mathlib_options` enabled now parses `formal_statement` with Mathlib settings as well; previously they only applied to `content`.
+- `repair_proofs` now properly counts all time dedicated to file elaboration in the `parse_ms` timing field, not just the initial parse.
+- Stray, ambiguous warnings are no longer emitted when a `simplify_theorems` iteration fails and falls back to the last stable version of the file.
+- Fixed a rare case in `simplify_theorems` where removing an entire unused tactic sequence could cause the simplification pass to fail in older Lean versions. For example, [this request](https://axle.axiommath.ai/simplify_theorems#r=5acc9f84-6d3b-4e6d-ac51-241b28f2f624) used to fail and return the original content unchanged, because removing `norm_num` is invalid. Now, a synthetic `skip` tactic is inserted to ensure the content re-elaborates cleanly.
+- Fixed a set of redundant reparses in `extract_decls` when computing each document's `content` field. Files containing many declarations should now expect a significant speed increase. (Up to 10x faster!)
+
+
 ## v1.6.0 - July 29, 2026
 
 This update ships three sets of features: first, a new tool, [`extract_proof_states`](https://axle.axiommath.ai/v1/docs/tools/extract_proof_states), for proof state analysis in bulk. Second, better support for "find-the-answer"-style problems, e.g. problems where the candidate solution must provide an explicit answer in addition to the formal proof; you can read more about such problems [here](https://axle.axiommath.ai/v1/docs/tools/verify_proof#find-the-answer-problems). Third, various fine-tuned efficiency improvements that customize elaboration to skip unnecessary work. Most users can ignore these settings, but instructions are available on the [troubleshooting page](https://axle.axiommath.ai/v1/docs/troubleshooting/#slow-lean-execution).
@@ -28,6 +52,7 @@ This update ships three sets of features: first, a new tool, [`extract_proof_sta
 - Fixed proofs containing `bv_decide`, which previously failed with an unintelligible message. Now supported as in vanilla Lean.
 - Sorried-out definitions in formal statements are no longer unfolded in `verify_proof`. For example, [this case](https://axle.axiommath.ai/verify_proof#r=c46426e9-365d-4238-b585-d60a4484a49b) used to fail because with `use_def_eq=True`, the `answer` would be unfolded into different values in the formal statement and the candidate solution, causing `verify_proof` to reject the proof with the message "Theorem 'problem' does not match expected signature". This affects ["find the answer"-style problems](https://axle.axiommath.ai/v1/docs/tools/verify_proof#find-the-answer-problems).
 - Fixed two bugs affecting the `normalize` tool:
+
   - The `expand_scoped_notations` option incorrectly failed to expand notations added to the namespace via the `open scoped` command, and sometimes incorrectly expanded namespaced global notations.
   - The `expand_decl_names` option sometimes incorrectly expanded synthetic identifiers that were attached to the same source range as an identifier.
 

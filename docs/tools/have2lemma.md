@@ -37,10 +37,45 @@ This tool is partially powered by [`extract_goal`](https://leanprover-community.
     If `true`, the original `have` is replaced with a call to the extracted lemma. Defaults to false.
 
 ??? "`verbosity` · float · default: `0` · Pretty-printer verbosity level (0-2)"
-    0=default, 1=robust, 2=extra robust. Higher levels produce more explicit type annotations. Use when default output has ambiguity errors.
+    Preset buckets of pretty-printer options, addressing the ambiguity problem described under `delab_options`:
+
+    - `verbosity=0` (default): Standard pretty-printing options
+    - `verbosity=1`: Robust options with additional explicitness
+    - `verbosity=2`: Extra robust options with maximum explicitness (e.g. `pp.explicit=true`)
+
+    **Rule of thumb:** If you encounter type inference errors in the output—especially involving coercions, casts, or polymorphic functions—try increasing the verbosity level. Do note that at `verbosity=2`, type signatures may become incredibly complex and unreadable, so it should be used sparingly.
+
+    For finer-grained control over individual pretty-printer options, see `delab_options`, whose overrides apply on top of this preset.
+
+??? "`delab_options` · dict · Pretty-printer option overrides"
+    A dictionary of Lean pretty-printer options (JSON format), applied on top of the options this tool pretty-prints with. Only `pp.*` options are accepted.
+
+    **Why override pretty-printer options?** Pretty-printed output can be ambiguous: the printed form loses information and fails to re-elaborate. Consider this example involving coercions:
+    ```
+    theorem explicit_coercion_test (n : ℕ) (hn : n > 0) : True := by
+      have h : (∑ i : Fin n, (1 : ℝ) / (i.val + 1)) ≤ (harmonic n : ℝ) + 1 := by
+        sorry
+      trivial
+    ```
+
+    With default options, the coercion `(harmonic n : ℝ)` may be pretty-printed as `Rat.cast (harmonic n)`, losing the target type `ℝ`. This causes Lean to fail with errors like "failed to synthesize RatCast ℕ" because it can't infer the correct target type for the coercion. Setting `{"pp.explicit": true}` preserves the target type information and produces valid output.
+
+    This is a known limitation of the Lean pretty-printer (for more details, see [this Zulip thread](https://leanprover.zulipchat.com/#narrow/stream/113488-general/topic/RFC.3A.20printing.20coercions.20with.20type.20ascriptions)).
+
+    For preset buckets of suggested options, see the `verbosity` field (available on some tools).
 
 ??? "`reparse` · bool · default: `True` · Re-elaborate the transformed output"
     If `true` (default), the transformed content is re-elaborated. If `false`, re-elaboration is skipped. The resulting `lean_messages` is then returned empty.
+
+??? "`mathlib_options` · bool · default: `False` · Enable Mathlib options"
+    If true, enables conventional Mathlib options. This toggle sets `linter.mathlibStandardSet` to true, `autoImplicit` to false, `relaxedAutoImplicit` to false, and `pp.unicode.fun` to true. It also runs the `#lint` environment linters and reports their findings in `lean_messages`.
+
+??? "`global_options` · dict · Lean option overrides"
+    A dictionary of Lean options (JSON format), applied to everything the request parses and elaborates, on top of the defaults and the `mathlib_options` preset. For example, `{"maxHeartbeats": 400000}` raises the elaboration heartbeats budget.
+
+    Each name must be a registered Lean option, and its value must match the type the option was declared with: a boolean, an integer, or a string.
+
+    For pretty-printer overrides on the tools that pretty-print output, see `delab_options`.
 
 ??? "`ignore_imports` · bool · default: `True` · Ignore import mismatches"
     Controls import statement handling:
@@ -294,32 +329,6 @@ theorem example_theorem (p q r : Prop) : p ∧ r → p ∨ q := by
   assumption
 ```
 Uh oh. What happened? Notice that when we run `intros`, we introduce a new hypothesis with type `p ∧ r` -- but we haven't given it a name! This means we can't ever refer to it explicitly (i.e., it is *inaccessible*). (This is a Lean quirk which can be disabled, but hygienic names are generally a good thing.) `have2lemma` automatically generated the name `a` in the lemmas, but we can't assign anything to it -- so our tool complains that we've encountered an inaccessible variable, and gives up.
-
-### Verbosity
-
-The `verbosity` parameter controls how explicit the pretty-printer is when generating lemma signatures. Higher verbosity levels produce more explicit output, which can help avoid ambiguity in complex type situations.
-
-- `verbosity=0` (default): Standard pretty-printing options
-- `verbosity=1`: Robust options with additional explicitness
-- `verbosity=2`: Extra robust options with maximum explicitness
-
-#### When to use higher verbosity
-
-Consider this example involving coercions:
-```
-theorem explicit_coercion_test (n : ℕ) (hn : n > 0) : True := by
-  have h : (∑ i : Fin n, (1 : ℝ) / (i.val + 1)) ≤ (harmonic n : ℝ) + 1 := by
-    sorry
-  trivial
-```
-
-With default verbosity (`verbosity=0`), the coercion `(harmonic n : ℝ)` may be pretty-printed as `Rat.cast (harmonic n)`, losing the target type `ℝ`. This causes Lean to fail with errors like "failed to synthesize RatCast ℕ" because it can't infer the correct target type for the coercion.
-
-With `verbosity=2`, the pretty-printer uses `pp.explicit=true`, which preserves the target type information and produces a valid lemma signature.
-
-**Rule of thumb:** If you encounter type inference errors in generated lemmas—especially involving coercions, casts, or polymorphic functions—try increasing the verbosity level.
-
-Do note that at `verbosity=2`, type signatures may become incredibly complex and unreadable, so it should be used sparingly.
 
 ### Summary
 

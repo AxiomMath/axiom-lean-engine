@@ -156,10 +156,45 @@ VERBOSITY_INPUT: InputField = {
     "name": "verbosity",
     "type": "number",
     "description": "Pretty-printer verbosity level (0-2)",
-    "details": "0=default, 1=robust, 2=extra robust. Higher levels produce more explicit type annotations. Use when default output has ambiguity errors.",
+    "details": """\
+Preset buckets of pretty-printer options, addressing the ambiguity problem described under `delab_options`:
+
+- `verbosity=0` (default): Standard pretty-printing options
+- `verbosity=1`: Robust options with additional explicitness
+- `verbosity=2`: Extra robust options with maximum explicitness (e.g. `pp.explicit=true`)
+
+**Rule of thumb:** If you encounter type inference errors in the output—especially involving coercions, casts, or polymorphic functions—try increasing the verbosity level. Do note that at `verbosity=2`, type signatures may become incredibly complex and unreadable, so it should be used sparingly.
+
+For finer-grained control over individual pretty-printer options, see `delab_options`, whose overrides apply on top of this preset.""",
     "required": False,
     "default": 0,
     "placeholder": "0",
+}
+
+DELAB_OPTIONS_INPUT: InputField = {
+    "name": "delab_options",
+    "type": "dict",
+    "description": "Pretty-printer option overrides",
+    "details": """\
+A dictionary of Lean pretty-printer options (JSON format), applied on top of the options this tool pretty-prints with. Only `pp.*` options are accepted.
+
+**Why override pretty-printer options?** Pretty-printed output can be ambiguous: the printed form loses information and fails to re-elaborate. Consider this example involving coercions:
+```
+theorem explicit_coercion_test (n : ℕ) (hn : n > 0) : True := by
+  have h : (∑ i : Fin n, (1 : ℝ) / (i.val + 1)) ≤ (harmonic n : ℝ) + 1 := by
+    sorry
+  trivial
+```
+
+With default options, the coercion `(harmonic n : ℝ)` may be pretty-printed as `Rat.cast (harmonic n)`, losing the target type `ℝ`. This causes Lean to fail with errors like "failed to synthesize RatCast ℕ" because it can't infer the correct target type for the coercion. Setting `{"pp.explicit": true}` preserves the target type information and produces valid output.
+
+This is a known limitation of the Lean pretty-printer (for more details, see [this Zulip thread](https://leanprover.zulipchat.com/#narrow/stream/113488-general/topic/RFC.3A.20printing.20coercions.20with.20type.20ascriptions)).
+
+For preset buckets of suggested options, see the `verbosity` field (available on some tools).""",
+    "required": False,
+    "placeholder": '{"pp.fieldNotation": false}',
+    "cli_dict_inline": True,
+    "cli_dict_file_flag": "--delab-options-file",
 }
 
 # Proof elaboration toggle (extract_decls)
@@ -182,8 +217,24 @@ MATHLIB_OPTIONS_INPUT: InputField = {
     "name": "mathlib_options",
     "type": "checkbox",
     "description": "Enable Mathlib options",
-    "details": "If true, enables conventional Mathlib options. This toggle sets `linter.mathlibStandardSet` to true, `autoImplicit` to false, `relaxedAutoImplicit` to false, and `pp.unicode.fun` to true.",
+    "details": "If true, enables conventional Mathlib options. This toggle sets `linter.mathlibStandardSet` to true, `autoImplicit` to false, `relaxedAutoImplicit` to false, and `pp.unicode.fun` to true. It also runs the `#lint` environment linters and reports their findings in `lean_messages`.",
     "default": False,
+}
+
+GLOBAL_OPTIONS_INPUT: InputField = {
+    "name": "global_options",
+    "type": "dict",
+    "description": "Lean option overrides",
+    "details": """\
+A dictionary of Lean options (JSON format), applied to everything the request parses and elaborates, on top of the defaults and the `mathlib_options` preset. For example, `{"maxHeartbeats": 400000}` raises the elaboration heartbeats budget.
+
+Each name must be a registered Lean option, and its value must match the type the option was declared with: a boolean, an integer, or a string.
+
+For pretty-printer overrides on the tools that pretty-print output, see `delab_options`.""",
+    "required": False,
+    "placeholder": '{"maxHeartbeats": 400000}',
+    "cli_dict_inline": True,
+    "cli_dict_file_flag": "--global-options-file",
 }
 
 # REUSABLE OUTPUT FIELDS
@@ -573,6 +624,7 @@ This option is also useful for enabling tactics like `native_decide`, which intr
                 "placeholder": "helper_lemma, auxiliary_theorem",
             },
             MATHLIB_OPTIONS_INPUT,
+            GLOBAL_OPTIONS_INPUT,
             {
                 "name": "use_def_eq",
                 "type": "checkbox",
@@ -727,6 +779,7 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/check \\
         "inputs": [
             CONTENT_INPUT,
             MATHLIB_OPTIONS_INPUT,
+            GLOBAL_OPTIONS_INPUT,
             NAMES_INPUT,
             INDICES_INPUT,
             THEOREMS_ONLY_INPUT,
@@ -865,6 +918,9 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/extract_theorems \\
             },
             NAMES_INPUT,
             INDICES_INPUT,
+            DELAB_OPTIONS_INPUT,
+            MATHLIB_OPTIONS_INPUT,
+            GLOBAL_OPTIONS_INPUT,
             IGNORE_IMPORTS_INPUT,
             ENVIRONMENT_INPUT,
             TIMEOUT_INPUT,
@@ -1013,7 +1069,10 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/extract_decls \\
             NAMES_INPUT,
             INDICES_INPUT,
             VERBOSITY_INPUT,
+            DELAB_OPTIONS_INPUT,
             ELABORATE_PROOFS_INPUT,
+            MATHLIB_OPTIONS_INPUT,
+            GLOBAL_OPTIONS_INPUT,
             IGNORE_IMPORTS_INPUT,
             ENVIRONMENT_INPUT,
             TIMEOUT_INPUT,
@@ -1089,6 +1148,8 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/extract_proof_states \\
                 **CONTENT_INPUT,
                 "placeholder": "theorem foo (n : Nat) : n + 0 = n := by\n  induction n with\n  | zero => rfl\n  | succ k ih => simp",
             },
+            MATHLIB_OPTIONS_INPUT,
+            GLOBAL_OPTIONS_INPUT,
             IGNORE_IMPORTS_INPUT,
             ENVIRONMENT_INPUT,
             TIMEOUT_INPUT,
@@ -1244,6 +1305,8 @@ CLI supports `key=val,key=val` format or `--declarations-file mapping.json`.""",
                 "cli_dict_file_flag": "--declarations-file",
             },
             REPARSE_INPUT,
+            MATHLIB_OPTIONS_INPUT,
+            GLOBAL_OPTIONS_INPUT,
             IGNORE_IMPORTS_INPUT,
             ENVIRONMENT_INPUT,
             TIMEOUT_INPUT,
@@ -1342,6 +1405,8 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/theorem2lemma \\
             },
             THEOREMS_ONLY_NOOP_INPUT,
             REPARSE_INPUT,
+            MATHLIB_OPTIONS_INPUT,
+            GLOBAL_OPTIONS_INPUT,
             IGNORE_IMPORTS_INPUT,
             ENVIRONMENT_INPUT,
             TIMEOUT_INPUT,
@@ -1422,6 +1487,8 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/theorem2sorry \\
             INDICES_INPUT,
             THEOREMS_ONLY_INPUT,
             REPARSE_INPUT,
+            MATHLIB_OPTIONS_INPUT,
+            GLOBAL_OPTIONS_INPUT,
             IGNORE_IMPORTS_INPUT,
             ENVIRONMENT_INPUT,
             TIMEOUT_INPUT,
@@ -1665,6 +1732,8 @@ Defaults to true.""",
                 "default": False,
             },
             REPARSE_INPUT,
+            MATHLIB_OPTIONS_INPUT,
+            GLOBAL_OPTIONS_INPUT,
             IGNORE_IMPORTS_INPUT,
             ENVIRONMENT_INPUT,
             TIMEOUT_INPUT,
@@ -1841,6 +1910,8 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/simplify_theorems \\
                 "required": False,
                 "placeholder": "remove_unused_tactics, rename_unused_vars, remove_unused_haves",
             },
+            MATHLIB_OPTIONS_INPUT,
+            GLOBAL_OPTIONS_INPUT,
             IGNORE_IMPORTS_INPUT,
             ENVIRONMENT_INPUT,
             TIMEOUT_INPUT,
@@ -2101,6 +2172,8 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/repair_proofs \\
                 "default": ["grind"],
                 "placeholder": "grind, aesop, rfl, simp, decide",
             },
+            MATHLIB_OPTIONS_INPUT,
+            GLOBAL_OPTIONS_INPUT,
             IGNORE_IMPORTS_INPUT,
             ENVIRONMENT_INPUT,
             TIMEOUT_INPUT,
@@ -2340,32 +2413,6 @@ theorem example_theorem (p q r : Prop) : p ∧ r → p ∨ q := by
 ```
 Uh oh. What happened? Notice that when we run `intros`, we introduce a new hypothesis with type `p ∧ r` -- but we haven't given it a name! This means we can't ever refer to it explicitly (i.e., it is *inaccessible*). (This is a Lean quirk which can be disabled, but hygienic names are generally a good thing.) `have2lemma` automatically generated the name `a` in the lemmas, but we can't assign anything to it -- so our tool complains that we've encountered an inaccessible variable, and gives up.
 
-### Verbosity
-
-The `verbosity` parameter controls how explicit the pretty-printer is when generating lemma signatures. Higher verbosity levels produce more explicit output, which can help avoid ambiguity in complex type situations.
-
-- `verbosity=0` (default): Standard pretty-printing options
-- `verbosity=1`: Robust options with additional explicitness
-- `verbosity=2`: Extra robust options with maximum explicitness
-
-#### When to use higher verbosity
-
-Consider this example involving coercions:
-```
-theorem explicit_coercion_test (n : ℕ) (hn : n > 0) : True := by
-  have h : (∑ i : Fin n, (1 : ℝ) / (i.val + 1)) ≤ (harmonic n : ℝ) + 1 := by
-    sorry
-  trivial
-```
-
-With default verbosity (`verbosity=0`), the coercion `(harmonic n : ℝ)` may be pretty-printed as `Rat.cast (harmonic n)`, losing the target type `ℝ`. This causes Lean to fail with errors like "failed to synthesize RatCast ℕ" because it can't infer the correct target type for the coercion.
-
-With `verbosity=2`, the pretty-printer uses `pp.explicit=true`, which preserves the target type information and produces a valid lemma signature.
-
-**Rule of thumb:** If you encounter type inference errors in generated lemmas—especially involving coercions, casts, or polymorphic functions—try increasing the verbosity level.
-
-Do note that at `verbosity=2`, type signatures may become incredibly complex and unreadable, so it should be used sparingly.
-
 ### Summary
 
 These configuration options provide some flexibility around usage, at the cost of correctness in some cases. Try to keep this in mind when generating bug reports -- some of these errors aren't fixable without significant effort.""",
@@ -2400,7 +2447,10 @@ These configuration options provide some flexibility around usage, at the cost o
                 "default": False,
             },
             VERBOSITY_INPUT,
+            DELAB_OPTIONS_INPUT,
             REPARSE_INPUT,
+            MATHLIB_OPTIONS_INPUT,
+            GLOBAL_OPTIONS_INPUT,
             IGNORE_IMPORTS_INPUT,
             ENVIRONMENT_INPUT,
             TIMEOUT_INPUT,
@@ -2475,6 +2525,8 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/have2sorry \\
             INDICES_INPUT,
             THEOREMS_ONLY_INPUT,
             REPARSE_INPUT,
+            MATHLIB_OPTIONS_INPUT,
+            GLOBAL_OPTIONS_INPUT,
             IGNORE_IMPORTS_INPUT,
             ENVIRONMENT_INPUT,
             TIMEOUT_INPUT,
@@ -2569,7 +2621,7 @@ result = await axle.sorry2lemma(content, environment="lean-4.28.0", extract_sorr
 result = await axle.sorry2lemma(content, environment="lean-4.28.0", extract_sorries=False, extract_errors=False)
 ```
 
-### `include_whole_context`, `reconstruct_callsite`, `verbosity`
+### `include_whole_context`, `reconstruct_callsite`
 Refer to the [have2lemma documentation](have2lemma.md#demo) for a detailed description and examples of these fields. `sorry2lemma` handles them in mostly the same way.
 
 **Multiple goals:** When a single sorry applies to multiple goals (e.g., after `<;>`), the tool generates multiple lemmas and combines them with `first`:
@@ -2622,7 +2674,10 @@ theorem multiple (n : Nat) : 1 = 1 ∧ 2 = 2 := by constructor <;> (first | exac
             },
             THEOREMS_ONLY_INPUT,
             VERBOSITY_INPUT,
+            DELAB_OPTIONS_INPUT,
             REPARSE_INPUT,
+            MATHLIB_OPTIONS_INPUT,
+            GLOBAL_OPTIONS_INPUT,
             IGNORE_IMPORTS_INPUT,
             ENVIRONMENT_INPUT,
             TIMEOUT_INPUT,
@@ -2721,6 +2776,9 @@ Tactics tried in order to prove the negation. `grind` often works for false stat
             },
             THEOREMS_ONLY_NOOP_INPUT,
             VERBOSITY_INPUT,
+            DELAB_OPTIONS_INPUT,
+            MATHLIB_OPTIONS_INPUT,
+            GLOBAL_OPTIONS_INPUT,
             IGNORE_IMPORTS_INPUT,
             ENVIRONMENT_INPUT,
             TIMEOUT_INPUT,
@@ -2950,6 +3008,9 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/normalize \\
                 "details": "If true, returns the original content unchanged if normalization introduces errors. Defaults to true.",
                 "default": True,
             },
+            DELAB_OPTIONS_INPUT,
+            MATHLIB_OPTIONS_INPUT,
+            GLOBAL_OPTIONS_INPUT,
             IGNORE_IMPORTS_INPUT,
             ENVIRONMENT_INPUT,
             TIMEOUT_INPUT,

@@ -103,7 +103,14 @@ See the corresponding [Github issue](https://github.com/AxiomMath/axiom-lean-eng
     **Note:** glob patterns do not defend against an adversary deliberately crafting malicious axioms with matching names, so we don't recommend using them with untrusted code.
 
 ??? "`mathlib_options` · bool · default: `False` · Enable Mathlib options"
-    If true, enables conventional Mathlib options. This toggle sets `linter.mathlibStandardSet` to true, `autoImplicit` to false, `relaxedAutoImplicit` to false, and `pp.unicode.fun` to true.
+    If true, enables conventional Mathlib options. This toggle sets `linter.mathlibStandardSet` to true, `autoImplicit` to false, `relaxedAutoImplicit` to false, and `pp.unicode.fun` to true. It also runs the `#lint` environment linters and reports their findings in `lean_messages`.
+
+??? "`global_options` · dict · Lean option overrides"
+    A dictionary of Lean options (JSON format), applied to everything the request parses and elaborates, on top of the defaults and the `mathlib_options` preset. For example, `{"maxHeartbeats": 400000}` raises the elaboration heartbeats budget.
+
+    Each name must be a registered Lean option, and its value must match the type the option was declared with: a boolean, an integer, or a string.
+
+    For pretty-printer overrides on the tools that pretty-print output, see `delab_options`.
 
 ??? "`use_def_eq` · bool · default: `True` · Use definitional equality for type comparison"
     When `false`, types are compared at face value (faster, but may very rarely reject valid proofs).
