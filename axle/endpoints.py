@@ -96,7 +96,8 @@ NAMES_INPUT: InputField = {
     "description": "Theorem names to process",
     "details": """\
 Optional list of theorem names to process. If not specified, all theorems are processed.
-Requesting a name not found in the code returns an error.
+Performs a best-effort name resolution (e.g. `bar` resolves to `Foo.bar`) when no declaration
+matches the given name. When multiple declarations match, returns an error message listing the candidates.
 When `theorems_only` is `false`, these select over all declarations (not just theorems).""",
     "required": False,
     "placeholder": "foo, bar",
@@ -300,10 +301,10 @@ DOCUMENT_FIELDS_BASE = """\
 ??? "`type` · str · Pretty-printed type of the declaration"
     The type of the declaration as pretty-printed by Lean.
 
-??? "`type_hash` · int · Hash of the canonical type expression"
+??? "`type_hash` · int | None · Hash of the canonical type expression"
     Hash of the canonical, alpha-invariant type expression. Useful for deduplication.
 
-??? "`unfolded_type_hash` · int · Hash after unfolding local elaboration auxiliaries"
+??? "`unfolded_type_hash` · int | None · Hash after unfolding local elaboration auxiliaries"
     Hash of the type after unfolding module-local elaboration auxiliaries; useful for deduplication.
 
 ??? "`type_depth` · int · Structural depth of the type expression"
@@ -1939,6 +1940,7 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/simplify_theorems \\
         "details": """\
 Attempt to repair broken theorem proofs. Available repairs:
 
+- `insert_sorries` — append `sorry` to proofs that end with goals still open
 - `remove_extraneous_tactics` — truncate trailing tactics after the proof closes
 - `apply_terminal_tactics` — try terminal tactics in place of `sorry`
 - `replace_unsafe_tactics` — replace `native_decide` with `decide +kernel`
@@ -2027,6 +2029,51 @@ If `repairs` is omitted, all of the above run. Pass an explicit list to limit wh
     theorem pnat_card_Icc (a b : ℕ+) : #(Icc a b) = b + 1 - a := by
       rw [← Nat.card_Icc, ← PNat.map_subtype_embedding_Icc, card_map]
     ```
+
+??? "`insert_sorries`"
+    When a proof runs out of tactics with goals still open, this repair appends a `sorry` so the
+    file compiles. `all_goals sorry` is used when more than one goal is left.
+
+    **Before:**
+    ```lean
+    theorem incomplete (n : Nat) : n + 0 = n ∧ n = n := by
+      have h : n = n := rfl
+      constructor
+    ```
+
+    **After:**
+    ```lean
+    theorem incomplete (n : Nat) : n + 0 = n ∧ n = n := by
+      have h : n = n := rfl
+      constructor
+      all_goals sorry
+    ```
+
+    A proof written on a single line keeps it that way, with `;` as the separator:
+
+    **Before:**
+    ```lean
+    theorem one_liner : True ∧ True := by constructor
+    ```
+
+    **After:**
+    ```lean
+    theorem one_liner : True ∧ True := by constructor; all_goals sorry
+    ```
+
+    An empty proof body is filled in the same way:
+
+    **Before:**
+    ```lean
+    theorem empty_proof : True ∧ True := by
+    ```
+
+    **After:**
+    ```lean
+    theorem empty_proof : True ∧ True := by sorry
+    ```
+
+    A block aborted by a failing tactic is left unchanged.
 
 ??? "`remove_extraneous_tactics`"
     When a proof is already complete but has extra tactics afterward, this repair removes the extraneous tactics.
@@ -2157,11 +2204,12 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/repair_proofs \\
                     "remove_unknown_options",
                     "enable_autoImplicit",
                     "relax_defeq_transparency",
+                    "insert_sorries",
                     "remove_extraneous_tactics",
                     "apply_terminal_tactics",
                     "replace_unsafe_tactics",
                 ],
-                "placeholder": "remove_unknown_options, enable_autoImplicit, relax_defeq_transparency, remove_extraneous_tactics, apply_terminal_tactics, replace_unsafe_tactics",
+                "placeholder": "remove_unknown_options, enable_autoImplicit, relax_defeq_transparency, insert_sorries, remove_extraneous_tactics, apply_terminal_tactics, replace_unsafe_tactics",
             },
             {
                 "name": "terminal_tactics",

@@ -1,6 +1,6 @@
-# Troubleshooting
+# Tool Troubleshooting
 
-Common issues when working with AXLE and how to resolve them.
+Common issues with tool behavior and Lean output, and how to resolve them. For issues with the AXLE service itself — capacity, connectivity, and auth — see [Service Troubleshooting](../setup/troubleshooting.md).
 
 ## Reading Error Messages
 
@@ -16,7 +16,7 @@ When a request fails entirely, the response includes an error type at the top le
 | `error` + `error_type: LeanResourceExceeded` | Lean worker hit a resource cap (e.g. memory) for this input | Reduce the problem's memory allocation |
 | `error` + `error_type: LeanTimeout` | Lean worker exceeded its time budget for this input | Simplify the input or raise the timeout |
 
-In the Python client, these map to exceptions: `AxleInvalidArgument`, `AxleInternalError`, `AxleRuntimeError`, `LeanResourceExceeded`, and `LeanTimeout`. See [Error Handling](python-api.md#error-handling) for details on catching and handling these exceptions, and for an exhaustive list of all AXLE exceptions, including networking errors.
+In the Python client, these map to exceptions: `AxleInvalidArgument`, `AxleInternalError`, `AxleRuntimeError`, `LeanResourceExceeded`, and `LeanTimeout`. See [Error Handling](../setup/python-api.md#error-handling) for details on catching and handling these exceptions, and for an exhaustive list of all AXLE exceptions, including networking errors.
 
 ### Resource Limits
 
@@ -83,7 +83,7 @@ else:
 
 - **`ignore_imports=False`:** AXLE processes your imports exactly as written. This is *significantly slower* because the cached environment cannot be reused, and it may produce **inconsistent or incorrect results** if a required dependency (such as `Mathlib.Tactic`) is missing. AXLE returns a warning in these cases.
 
-**Recommendation:** Leave `ignore_imports` at its default (`True`) unless you specifically need custom imports. To discover the expected imports for an environment, query the [environments endpoint](configuration.md#discovering-available-environments).
+**Recommendation:** Leave `ignore_imports` at its default (`True`) unless you specifically need custom imports. To discover the expected imports for an environment, query the [environments endpoint](../setup/configuration.md#discovering-available-environments).
 
 ### Unsupported Lean Constructs
 
@@ -98,7 +98,7 @@ else:
 - `section`/`namespace` blocks
 - Complex macro usage
 
-**Resolution:** Use the [`normalize`](tools/normalize.md) tool to detect unsupported constructs early. We attempt to support these patterns and fail fast when we can't, but we make no guarantees about stability.
+**Resolution:** Use the [`normalize`](normalize.md) tool to detect unsupported constructs early. We attempt to support these patterns and fail fast when we can't, but we make no guarantees about stability.
 
 ### Interpreting the `okay` Field
 
@@ -110,46 +110,6 @@ For every tool, `okay` is `true` exactly when `lean_messages.errors` is empty (t
 
 If you just want a single "is this a complete, valid proof" answer, use `verify_proof`.
 
-### "All Executors Failed After N Attempts"
-
-**Symptom:** Request fails with an error like `all executors failed after N attempts`.
-
-**Cause:** This indicates a runtime error or crash on the server side. The most likely cause is an out-of-memory (OOM) condition, where the server kills runaway Lean processes that exceed memory limits.
-
-**Resolution:** Check your input for patterns that might cause excessive memory usage:
-
-- Very large files or deeply nested expressions
-- Proofs that trigger expensive elaboration
-- Tactics that generate large proof terms
-
-Try simplifying your input or breaking it into smaller pieces.
-
-### Limited Concurrency
-
-**Symptom:** Requests are being throttled or you're hitting concurrency limits.
-
-**Resolution:**
-
-1. **Get and set an API key.** Authenticated requests have higher rate limits. See [Configuration](configuration.md) for details.
-
-2. **Increase client-side concurrency.** Set the `AXLE_MAX_CONCURRENCY` environment variable to allow more concurrent requests from your client. See [Configuration](configuration.md) for details.
-
-3. **Request more capacity.** If you need higher rate limits, you can [request more capacity](https://forms.gle/CdLKu45tEsRXtFQ29).
-
-### Slow Requests / Timing Mismatches
-
-**Symptom:** Requests take longer than expected, or reported timings don't match end-to-end latency.
-
-**Cause:** Several server-side factors can affect request duration:
-
-- **Warmup time** — Cold environments need initialization
-- **Queue delays** — Requests may wait for available executors or hit rate limits
-- **Server load** — Shared infrastructure can experience slowdowns
-
-**Note:** The request timeout does not necessarily correspond to end-to-end delay. Server-reported timings reflect processing time, not total round-trip time including queue wait.
-
-If Lean execution time itself is too slow, you may need to consult the next section.
-
 ### Slow Lean Execution
 
 This section addresses issues with Lean execution time itself being too slow. You can view more detailed timing information in the returned `info` and `timings` field returned by each tool.
@@ -160,17 +120,14 @@ This section addresses issues with Lean execution time itself being too slow. Yo
 
 3. **Use the `names` and `indices` fields.** If you only need to check / transform some declarations, you can specify them in the `names` or `indices` field. This skips proof elaboration for any unselected declarations, which can greatly increase execution speed.
 
-4. **Use `permitted_sorries`.** Proof elaboration is skipped for `permitted_sorries` (default: empty), so skipping checks for trusted parts of the file can lead to significant improvements. Use this option with caution -- errors or disallowed axioms inside those proofs now go unnoticed as well, not just explicit sorries. Any final verification should always be done with this field empty. See the [`verify_proof` page](tools/verify_proof.md) for details.
+4. **Use `permitted_sorries`.** Proof elaboration is skipped for `permitted_sorries` (default: empty), so skipping checks for trusted parts of the file can lead to significant improvements. Use this option with caution -- errors or disallowed axioms inside those proofs now go unnoticed as well, not just explicit sorries. Any final verification should always be done with this field empty. See the [`verify_proof` page](verify_proof.md) for details.
 
-5. **Turn off the `elab_proofs` option.** `extract_decls` comes with the `elab_proofs` option (default: `true`). If you only need to inspect theorem statements and not the proofs, you can turn this toggle off to skip processing proofs. Note that this will break any proof-dependent fields, such as `content`, any `value` dependencies, `proof_length`, etc. Statement-level fields (`type`, `type_hash`, `signature`, type dependencies, positions) are still computed, and non-theorem declarations are unaffected. Use this to cheaply list a file's declarations (e.g. to feed the `names`/`indices` parameters of other tools). See the [`extract_decls` page](tools/extract_decls.md) for details.
+5. **Turn off the `elab_proofs` option.** `extract_decls` comes with the `elab_proofs` option (default: `true`). If you only need to inspect theorem statements and not the proofs, you can turn this toggle off to skip processing proofs. Note that this will break any proof-dependent fields, such as `content`, any `value` dependencies, `proof_length`, etc. Statement-level fields (`type`, `type_hash`, `signature`, type dependencies, positions) are still computed, and non-theorem declarations are unaffected. Use this to cheaply list a file's declarations (e.g. to feed the `names`/`indices` parameters of other tools). See the [`extract_decls` page](extract_decls.md) for details.
 
 
 ### Tool-Specific Issues
 
-For troubleshooting specific to individual tools, see the documentation for that tool in the [Tools](tools/verify_proof.md) section.
-
-### HTTP 302 to a browser sign-in (`AxleBrowserLoginRequiredError`)
-You may be attempting to access a forbidden internal tier.
+For troubleshooting specific to individual tools, see the documentation for that tool in the [Tools](verify_proof.md) section.
 
 ### `verify_proof` rejects a proof with a user-provided answer
 
@@ -180,4 +137,4 @@ Some questions take the following format:
 
 > Prove or disprove that the sum of `1/p` over prime `p` converges.
 
-We call such examples "find the answer" problems. `verify_proof` has special handling for such cases; see the [`verify_proof` page](tools/verify_proof.md#find-the-answer-problems) for details.
+We call such examples "find the answer" problems. `verify_proof` has special handling for such cases; see the [`verify_proof` page](verify_proof.md#find-the-answer-problems) for details.

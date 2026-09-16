@@ -7,12 +7,22 @@ import pytest
 
 from axle.client import AxleClient
 from axle.exceptions import AxleRuntimeError, LeanResourceExceeded, LeanTimeout
-from axle.types import VerifyProofResponse
+from axle.types import Document, VerifyProofResponse
 
 
 def test_verify_proof_response(mock_verify_response: dict) -> None:
     response = VerifyProofResponse.from_response(mock_verify_response)
     assert response.okay is True
+
+
+def test_document_type_hashes_are_none_only_when_the_response_omits_them() -> None:
+    absent = Document.from_response("foo", {})
+    assert absent.type_hash is None
+    assert absent.unfolded_type_hash is None
+
+    carried = Document.from_response("foo", {"type_hash": 11, "unfolded_type_hash": 22})
+    assert carried.type_hash == 11
+    assert carried.unfolded_type_hash == 22
 
 
 async def test_run_one_raises_resource_exceeded() -> None:

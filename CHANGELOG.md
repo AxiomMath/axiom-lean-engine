@@ -10,19 +10,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Releases]
 
+## v1.8.0 - September 16, 2026
+
+This update ships the `insert_sorries` repair to `repair_proofs` and allows unqualified names to be passed to the `names` field.
+
+### Removed
+- Removed Lean 4.33.0 due to [kernel soundness bugs](https://leodemoura.github.io/blog/2026-8-24-postmortem-for-the-kernel-soundness-bug-hunt/) in Lean and replaced with Lean 4.33.1, which patches the bugs. Note that although we only remove Lean 4.33.0, these bugs affect all prior versions as well.
+
+### Added
+- `repair_proofs` now implements the `insert_sorries` repair: a proof that runs out of tactics with goals still open gets a `sorry` appended (`all_goals sorry` when more than one goal is left), and an empty proof body is filled the same way, so incomplete proofs compile. It runs as part of the default repair set.
+- Added Lean 4.34.0, and added Lean 4.33.1 as a replacement for Lean 4.33.0.
+
+### Changed
+- A missing `type_hash` or `unfolded_type_hash` (returned by `extract_decls` and `extract_theorems`) now defaults to `None` instead of 0.
+- The `names` field now accepts unqualified declaration names: `bar` selects `Foo.bar` when exactly one declaration in the file matches, mirroring how Lean resolves a short name. A name matching several declarations returns an error listing the candidates.
+- `exponent is too big` is now a `LeanResourceExceeded` (non-retriable) error.
+
+
 ## v1.7.0 - August 12, 2026
 
 This update reworks how global Lean options are handled in the (new) `global_options`, `delab_options`, `mathlib_options`, and `verbosity` fields. It also comes with new machine-readable docs endpoints under [`/v1/docs`](https://axle.axiommath.ai/v1/docs), which the MCP server uses to pull instructions for tools before using them.
 
 ### Removed
 - Removed Lean 4.32.0 due to a [kernel soundness bug](https://leodemoura.github.io/blog/2026-8-1-postmortem-for-kernel-soundness-bug-14576/) in Lean and replaced with Lean 4.32.2, which patches the bug. Note that although we only remove Lean 4.32.0, this bug affects all prior versions as well.
+
 ### Added
 - Added Lean 4.33.0, and added Lean 4.32.2 as a replacement for Lean 4.32.0.
 - Various additions to options configurations across all tools:
 
-    - The `mathlib_options` field (previously only on `check`, `verify_proof`, and `highlight`) is now accepted by every tool. It applies to everything the request elaborates. Note that this can change tool behavior; for example, the `enable_autoImplicit` pass in `repair_proofs` is mostly inert with Lean's defaults, but relevant with Mathlib options enabled.
-    - The pretty-printing tools (`normalize`, `extract_decls`, `extract_theorems`, `have2lemma`, `sorry2lemma`, `disprove`) now accept a `delab_options` field: Lean pretty-printer options, e.g. `{"pp.fieldNotation": false}`, applied on top of the options that tool pretty-prints with. Only `pp.*` options are accepted. See the `delab_options` and `verbosity` field documentation for each tool for more details.
-    - Every tool now accepts a `global_options` field: Lean options, e.g. `{"maxHeartbeats": 400000}`, applied to everything the request parses and elaborates, on top of the defaults and the `mathlib_options` preset. The format is the same as `delab_options`, but any registered option can be set, and values may be booleans, integers, or strings to match the type the option was declared with.
+        - The `mathlib_options` field (previously only on `check` and `verify_proof`) is now accepted by every tool. It applies to everything the request elaborates. Note that this can change tool behavior; for example, the `enable_autoImplicit` pass in `repair_proofs` is mostly inert with Lean's defaults, but relevant with Mathlib options enabled.
+        - The pretty-printing tools (`normalize`, `extract_decls`, `extract_theorems`, `have2lemma`, `sorry2lemma`, `disprove`) now accept a `delab_options` field: Lean pretty-printer options, e.g. `{"pp.fieldNotation": false}`, applied on top of the options that tool pretty-prints with. Only `pp.*` options are accepted. See the `delab_options` and `verbosity` field documentation for each tool for more details.
+        - Every tool now accepts a `global_options` field: Lean options, e.g. `{"maxHeartbeats": 400000}`, applied to everything the request parses and elaborates, on top of the defaults and the `mathlib_options` preset. The format is the same as `delab_options`, but any registered option can be set, and values may be booleans, integers, or strings to match the type the option was declared with.
 
 - This documentation is now also served in machine-readable form under [`/v1/docs`](https://axle.axiommath.ai/v1/docs): `pages.json` (a page manifest in navigation order), `all.json` (the manifest with each page's source markdown inlined), and `raw/{slug}.md` (one page's source markdown). See the documentation homepage for examples.
 
@@ -36,7 +54,7 @@ This update reworks how global Lean options are handled in the (new) `global_opt
 
 ## v1.6.0 - July 29, 2026
 
-This update ships three sets of features: first, a new tool, [`extract_proof_states`](https://axle.axiommath.ai/v1/docs/tools/extract_proof_states), for proof state analysis in bulk. Second, better support for "find-the-answer"-style problems, e.g. problems where the candidate solution must provide an explicit answer in addition to the formal proof; you can read more about such problems [here](https://axle.axiommath.ai/v1/docs/tools/verify_proof#find-the-answer-problems). Third, various fine-tuned efficiency improvements that customize elaboration to skip unnecessary work. Most users can ignore these settings, but instructions are available on the [troubleshooting page](https://axle.axiommath.ai/v1/docs/troubleshooting/#slow-lean-execution).
+This update ships three sets of features: first, a new tool, [`extract_proof_states`](https://axle.axiommath.ai/v1/docs/tools/extract_proof_states), for proof state analysis in bulk. Second, better support for "find-the-answer"-style problems, e.g. problems where the candidate solution must provide an explicit answer in addition to the formal proof; you can read more about such problems [here](https://axle.axiommath.ai/v1/docs/tools/verify_proof#find-the-answer-problems). Third, various fine-tuned efficiency improvements that customize elaboration to skip unnecessary work. Most users can ignore these settings, but instructions are available on the [troubleshooting page](https://axle.axiommath.ai/v1/docs/tools/troubleshooting/#slow-lean-execution).
 
 ### Added
 - Added a new tool: `extract_proof_states`, which returns the tactic proof state at the end of each line of the given Lean code, as shown in an editor's goal panel, as a list of `{line, proof_state}` objects. Output is capped at 10,000,000 characters; past the cap, states are omitted and the `truncated` field is set. See the [`extract_proof_states` page](https://axle.axiommath.ai/v1/docs/tools/extract_proof_states) for details.
@@ -53,8 +71,8 @@ This update ships three sets of features: first, a new tool, [`extract_proof_sta
 - Sorried-out definitions in formal statements are no longer unfolded in `verify_proof`. For example, [this case](https://axle.axiommath.ai/verify_proof#r=c46426e9-365d-4238-b585-d60a4484a49b) used to fail because with `use_def_eq=True`, the `answer` would be unfolded into different values in the formal statement and the candidate solution, causing `verify_proof` to reject the proof with the message "Theorem 'problem' does not match expected signature". This affects ["find the answer"-style problems](https://axle.axiommath.ai/v1/docs/tools/verify_proof#find-the-answer-problems).
 - Fixed two bugs affecting the `normalize` tool:
 
-  - The `expand_scoped_notations` option incorrectly failed to expand notations added to the namespace via the `open scoped` command, and sometimes incorrectly expanded namespaced global notations.
-  - The `expand_decl_names` option sometimes incorrectly expanded synthetic identifiers that were attached to the same source range as an identifier.
+    - The `expand_scoped_notations` option incorrectly failed to expand notations added to the namespace via the `open scoped` command, and sometimes incorrectly expanded namespaced global notations.
+    - The `expand_decl_names` option sometimes incorrectly expanded synthetic identifiers that were attached to the same source range as an identifier.
 
 
 
@@ -91,9 +109,9 @@ This update comes with two notable changes to `ignore_imports` and the `okay`/`t
 
 ### Changed
 
-- `ignore_imports` now defaults to `true`. When your code's imports don't match the environment's default header, AXLE substitutes the default header (reusing the cached environment) instead of raising an error. Setting `ignore_imports=false` no longer errors on a mismatch; instead AXLE processes your imports as written, which is significantly slower and may give incorrect results if a required dependency such as `Mathlib.Tactic` is missing (a warning is returned in these cases). See [Import Mismatches](https://axle.axiommath.ai/v1/docs/troubleshooting/#import-mismatches) for details.
+- `ignore_imports` now defaults to `true`. When your code's imports don't match the environment's default header, AXLE substitutes the default header (reusing the cached environment) instead of raising an error. Setting `ignore_imports=false` no longer errors on a mismatch; instead AXLE processes your imports as written, which is significantly slower and may give incorrect results if a required dependency such as `Mathlib.Tactic` is missing (a warning is returned in these cases). See [Import Mismatches](https://axle.axiommath.ai/v1/docs/tools/troubleshooting/#import-mismatches) for details.
 
-- Reworked the `tool_messages` and `okay` fields for a few tools. See [Interpreting the `okay` field](https://axle.axiommath.ai/v1/docs/troubleshooting/#interpreting-the-okay-field) for details.
+- Reworked the `tool_messages` and `okay` fields for a few tools. See [Interpreting the `okay` field](https://axle.axiommath.ai/v1/docs/tools/troubleshooting/#interpreting-the-okay-field) for details.
 
     - `check` now reports validation findings (`sorry`, disallowed axioms, unsafe definitions) as `tool_messages` warnings instead of errors. `okay` continues to reflect compilation only, and the offending declarations remain listed in `failed_declarations`.
     - `repair_proofs` now reports failed repairs (e.g. terminal tactics that fail to prove a `sorry`) as `tool_messages` errors instead of warnings, so `okay` is `True` only when the repaired code compiles *and* all repairs succeed.
@@ -134,7 +152,7 @@ This update comes with support for all declaration kinds, a reworked `repair_pro
 ### Added
 
 - Added *link shortening* to the gateway. The web UI has been updated correspondingly. Try it out: [https://axle.axiommath.ai/check#r=7d70453f-813f-4d19-8de9-44793dafa835](https://axle.axiommath.ai/check#r=7d70453f-813f-4d19-8de9-44793dafa835)
-- Added Claude web, desktop, and mobile support to the [`axiom-axle-mcp`](https://pypi.org/project/axiom-axle-mcp/) MCP server via a hosted endpoint at `https://mcp.axiommath.ai/mcp`. See the [Quick Start](https://axle.axiommath.ai/v1/docs/quickstart/#mcp-server) for details. Thanks to Andrew Sutherland for suggestions on setting up this hosted instance.
+- Added Claude web, desktop, and mobile support to the [`axiom-axle-mcp`](https://pypi.org/project/axiom-axle-mcp/) MCP server via a hosted endpoint at `https://mcp.axiommath.ai/mcp`. See the [Quick Start](https://axle.axiommath.ai/v1/docs/setup/quickstart/#mcp-server) for details. Thanks to Andrew Sutherland for suggestions on setting up this hosted instance.
 - Added three new fields to the `info` field of every response to identify the executor version your request was handled on: `_executor_commit_sha`, `_executor_docker_image_id`, and `_executor_artifact_sha256`.
 
 ### Changed
@@ -267,7 +285,7 @@ This is a minor patch with new documentation pages, increased rate limits, and b
 
 ### Added
 
-- Added [Changelog](https://axle.axiommath.ai/v1/docs/changelog/) and [Troubleshooting](https://axle.axiommath.ai/v1/docs/troubleshooting/) to the documentation pages.
+- Added [Changelog](https://axle.axiommath.ai/v1/docs/changelog/) and [Troubleshooting](https://axle.axiommath.ai/v1/docs/tools/troubleshooting/) to the documentation pages.
 
 ### Fixed
 

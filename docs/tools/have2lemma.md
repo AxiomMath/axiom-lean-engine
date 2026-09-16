@@ -15,7 +15,8 @@ This tool is partially powered by [`extract_goal`](https://leanprover-community.
 
 ??? "`names` · list[str] · Theorem names to process"
     Optional list of theorem names to process. If not specified, all theorems are processed.
-    Requesting a name not found in the code returns an error.
+    Performs a best-effort name resolution (e.g. `bar` resolves to `Foo.bar`) when no declaration
+    matches the given name. When multiple declarations match, returns an error message listing the candidates.
     When `theorems_only` is `false`, these select over all declarations (not just theorems).
 
 ??? "`indices` · list[int] · Theorem indices to process"

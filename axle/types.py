@@ -70,8 +70,8 @@ class Document:
     tokens: list[str]
     signature: str
     type: str
-    type_hash: int
-    unfolded_type_hash: int
+    type_hash: int | None
+    unfolded_type_hash: int | None
     type_depth: int
     term_depth: int
     is_sorry: bool
@@ -101,8 +101,8 @@ class Document:
             tokens=response.get("tokens", []),
             signature=response.get("signature", ""),
             type=response.get("type", ""),
-            type_hash=response.get("type_hash", 0),
-            unfolded_type_hash=response.get("unfolded_type_hash", 0),
+            type_hash=response.get("type_hash"),
+            unfolded_type_hash=response.get("unfolded_type_hash"),
             type_depth=response.get("type_depth", 0),
             term_depth=response.get("term_depth", 0),
             is_sorry=response.get("is_sorry", False),

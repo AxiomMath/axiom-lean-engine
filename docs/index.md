@@ -15,11 +15,11 @@ AXLE is a set of Lean utilities for theorem proving: validating candidate proofs
 AXLE can be accessed through:
 
 1. **Web Interface** - Interactive UI at [https://axle.axiommath.ai/](https://axle.axiommath.ai/)
-2. **Python API** - `pip install axiom-axle` ([Python API Reference](python-api.md))
-3. **CLI** - `axle verify-proof`, `axle check`, etc. ([CLI Reference](cli-reference.md))
+2. **Python API** - `pip install axiom-axle` ([Python API Reference](setup/python-api.md))
+3. **CLI** - `axle verify-proof`, `axle check`, etc. ([CLI Reference](setup/cli-reference.md))
 4. **HTTP API** - Direct REST calls with `curl`
 
-See the [Quick Start](quickstart.md) tutorial for examples of each method.
+See the [Quick Start](setup/quickstart.md) tutorial for examples of each method.
 
 ## Available Tools
 
@@ -46,12 +46,13 @@ See tools documentation for detailed parameters and response fields.
 
 ## Links
 
-- [Installation Guide](installation.md)
-- [Quick Start Tutorial](quickstart.md)
-- [Python API Reference](python-api.md)
-- [CLI Reference](cli-reference.md)
-- [Configuration](configuration.md)
-- [Troubleshooting](troubleshooting.md)
+- [Installation Guide](setup/installation.md)
+- [Quick Start Tutorial](setup/quickstart.md)
+- [Python API Reference](setup/python-api.md)
+- [CLI Reference](setup/cli-reference.md)
+- [Configuration](setup/configuration.md)
+- [Tool Troubleshooting](tools/troubleshooting.md)
+- [Service Troubleshooting](setup/troubleshooting.md)
 
 ## Citing AXLE
 
@@ -108,7 +109,7 @@ This documentation is also served in machine-readable form:
 |----------|-------------|
 | [`/v1/docs/pages.json`](https://axle.axiommath.ai/v1/docs/pages.json) | Page manifest in navigation order: slug, title, and HTML URL for every page |
 | [`/v1/docs/all.json`](https://axle.axiommath.ai/v1/docs/all.json) | The same manifest with each page's source markdown inlined |
-| `/v1/docs/raw/{slug}.md` | One page's source markdown, e.g. [`/v1/docs/raw/quickstart.md`](https://axle.axiommath.ai/v1/docs/raw/quickstart.md) |
+| `/v1/docs/raw/{slug}.md` | One page's source markdown, e.g. [`/v1/docs/raw/setup/quickstart.md`](https://axle.axiommath.ai/v1/docs/raw/setup/quickstart.md) |
 
 ```bash
 curl -s https://axle.axiommath.ai/v1/docs/pages.json | jq

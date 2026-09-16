@@ -14,7 +14,8 @@ Split a file containing one or more theorems into smaller units, each containing
 
 ??? "`names` · list[str] · Theorem names to process"
     Optional list of theorem names to process. If not specified, all theorems are processed.
-    Requesting a name not found in the code returns an error.
+    Performs a best-effort name resolution (e.g. `bar` resolves to `Foo.bar`) when no declaration
+    matches the given name. When multiple declarations match, returns an error message listing the candidates.
     When `theorems_only` is `false`, these select over all declarations (not just theorems).
 
 ??? "`indices` · list[int] · Theorem indices to process"
@@ -116,10 +117,10 @@ Each document in the `documents` dictionary contains:
 ??? "`type` · str · Pretty-printed type of the declaration"
     The type of the declaration as pretty-printed by Lean.
 
-??? "`type_hash` · int · Hash of the canonical type expression"
+??? "`type_hash` · int | None · Hash of the canonical type expression"
     Hash of the canonical, alpha-invariant type expression. Useful for deduplication.
 
-??? "`unfolded_type_hash` · int · Hash after unfolding local elaboration auxiliaries"
+??? "`unfolded_type_hash` · int | None · Hash after unfolding local elaboration auxiliaries"
     Hash of the type after unfolding module-local elaboration auxiliaries; useful for deduplication.
 
 ??? "`type_depth` · int · Structural depth of the type expression"

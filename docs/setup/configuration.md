@@ -146,4 +146,4 @@ Each environment includes the following fields:
   }]
 ```
 
-See [Import Mismatches](troubleshooting.md#import-mismatches) for important notes on how AXLE handles import statements.
+See [Import Mismatches](../tools/troubleshooting.md#import-mismatches) for important notes on how AXLE handles import statements.

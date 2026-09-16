@@ -26,12 +26,12 @@ theme:
 nav:
   - Home: index.md
   - Getting Started:
-      - Installation: installation.md
-      - Quick Start: quickstart.md
-      - Configuration: configuration.md
-      - Troubleshooting: troubleshooting.md
-  - Python API: python-api.md
-  - CLI Reference: cli-reference.md
+      - Installation: setup/installation.md
+      - Quick Start: setup/quickstart.md
+      - Configuration: setup/configuration.md
+      - Service Troubleshooting: setup/troubleshooting.md
+  - Python API: setup/python-api.md
+  - CLI Reference: setup/cli-reference.md
   - Release Notes:
       - Changelog: changelog.md
   - Tools:
@@ -51,6 +51,7 @@ nav:
       - sorry2lemma: tools/sorry2lemma.md
       - disprove: tools/disprove.md
       - normalize: tools/normalize.md
+      - Tool Troubleshooting: tools/troubleshooting.md
 
 markdown_extensions:
   - pymdownx.highlight:

@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Any, cast
 
 from axle import AxleClient, __version__
-from axle.cli.endpoints import ENDPOINTS, CliOutputConfig, EndpointMetadata, InputField
+from axle.endpoints import ENDPOINTS, CliOutputConfig, EndpointMetadata, InputField
 
 
 def snake_to_kebab(name: str) -> str:
