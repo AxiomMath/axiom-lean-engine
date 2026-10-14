@@ -2,6 +2,8 @@
 
 Split a file containing one or more declarations into smaller units, each containing a single declaration along with any required dependencies. This is the replacement for the deprecated [`extract_theorems`](extract_theorems.md) tool, and works for all declaration kinds (def, theorem, lemma, abbrev, instance, structure, etc.).
 
+To build a dependency graph over a file without paying for the pretty-printed types, hashes, and self-contained declaration sources, two inputs trade completeness for speed. `dependencies_only=true` computes only each declaration's kind, position, and dependency lists. `elaborate=false` skips elaboration entirely and reports only the constants named in the source text.
+
 [Try this example in the web UI](https://axle.axiommath.ai/extract_decls#data=eyJjb250ZW50Ijoic3RydWN0dXJlIFdlaWdodCB3aGVyZVxuICB2YWwgOiBOYXRcbiAgcG9zIDogdmFsID4gMCA6PSBieSBvbWVnYVxuXG5jbGFzcyBXZWlnaHRlZCAozrEgOiBUeXBlKSB3aGVyZVxuICB3ZWlnaHQgOiDOsSDihpIgV2VpZ2h0XG5cbmRlZiB0cml2aWFsV2VpZ2h0IDogV2VpZ2h0IDo9IOKfqDEsIGJ5IG9tZWdh4p+pXG5cbmluc3RhbmNlIDogV2VpZ2h0ZWQgTmF0IHdoZXJlXG4gIHdlaWdodCBfIDo9IHRyaXZpYWxXZWlnaHQiLCJpZ25vcmVfaW1wb3J0cyI6dHJ1ZSwiZW52aXJvbm1lbnQiOiJsZWFuLTQuMjguMCIsInRpbWVvdXRfc2Vjb25kcyI6MTIwfQ%3D%3D)
 
 ## Input Parameters
@@ -57,8 +59,21 @@ Split a file containing one or more declarations into smaller units, each contai
     - These fields are empty — do not use them: `content`; for theorems `is_sorry`, `term_depth`, `local_value_dependencies`, `external_value_dependencies`.
     - These fields are incomplete — use with caution: `lean_messages`, `declaration_messages`; for theorems `local_syntactic_dependencies`, `external_syntactic_dependencies`, `wall_ms`, `heartbeats`.
 
+??? "`dependencies_only` · bool · default: `False` · Extract dependencies only"
+    If `false` (default), every document field is computed. Set to `true` to compute only each declaration's `kind`, `index`, `line_pos`, `end_line_pos`, `is_sorry`, and the six dependency lists (`local`/`external` × `type`/`value`/`syntactic`). This skips the pretty-printed types, hashes, and self-contained declaration sources, which dominate the cost on files with many declarations. Use this to build a dependency graph over a file.
+
+    When `true`, emits a `tool_messages` warning and these fields are empty and should not be used: `declaration`, `content`, `tokens`, `signature`, `type`, `type_hash`, `unfolded_type_hash`, `type_depth`, `term_depth`, `proof_length`, `tactic_counts`, `wall_ms`, `heartbeats`, `theorem_messages`, `declaration_messages`. `verbosity` and `delab_options` have no effect.
+
+??? "`elaborate` · bool · default: `True` · Elaborate the file"
+    If `true` (default), the file is elaborated. Set to `false` to skip elaboration entirely and report only the constants named in each declaration's source text, resolved against the environment's imports. This is much faster but misses constants introduced by tactics, notation, and macro expansion.
+
+    When `false`, emits a `tool_messages` warning and populates only `kind`, `index`, `line_pos`, `end_line_pos`, `local_syntactic_dependencies`, and `external_syntactic_dependencies`; every other document field is empty. `lean_messages` holds only header and parse errors. `elaborate_proofs`, `dependencies_only`, `verbosity`, and `delab_options` have no effect.
+
 ??? "`mathlib_options` · bool · default: `False` · Enable Mathlib options"
     If true, enables conventional Mathlib options. This toggle sets `linter.mathlibStandardSet` to true, `autoImplicit` to false, `relaxedAutoImplicit` to false, and `pp.unicode.fun` to true. It also runs the `#lint` environment linters and reports their findings in `lean_messages`.
+
+??? "`run_env_linters` · bool · default: `False` · Run environment linters"
+    If true, runs the `#lint` environment linters (such as `docBlame`, `simpNF` and `unusedArguments`) on the file's declarations and reports their findings in `lean_messages`. It changes no Lean options. `mathlib_options` also runs them.
 
 ??? "`global_options` · dict · Lean option overrides"
     A dictionary of Lean options (JSON format), applied to everything the request parses and elaborates, on top of the defaults and the `mathlib_options` preset. For example, `{"maxHeartbeats": 400000}` raises the elaboration heartbeats budget.

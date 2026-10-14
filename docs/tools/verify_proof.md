@@ -105,6 +105,9 @@ See the corresponding [Github issue](https://github.com/AxiomMath/axiom-lean-eng
 ??? "`mathlib_options` · bool · default: `False` · Enable Mathlib options"
     If true, enables conventional Mathlib options. This toggle sets `linter.mathlibStandardSet` to true, `autoImplicit` to false, `relaxedAutoImplicit` to false, and `pp.unicode.fun` to true. It also runs the `#lint` environment linters and reports their findings in `lean_messages`.
 
+??? "`run_env_linters` · bool · default: `False` · Run environment linters"
+    If true, runs the `#lint` environment linters (such as `docBlame`, `simpNF` and `unusedArguments`) on the file's declarations and reports their findings in `lean_messages`. It changes no Lean options. `mathlib_options` also runs them.
+
 ??? "`global_options` · dict · Lean option overrides"
     A dictionary of Lean options (JSON format), applied to everything the request parses and elaborates, on top of the defaults and the `mathlib_options` preset. For example, `{"maxHeartbeats": 400000}` raises the elaboration heartbeats budget.
 
@@ -149,6 +152,31 @@ See the corresponding [Github issue](https://github.com/AxiomMath/axiom-lean-eng
     - A universe-polymorphic sorried def is not quantified over. It remains a constant in the negated type.
     - A sorried def is only quantified over when it appears directly in a theorem's type. If it is reachable only through the body of another local def, it remains a constant in the negated type.
     - When `formal_statement` contains several theorems, each is negated independently. This may be logically inconsistent but is out of the scope of `verify_proof`.
+
+??? "`allow_statement_axioms` · bool · default: `False` · Allow `content` to use axioms declared in `formal_statement`"
+    By default, `content` may only use the standard axioms `propext`, `Quot.sound`, and
+    `Classical.choice`. When `true`, it may also use any axiom declared in `formal_statement`.
+    `content` must redeclare each such axiom it uses, with the same name, universe parameters,
+    and type. Types are compared at face value, regardless of `use_def_eq`.
+
+    ```lean
+    -- formal_statement
+    axiom ax : 1 = 2
+    theorem t : 1 = 2 := sorry
+
+    -- content
+    axiom ax : 1 = 2
+    theorem t : 1 = 2 := ax
+    ```
+
+    Axioms that `content` does not use are not checked, and need not be redeclared. Axioms
+    that `formal_statement` only imports are not allowed. The option also applies to the
+    negation check when `verify_negation` is set.
+
+??? "`allow_bv_decide` · bool · default: `False` · Allow the axioms that `bv_decide` generates"
+    By default, proofs that use `bv_decide` are rejected, because the tactic adds an axiom. When
+    `true`, `content` may also use the axioms that `bv_decide` generates. Any other axiom is still
+    rejected. Has no effect before Lean 4.29.0.
 
 ??? "`ignore_imports` · bool · default: `True` · Ignore import mismatches"
     Controls import statement handling:

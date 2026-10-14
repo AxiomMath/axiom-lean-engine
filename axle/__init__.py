@@ -1,5 +1,7 @@
 """AXLE - Python client for the Axiom Lean Engine API."""
 
+import importlib.metadata
+
 from axle.client import AxleClient
 from axle.exceptions import (
     AxleApiError,
@@ -80,4 +82,4 @@ __all__ = [
     "VerifyProofResponse",
 ]
 
-__version__ = "0.1.0"
+__version__ = importlib.metadata.version("axiom-axle")

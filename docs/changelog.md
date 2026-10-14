@@ -10,6 +10,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Releases]
 
+## v1.9.0 - October 14, 2026
+
+This update adds new environments (CSLib, Physlib, and PrimeGapsLib) and introduces options to `extract_decls`, `simplify_theorems`, and `verify_proof` for faster, simpler, or more permissive usage.
+
+### Removed
+- Removed Lean 4.34.0 and replaced it with Lean 4.34.1.
+
+### Added
+- Added [CSLib](https://github.com/leanprover/cslib/) (4.35.0), [Physlib](https://github.com/leanprover-community/physlib) (4.34.1), and [PrimeGapsLib](https://github.com/AxiomMath/PrimeGapsLib) (4.33.0-rc1) environments.
+- Added Lean 4.35.0, and added Lean 4.34.1 as a replacement for Lean 4.34.0.
+- Every tool now accepts a `run_env_linters` option (default `false`). When set, the `#lint` environment linters run and report their findings in `lean_messages`, without changing any Lean options.
+- `simplify_theorems` gained two opt-in simplifications, selected via `simplifications`:
+    - `apply_try_this` applies the `Try this:` suggestions tactics offer (`exact?`, `simp?`, `apply?`).
+    - `apply_linter_hints` applies the fixes linter warnings carry, such as dropping an unused `simp` argument.
+- `verify_proof` now accepts two new options:
+    - `allow_bv_decide` (default `false`): when set, `content` may use the axioms that `bv_decide` generates (Lean 4.29.0 and later).
+    - `allow_statement_axioms` (default `false`): when set, `content` may use the axioms declared in `formal_statement`, provided it redeclares each one it uses with the same name, universe parameters, and type.
+- `extract_decls` now accepts two new options:
+    - `dependencies_only` (default `false`): when set to `true`, each document reports only its declaration's kind, its line range, whether it contains `sorry`, and its local and external type, value and syntactic dependencies, and every other field is empty. This skips the pretty-printed types, hashes and self-contained `content`, which is much faster on files with many declarations. See the [`extract_decls` page](https://axle.axiommath.ai/v1/docs/tools/extract_decls) for details.
+    - `elaborate` (default `true`): when set to `false`, elaboration is skipped and the identifiers are resolved as written: names that resolve to nothing (binders, hypotheses) are dropped, constants introduced by tactics, notation or macro expansion are missed, and every field but `kind`, `index`, `line_pos`, `end_line_pos` and the syntactic dependencies is empty.
+
+### Changed
+- `verify_proof` now checks declarations that are marked private in the formal statement, which are reported under the name the user wrote.
+- `repair_proofs`: `apply_terminal_tactics` now also runs where a proof ends with goals still open, not just at a `sorry`.
+- `extract_decls` and `extract_theorems`: `content` is less likely to include earlier declarations that the target does not depend on.
+
+### Fixed
+- `check` and `verify_proof` now report declarations that the elaborator accepts but the kernel rejects.
+- `extract_decls` and `extract_theorems` now attribute each message to the declaration it starts in. Previously, a parse error that ran into the next command was reported under the next declaration, or under none.
+- `extract_decls` now sets `is_sorry` when a `sorry` appears in the auxiliary declarations Lean creates from a declaration's body (from `termination_by`, `where`, `let rec`, `mutual` blocks and the like). Previously, only the declaration's own type and body were checked.
+- Fixed `extract_decls` for an `example` declared inside a namespace, which previously was missing its `type`, `is_sorry` and other elaborated fields.
+
 ## v1.8.0 - September 16, 2026
 
 This update ships the `insert_sorries` repair to `repair_proofs` and allows unqualified names to be passed to the `names` field.
@@ -38,9 +70,9 @@ This update reworks how global Lean options are handled in the (new) `global_opt
 - Added Lean 4.33.0, and added Lean 4.32.2 as a replacement for Lean 4.32.0.
 - Various additions to options configurations across all tools:
 
-        - The `mathlib_options` field (previously only on `check` and `verify_proof`) is now accepted by every tool. It applies to everything the request elaborates. Note that this can change tool behavior; for example, the `enable_autoImplicit` pass in `repair_proofs` is mostly inert with Lean's defaults, but relevant with Mathlib options enabled.
-        - The pretty-printing tools (`normalize`, `extract_decls`, `extract_theorems`, `have2lemma`, `sorry2lemma`, `disprove`) now accept a `delab_options` field: Lean pretty-printer options, e.g. `{"pp.fieldNotation": false}`, applied on top of the options that tool pretty-prints with. Only `pp.*` options are accepted. See the `delab_options` and `verbosity` field documentation for each tool for more details.
-        - Every tool now accepts a `global_options` field: Lean options, e.g. `{"maxHeartbeats": 400000}`, applied to everything the request parses and elaborates, on top of the defaults and the `mathlib_options` preset. The format is the same as `delab_options`, but any registered option can be set, and values may be booleans, integers, or strings to match the type the option was declared with.
+    - The `mathlib_options` field (previously only on `check` and `verify_proof`) is now accepted by every tool. It applies to everything the request elaborates. Note that this can change tool behavior; for example, the `enable_autoImplicit` pass in `repair_proofs` is mostly inert with Lean's defaults, but relevant with Mathlib options enabled.
+    - The pretty-printing tools (`normalize`, `extract_decls`, `extract_theorems`, `have2lemma`, `sorry2lemma`, `disprove`) now accept a `delab_options` field: Lean pretty-printer options, e.g. `{"pp.fieldNotation": false}`, applied on top of the options that tool pretty-prints with. Only `pp.*` options are accepted. See the `delab_options` and `verbosity` field documentation for each tool for more details.
+    - Every tool now accepts a `global_options` field: Lean options, e.g. `{"maxHeartbeats": 400000}`, applied to everything the request parses and elaborates, on top of the defaults and the `mathlib_options` preset. The format is the same as `delab_options`, but any registered option can be set, and values may be booleans, integers, or strings to match the type the option was declared with.
 
 - This documentation is now also served in machine-readable form under [`/v1/docs`](https://axle.axiommath.ai/v1/docs): `pages.json` (a page manifest in navigation order), `all.json` (the manifest with each page's source markdown inlined), and `raw/{slug}.md` (one page's source markdown). See the documentation homepage for examples.
 

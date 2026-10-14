@@ -12,6 +12,9 @@ Extract the tactic proof state at the end of each line of the given Lean code, a
 ??? "`mathlib_options` · bool · default: `False` · Enable Mathlib options"
     If true, enables conventional Mathlib options. This toggle sets `linter.mathlibStandardSet` to true, `autoImplicit` to false, `relaxedAutoImplicit` to false, and `pp.unicode.fun` to true. It also runs the `#lint` environment linters and reports their findings in `lean_messages`.
 
+??? "`run_env_linters` · bool · default: `False` · Run environment linters"
+    If true, runs the `#lint` environment linters (such as `docBlame`, `simpNF` and `unusedArguments`) on the file's declarations and reports their findings in `lean_messages`. It changes no Lean options. `mathlib_options` also runs them.
+
 ??? "`global_options` · dict · Lean option overrides"
     A dictionary of Lean options (JSON format), applied to everything the request parses and elaborates, on top of the defaults and the `mathlib_options` preset. For example, `{"maxHeartbeats": 400000}` raises the elaboration heartbeats budget.
 

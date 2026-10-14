@@ -25,10 +25,13 @@ Simplify theorem proofs by removing unnecessary tactics and cleaning up code.
     If `true` (default), only `theorem`/`lemma` declarations are processed. Set to `false` to process all declaration kinds (`def`/`instance`/`abbrev`/`opaque`/etc). When `false`, `names` and `indices` select over all declarations rather than just theorems.
 
 ??? "`simplifications` · list[str] · List of simplifications to apply"
-    If not specified, all simplifications are applied. See below for available simplifications.
+    If not specified, a default set is applied: `remove_unused_tactics`, `rename_unused_vars`, and `remove_unused_haves`. See below for available simplifications.
 
 ??? "`mathlib_options` · bool · default: `False` · Enable Mathlib options"
     If true, enables conventional Mathlib options. This toggle sets `linter.mathlibStandardSet` to true, `autoImplicit` to false, `relaxedAutoImplicit` to false, and `pp.unicode.fun` to true. It also runs the `#lint` environment linters and reports their findings in `lean_messages`.
+
+??? "`run_env_linters` · bool · default: `False` · Run environment linters"
+    If true, runs the `#lint` environment linters (such as `docBlame`, `simpNF` and `unusedArguments`) on the file's declarations and reports their findings in `lean_messages`. It changes no Lean options. `mathlib_options` also runs them.
 
 ??? "`global_options` · dict · Lean option overrides"
     A dictionary of Lean options (JSON format), applied to everything the request parses and elaborates, on top of the defaults and the `mathlib_options` preset. For example, `{"maxHeartbeats": 400000}` raises the elaboration heartbeats budget.
@@ -102,6 +105,16 @@ Simplify theorem proofs by removing unnecessary tactics and cleaning up code.
     Cleans up unused variable names.
 
     In `theorem triv (arg : ℕ) : True := trivial`, the variable `arg` is useless. We do *not* remove it, because that would change the signature of the theorem, but we can clean things up a bit by replacing it with an underscore, as in: `theorem triv (_ : ℕ) : True := trivial`.
+
+??? "`apply_try_this`"
+    Applies the suggestions tactics offer.
+
+    In `theorem foo (a : Nat) : a + 0 = a := by simp?`, the `simp?` reports `Try this: simp only [add_zero]`, and so is replaced by that.
+
+??? "`apply_linter_hints`"
+    Applies the fix that linter warnings carry.
+
+    In `theorem foo (a : Nat) : a + 0 = a := by simp [Nat.mul_one]`, the `Nat.mul_one` argument is unused, and the linter's hint drops it, leaving `simp`.
 
 <!-- Not functional
 #### `simplify_have_exact`

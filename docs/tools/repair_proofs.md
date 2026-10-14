@@ -4,7 +4,7 @@ Attempt to repair broken theorem proofs. Available repairs:
 
 - `insert_sorries` — append `sorry` to proofs that end with goals still open
 - `remove_extraneous_tactics` — truncate trailing tactics after the proof closes
-- `apply_terminal_tactics` — try terminal tactics in place of `sorry`
+- `apply_terminal_tactics` — try terminal tactics at each `sorry` and at each block left with goals open
 - `replace_unsafe_tactics` — replace `native_decide` with `decide +kernel`
 - `remove_unknown_options` — strip `set_option` commands referencing an unknown option
 - `enable_autoImplicit` — set `autoImplicit true` when a command needs auto-implicit binders
@@ -49,6 +49,9 @@ If `repairs` is omitted, all of the above run. Pass an explicit list to limit wh
     Used when `apply_terminal_tactics` repair is applied. Tactics tried in order; stops on first success. Defaults to `grind`.
 ??? "`mathlib_options` · bool · default: `False` · Enable Mathlib options"
     If true, enables conventional Mathlib options. This toggle sets `linter.mathlibStandardSet` to true, `autoImplicit` to false, `relaxedAutoImplicit` to false, and `pp.unicode.fun` to true. It also runs the `#lint` environment linters and reports their findings in `lean_messages`.
+
+??? "`run_env_linters` · bool · default: `False` · Run environment linters"
+    If true, runs the `#lint` environment linters (such as `docBlame`, `simpNF` and `unusedArguments`) on the file's declarations and reports their findings in `lean_messages`. It changes no Lean options. `mathlib_options` also runs them.
 
 ??? "`global_options` · dict · Lean option overrides"
     A dictionary of Lean options (JSON format), applied to everything the request parses and elaborates, on top of the defaults and the `mathlib_options` preset. For example, `{"maxHeartbeats": 400000}` raises the elaboration heartbeats budget.
@@ -221,7 +224,7 @@ If `repairs` is omitted, all of the above run. Pass an explicit list to limit wh
     ```
 
 ??? "`apply_terminal_tactics`"
-    Tries terminal tactics in place of sorries.
+    Tries terminal tactics wherever a proof is unfinished: in place of a `sorry`, and at the end of a tactic block that ran out of tactics with goals still open.
 
     In `theorem foo : 1 = 1 := by sorry`, the proof is incomplete. This repair attempts to apply terminal tactics to complete the proof. The tactics to try can be customized via the `terminal_tactics` parameter (default: `["grind"]`).
 
@@ -235,6 +238,20 @@ If `repairs` is omitted, all of the above run. Pass an explicit list to limit wh
     ```lean
     theorem simple_eq : 1 + 1 = 2 := by
       grind
+    ```
+
+    A block that ends with goals still open is closed:
+
+    **Before:**
+    ```lean
+    theorem incomplete (n : Nat) : n + 0 = n ∧ n = n := by
+      constructor
+    ```
+
+    **After:**
+    ```lean
+    theorem incomplete (n : Nat) : n + 0 = n ∧ n = n := by
+      constructor; all_goals grind
     ```
 
 

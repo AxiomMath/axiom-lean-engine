@@ -7,6 +7,13 @@ Homepage: https://axle.axiommath.ai/
 ## Recent Announcements
 
 <details open>
+<summary><strong>October 14, 2026 - v1.9.0</strong></summary>
+
+This update adds new environments (CSLib, Physlib, and PrimeGapsLib) and introduces options to `extract_decls`, `simplify_theorems`, and `verify_proof` for faster, simpler, or more permissive usage. See the [changelog](https://axle.axiommath.ai/v1/docs/changelog/) for details.
+
+</details>
+
+<details>
 <summary><strong>September 16, 2026 - v1.8.0</strong></summary>
 
 This update ships the `insert_sorries` repair to `repair_proofs` and allows unqualified names to be passed to the `names` field. See the [changelog](https://axle.axiommath.ai/v1/docs/changelog/) for details.
@@ -31,19 +38,6 @@ This update ships three sets of features. First, a new tool, [`extract_proof_sta
 <summary><strong>July 15, 2026 - v1.5.0</strong></summary>
 
 New `LeanTimeout`/`LeanResourceExceeded` exceptions, `names`/`indices` selection on `check` and `extract_decls`/`extract_theorems` (to skip elaboration for faster runs), and new fields and options (`unfolded_type_hash`, `verify_negation`, `verbosity`). See the [changelog](https://axle.axiommath.ai/v1/docs/changelog/) for details.
-
-</details>
-
-<details>
-<summary><strong>July 1, 2026 - v1.4.0</strong></summary>
-
-This update comes with two notable changes and a variety of additional features:
-
-- **`ignore_imports` now defaults to `true`** — on an import mismatch, AXLE substitutes the default header and reuses the cached environment.
-- In turn, **`ignore_imports=false` no longer errors: it now processes your imports as written**. However, note that this is much slower and may cause issues if a dependency is missing. See [Import Mismatches](https://axle.axiommath.ai/v1/docs/tools/troubleshooting/#import-mismatches).
-- **Reworked `okay` and `tool_messages`** — `check` now reports `sorry`/axiom/unsafe findings as warnings (not errors), and `repair_proofs` reports failed repairs as errors. See [Interpreting the `okay` field](https://axle.axiommath.ai/v1/docs/tools/troubleshooting/#interpreting-the-okay-field).
-
-Also: opaque support in `merge`/`extract_decls`, a `disprove` fix, and Lean 4.30/4.31. See the [changelog](https://axle.axiommath.ai/v1/docs/changelog/) for more details.
 
 </details>
 
@@ -73,6 +67,19 @@ To cite AXLE, please cite the [technical report](https://arxiv.org/abs/2606.2644
 ```
 
 ## Past Announcements
+
+<details>
+<summary><strong>July 1, 2026 - v1.4.0</strong></summary>
+
+This update comes with two notable changes and a variety of additional features:
+
+- **`ignore_imports` now defaults to `true`** — on an import mismatch, AXLE substitutes the default header and reuses the cached environment.
+- In turn, **`ignore_imports=false` no longer errors: it now processes your imports as written**. However, note that this is much slower and may cause issues if a dependency is missing. See [Import Mismatches](https://axle.axiommath.ai/v1/docs/tools/troubleshooting/#import-mismatches).
+- **Reworked `okay` and `tool_messages`** — `check` now reports `sorry`/axiom/unsafe findings as warnings (not errors), and `repair_proofs` reports failed repairs as errors. See [Interpreting the `okay` field](https://axle.axiommath.ai/v1/docs/tools/troubleshooting/#interpreting-the-okay-field).
+
+Also: opaque support in `merge`/`extract_decls`, a `disprove` fix, and Lean 4.30/4.31. See the [changelog](https://axle.axiommath.ai/v1/docs/changelog/) for more details.
+
+</details>
 
 <details>
 <summary><strong>June 24, 2026 - 📣 AXLE @ ICML 2026</strong></summary>

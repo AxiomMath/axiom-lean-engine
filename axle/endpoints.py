@@ -213,12 +213,44 @@ When `false`, emits a `tool_messages` warning and:
     "default": True,
 }
 
+# Dependency-only toggle (extract_decls)
+DEPENDENCIES_ONLY_INPUT: InputField = {
+    "name": "dependencies_only",
+    "type": "checkbox",
+    "description": "Extract dependencies only",
+    "details": """\
+If `false` (default), every document field is computed. Set to `true` to compute only each declaration's `kind`, `index`, `line_pos`, `end_line_pos`, `is_sorry`, and the six dependency lists (`local`/`external` × `type`/`value`/`syntactic`). This skips the pretty-printed types, hashes, and self-contained declaration sources, which dominate the cost on files with many declarations. Use this to build a dependency graph over a file.
+
+When `true`, emits a `tool_messages` warning and these fields are empty and should not be used: `declaration`, `content`, `tokens`, `signature`, `type`, `type_hash`, `unfolded_type_hash`, `type_depth`, `term_depth`, `proof_length`, `tactic_counts`, `wall_ms`, `heartbeats`, `theorem_messages`, `declaration_messages`. `verbosity` and `delab_options` have no effect.""",
+    "default": False,
+}
+
+# Elaboration toggle (extract_decls)
+ELABORATE_INPUT: InputField = {
+    "name": "elaborate",
+    "type": "checkbox",
+    "description": "Elaborate the file",
+    "details": """\
+If `true` (default), the file is elaborated. Set to `false` to skip elaboration entirely and report only the constants named in each declaration's source text, resolved against the environment's imports. This is much faster but misses constants introduced by tactics, notation, and macro expansion.
+
+When `false`, emits a `tool_messages` warning and populates only `kind`, `index`, `line_pos`, `end_line_pos`, `local_syntactic_dependencies`, and `external_syntactic_dependencies`; every other document field is empty. `lean_messages` holds only header and parse errors. `elaborate_proofs`, `dependencies_only`, `verbosity`, and `delab_options` have no effect.""",
+    "default": True,
+}
+
 # Mathlib options toggle
 MATHLIB_OPTIONS_INPUT: InputField = {
     "name": "mathlib_options",
     "type": "checkbox",
     "description": "Enable Mathlib options",
     "details": "If true, enables conventional Mathlib options. This toggle sets `linter.mathlibStandardSet` to true, `autoImplicit` to false, `relaxedAutoImplicit` to false, and `pp.unicode.fun` to true. It also runs the `#lint` environment linters and reports their findings in `lean_messages`.",
+    "default": False,
+}
+
+RUN_ENV_LINTERS_INPUT: InputField = {
+    "name": "run_env_linters",
+    "type": "checkbox",
+    "description": "Run environment linters",
+    "details": "If true, runs the `#lint` environment linters (such as `docBlame`, `simpNF` and `unusedArguments`) on the file's declarations and reports their findings in `lean_messages`. It changes no Lean options. `mathlib_options` also runs them.",
     "default": False,
 }
 
@@ -625,6 +657,7 @@ This option is also useful for enabling tactics like `native_decide`, which intr
                 "placeholder": "helper_lemma, auxiliary_theorem",
             },
             MATHLIB_OPTIONS_INPUT,
+            RUN_ENV_LINTERS_INPUT,
             GLOBAL_OPTIONS_INPUT,
             {
                 "name": "use_def_eq",
@@ -672,6 +705,41 @@ Limitations:
 - A universe-polymorphic sorried def is not quantified over. It remains a constant in the negated type.
 - A sorried def is only quantified over when it appears directly in a theorem's type. If it is reachable only through the body of another local def, it remains a constant in the negated type.
 - When `formal_statement` contains several theorems, each is negated independently. This may be logically inconsistent but is out of the scope of `verify_proof`.""",
+                "default": False,
+            },
+            {
+                "name": "allow_statement_axioms",
+                "type": "checkbox",
+                "description": "Allow `content` to use axioms declared in `formal_statement`",
+                "details": """\
+By default, `content` may only use the standard axioms `propext`, `Quot.sound`, and
+`Classical.choice`. When `true`, it may also use any axiom declared in `formal_statement`.
+`content` must redeclare each such axiom it uses, with the same name, universe parameters,
+and type. Types are compared at face value, regardless of `use_def_eq`.
+
+```lean
+-- formal_statement
+axiom ax : 1 = 2
+theorem t : 1 = 2 := sorry
+
+-- content
+axiom ax : 1 = 2
+theorem t : 1 = 2 := ax
+```
+
+Axioms that `content` does not use are not checked, and need not be redeclared. Axioms
+that `formal_statement` only imports are not allowed. The option also applies to the
+negation check when `verify_negation` is set.""",
+                "default": False,
+            },
+            {
+                "name": "allow_bv_decide",
+                "type": "checkbox",
+                "description": "Allow the axioms that `bv_decide` generates",
+                "details": """\
+By default, proofs that use `bv_decide` are rejected, because the tactic adds an axiom. When
+`true`, `content` may also use the axioms that `bv_decide` generates. Any other axiom is still
+rejected. Has no effect before Lean 4.29.0.""",
                 "default": False,
             },
             IGNORE_IMPORTS_INPUT,
@@ -780,6 +848,7 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/check \\
         "inputs": [
             CONTENT_INPUT,
             MATHLIB_OPTIONS_INPUT,
+            RUN_ENV_LINTERS_INPUT,
             GLOBAL_OPTIONS_INPUT,
             NAMES_INPUT,
             INDICES_INPUT,
@@ -921,6 +990,7 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/extract_theorems \\
             INDICES_INPUT,
             DELAB_OPTIONS_INPUT,
             MATHLIB_OPTIONS_INPUT,
+            RUN_ENV_LINTERS_INPUT,
             GLOBAL_OPTIONS_INPUT,
             IGNORE_IMPORTS_INPUT,
             ENVIRONMENT_INPUT,
@@ -942,7 +1012,10 @@ Dictionary mapping theorem names to self-contained Lean code documents. Each key
     },
     "extract_decls": {
         "title": "Extract Declarations",
-        "details": "Split a file containing one or more declarations into smaller units, each containing a single declaration along with any required dependencies. This is the replacement for the deprecated [`extract_theorems`](extract_theorems.md) tool, and works for all declaration kinds (def, theorem, lemma, abbrev, instance, structure, etc.).",
+        "details": """\
+Split a file containing one or more declarations into smaller units, each containing a single declaration along with any required dependencies. This is the replacement for the deprecated [`extract_theorems`](extract_theorems.md) tool, and works for all declaration kinds (def, theorem, lemma, abbrev, instance, structure, etc.).
+
+To build a dependency graph over a file without paying for the pretty-printed types, hashes, and self-contained declaration sources, two inputs trade completeness for speed. `dependencies_only=true` computes only each declaration's kind, position, and dependency lists. `elaborate=false` skips elaboration entirely and reports only the constants named in the source text.""",
         "description": "split file into separate declarations with dependencies",
         "cli_output": {
             "mode": "multiple_files",
@@ -1072,7 +1145,10 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/extract_decls \\
             VERBOSITY_INPUT,
             DELAB_OPTIONS_INPUT,
             ELABORATE_PROOFS_INPUT,
+            DEPENDENCIES_ONLY_INPUT,
+            ELABORATE_INPUT,
             MATHLIB_OPTIONS_INPUT,
+            RUN_ENV_LINTERS_INPUT,
             GLOBAL_OPTIONS_INPUT,
             IGNORE_IMPORTS_INPUT,
             ENVIRONMENT_INPUT,
@@ -1150,6 +1226,7 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/extract_proof_states \\
                 "placeholder": "theorem foo (n : Nat) : n + 0 = n := by\n  induction n with\n  | zero => rfl\n  | succ k ih => simp",
             },
             MATHLIB_OPTIONS_INPUT,
+            RUN_ENV_LINTERS_INPUT,
             GLOBAL_OPTIONS_INPUT,
             IGNORE_IMPORTS_INPUT,
             ENVIRONMENT_INPUT,
@@ -1307,6 +1384,7 @@ CLI supports `key=val,key=val` format or `--declarations-file mapping.json`.""",
             },
             REPARSE_INPUT,
             MATHLIB_OPTIONS_INPUT,
+            RUN_ENV_LINTERS_INPUT,
             GLOBAL_OPTIONS_INPUT,
             IGNORE_IMPORTS_INPUT,
             ENVIRONMENT_INPUT,
@@ -1407,6 +1485,7 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/theorem2lemma \\
             THEOREMS_ONLY_NOOP_INPUT,
             REPARSE_INPUT,
             MATHLIB_OPTIONS_INPUT,
+            RUN_ENV_LINTERS_INPUT,
             GLOBAL_OPTIONS_INPUT,
             IGNORE_IMPORTS_INPUT,
             ENVIRONMENT_INPUT,
@@ -1489,6 +1568,7 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/theorem2sorry \\
             THEOREMS_ONLY_INPUT,
             REPARSE_INPUT,
             MATHLIB_OPTIONS_INPUT,
+            RUN_ENV_LINTERS_INPUT,
             GLOBAL_OPTIONS_INPUT,
             IGNORE_IMPORTS_INPUT,
             ENVIRONMENT_INPUT,
@@ -1734,6 +1814,7 @@ Defaults to true.""",
             },
             REPARSE_INPUT,
             MATHLIB_OPTIONS_INPUT,
+            RUN_ENV_LINTERS_INPUT,
             GLOBAL_OPTIONS_INPUT,
             IGNORE_IMPORTS_INPUT,
             ENVIRONMENT_INPUT,
@@ -1794,6 +1875,16 @@ Defaults to true.""",
     Cleans up unused variable names.
 
     In `theorem triv (arg : ℕ) : True := trivial`, the variable `arg` is useless. We do *not* remove it, because that would change the signature of the theorem, but we can clean things up a bit by replacing it with an underscore, as in: `theorem triv (_ : ℕ) : True := trivial`.
+
+??? "`apply_try_this`"
+    Applies the suggestions tactics offer.
+
+    In `theorem foo (a : Nat) : a + 0 = a := by simp?`, the `simp?` reports `Try this: simp only [add_zero]`, and so is replaced by that.
+
+??? "`apply_linter_hints`"
+    Applies the fix that linter warnings carry.
+
+    In `theorem foo (a : Nat) : a + 0 = a := by simp [Nat.mul_one]`, the `Nat.mul_one` argument is unused, and the linter's hint drops it, leaving `simp`.
 
 <!-- Not functional
 #### `simplify_have_exact`
@@ -1907,11 +1998,12 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/simplify_theorems \\
                 "name": "simplifications",
                 "type": "list",
                 "description": "List of simplifications to apply",
-                "details": """If not specified, all simplifications are applied. See below for available simplifications.""",
+                "details": """If not specified, a default set is applied: `remove_unused_tactics`, `rename_unused_vars`, and `remove_unused_haves`. See below for available simplifications.""",
                 "required": False,
                 "placeholder": "remove_unused_tactics, rename_unused_vars, remove_unused_haves",
             },
             MATHLIB_OPTIONS_INPUT,
+            RUN_ENV_LINTERS_INPUT,
             GLOBAL_OPTIONS_INPUT,
             IGNORE_IMPORTS_INPUT,
             ENVIRONMENT_INPUT,
@@ -1942,7 +2034,7 @@ Attempt to repair broken theorem proofs. Available repairs:
 
 - `insert_sorries` — append `sorry` to proofs that end with goals still open
 - `remove_extraneous_tactics` — truncate trailing tactics after the proof closes
-- `apply_terminal_tactics` — try terminal tactics in place of `sorry`
+- `apply_terminal_tactics` — try terminal tactics at each `sorry` and at each block left with goals open
 - `replace_unsafe_tactics` — replace `native_decide` with `decide +kernel`
 - `remove_unknown_options` — strip `set_option` commands referencing an unknown option
 - `enable_autoImplicit` — set `autoImplicit true` when a command needs auto-implicit binders
@@ -2093,7 +2185,7 @@ If `repairs` is omitted, all of the above run. Pass an explicit list to limit wh
     ```
 
 ??? "`apply_terminal_tactics`"
-    Tries terminal tactics in place of sorries.
+    Tries terminal tactics wherever a proof is unfinished: in place of a `sorry`, and at the end of a tactic block that ran out of tactics with goals still open.
 
     In `theorem foo : 1 = 1 := by sorry`, the proof is incomplete. This repair attempts to apply terminal tactics to complete the proof. The tactics to try can be customized via the `terminal_tactics` parameter (default: `["grind"]`).
 
@@ -2107,6 +2199,20 @@ If `repairs` is omitted, all of the above run. Pass an explicit list to limit wh
     ```lean
     theorem simple_eq : 1 + 1 = 2 := by
       grind
+    ```
+
+    A block that ends with goals still open is closed:
+
+    **Before:**
+    ```lean
+    theorem incomplete (n : Nat) : n + 0 = n ∧ n = n := by
+      constructor
+    ```
+
+    **After:**
+    ```lean
+    theorem incomplete (n : Nat) : n + 0 = n ∧ n = n := by
+      constructor; all_goals grind
     ```
 
 
@@ -2221,6 +2327,7 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/repair_proofs \\
                 "placeholder": "grind, aesop, rfl, simp, decide",
             },
             MATHLIB_OPTIONS_INPUT,
+            RUN_ENV_LINTERS_INPUT,
             GLOBAL_OPTIONS_INPUT,
             IGNORE_IMPORTS_INPUT,
             ENVIRONMENT_INPUT,
@@ -2498,6 +2605,7 @@ These configuration options provide some flexibility around usage, at the cost o
             DELAB_OPTIONS_INPUT,
             REPARSE_INPUT,
             MATHLIB_OPTIONS_INPUT,
+            RUN_ENV_LINTERS_INPUT,
             GLOBAL_OPTIONS_INPUT,
             IGNORE_IMPORTS_INPUT,
             ENVIRONMENT_INPUT,
@@ -2574,6 +2682,7 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/have2sorry \\
             THEOREMS_ONLY_INPUT,
             REPARSE_INPUT,
             MATHLIB_OPTIONS_INPUT,
+            RUN_ENV_LINTERS_INPUT,
             GLOBAL_OPTIONS_INPUT,
             IGNORE_IMPORTS_INPUT,
             ENVIRONMENT_INPUT,
@@ -2725,6 +2834,7 @@ theorem multiple (n : Nat) : 1 = 1 ∧ 2 = 2 := by constructor <;> (first | exac
             DELAB_OPTIONS_INPUT,
             REPARSE_INPUT,
             MATHLIB_OPTIONS_INPUT,
+            RUN_ENV_LINTERS_INPUT,
             GLOBAL_OPTIONS_INPUT,
             IGNORE_IMPORTS_INPUT,
             ENVIRONMENT_INPUT,
@@ -2826,6 +2936,7 @@ Tactics tried in order to prove the negation. `grind` often works for false stat
             VERBOSITY_INPUT,
             DELAB_OPTIONS_INPUT,
             MATHLIB_OPTIONS_INPUT,
+            RUN_ENV_LINTERS_INPUT,
             GLOBAL_OPTIONS_INPUT,
             IGNORE_IMPORTS_INPUT,
             ENVIRONMENT_INPUT,
@@ -3058,6 +3169,7 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/normalize \\
             },
             DELAB_OPTIONS_INPUT,
             MATHLIB_OPTIONS_INPUT,
+            RUN_ENV_LINTERS_INPUT,
             GLOBAL_OPTIONS_INPUT,
             IGNORE_IMPORTS_INPUT,
             ENVIRONMENT_INPUT,
