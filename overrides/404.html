@@ -1,0 +1,16 @@
+{% extends "main.html" %}
+
+{% block content %}
+<h1>404 - Page Not Found</h1>
+
+<p><strong>Theorem not found.</strong> Perhaps it was left as an exercise to the reader?</p>
+
+<hr>
+
+<p>The page you're looking for doesn't exist or has been moved.</p>
+
+<ul>
+  <li><a href="{{ config.site_url }}">Go to the homepage</a></li>
+  <li><a href="{{ config.site_url }}tools/verify_proof/">Browse all tools</a></li>
+</ul>
+{% endblock %}
