@@ -27,6 +27,9 @@ Strip proofs from theorems, replacing them with `sorry`.
 ??? "`reparse` · bool · default: `True` · Re-elaborate the transformed output"
     If `true` (default), the transformed content is re-elaborated. If `false`, re-elaboration is skipped. The resulting `lean_messages` is then returned empty.
 
+??? "`nested_proofs` · bool · default: `False` · Sorry out tactic-mode proofs inside non-theorem declarations"
+    If `true`, tactic-mode proofs inside non-theorem declarations are replaced with `sorry`, taking the outermost `by` block. Term-mode proofs are left as written. Requires `theorems_only=false`.
+
 ??? "`mathlib_options` · bool · default: `False` · Enable Mathlib options"
     If true, enables conventional Mathlib options. This toggle sets `linter.mathlibStandardSet` to true, `autoImplicit` to false, `relaxedAutoImplicit` to false, and `pp.unicode.fun` to true. It also runs the `#lint` environment linters and reports their findings in `lean_messages`.
 

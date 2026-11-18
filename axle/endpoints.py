@@ -1567,6 +1567,13 @@ curl -s -X POST https://axle.axiommath.ai/api/v1/theorem2sorry \\
             INDICES_INPUT,
             THEOREMS_ONLY_INPUT,
             REPARSE_INPUT,
+            {
+                "name": "nested_proofs",
+                "type": "checkbox",
+                "description": "Sorry out tactic-mode proofs inside non-theorem declarations",
+                "details": "If `true`, tactic-mode proofs inside non-theorem declarations are replaced with `sorry`, taking the outermost `by` block. Term-mode proofs are left as written. Requires `theorems_only=false`.",
+                "default": False,
+            },
             MATHLIB_OPTIONS_INPUT,
             RUN_ENV_LINTERS_INPUT,
             GLOBAL_OPTIONS_INPUT,

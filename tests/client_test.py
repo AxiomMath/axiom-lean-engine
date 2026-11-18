@@ -6,7 +6,11 @@ from unittest.mock import AsyncMock
 import pytest
 
 from axle.client import AxleClient
-from axle.exceptions import AxleRuntimeError, LeanResourceExceeded, LeanTimeout
+from axle.exceptions import (
+    AxleRuntimeError,
+    LeanResourceExceeded,
+    LeanTimeout,
+)
 from axle.types import Document, VerifyProofResponse
 
 

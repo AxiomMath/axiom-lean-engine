@@ -10,6 +10,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Releases]
 
+## v1.9.1 - November 18, 2026
+
+This is a minor update adding Lean 4.36.0 and a `nested_proofs` option to `theorem2sorry`.
+
+### Added
+- Added Lean 4.36.0.
+- `theorem2sorry` accepts `nested_proofs` (default `false`) to sorry out tactic-mode proofs inside non-theorem declarations (only applicable when `theorems_only=false`).
+
+### Changed
+- The `environment` field is now case-insensitive.
+- `disprove` and `simplify_theorems` (with `remove_unused_tactics`) now return a warning in `tool_messages` when the file does not import a required library (Plausible and Mathlib's unused-tactic linter, respectively). Previously, the work was skipped silently.
+- `run_env_linters` now returns a warning in `tool_messages` when the file does not import Batteries. Previously, it reported that all linting checks passed.
+- On Lean 4.36.0 and later, `repair_proofs` and `disprove` may have poorer results with library suggestion tactics (such as `grind +suggestions`) if the file does not import `Lean.LibrarySuggestions.Default`. They now return a warning in `tool_messages` when this occurs.
+
 ## v1.9.0 - October 14, 2026
 
 This update adds new environments (CSLib, Physlib, and PrimeGapsLib) and introduces options to `extract_decls`, `simplify_theorems`, and `verify_proof` for faster, simpler, or more permissive usage.

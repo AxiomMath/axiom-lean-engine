@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "axiom-axle"
-version = "1.9.0"
+version = "1.9.1"
 description = "Python client for AXLE (Axiom Lean Engine) API"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -53,7 +53,7 @@ dev = [
     "pytest>=8.0.0",
     "pytest-asyncio>=0.23.0",
     "mypy>=1.8.0",
-    "ruff>=0.16.8,<0.17",  # Keep in sync with .pre-commit-config.yaml
+    "ruff>=0.17,<0.18",  # Keep in sync with .pre-commit-config.yaml
     "aioresponses>=0.7.0",
     "mkdocs-material>=9.0.0",
     "types-requests>=2.28.0",
@@ -80,4 +80,3 @@ asyncio_default_fixture_loop_scope = "function"
 
 [tool.uv]
 exclude-newer = "3 weeks"
-exclude-newer-package = { multidict = "2026-09-22T00:00:00Z" }
