@@ -110,3 +110,15 @@ def test_inline_lean_messages_mixed_formats() -> None:
     result = inline_lean_messages(code, messages)
     assert "without endPos" in result
     assert "with endPos" in result
+
+
+def test_remove_comments_primed_identifiers() -> None:
+    """A ' inside an identifier (h', foo') is not a char literal."""
+    code = "theorem foo (h' : a = b) : b = a := by -- flip it\n  exact h'.symm /- don't -/"
+    result = remove_comments(code)
+    assert result == "theorem foo (h' : a = b) : b = a := by \n  exact h'.symm "
+
+
+def test_remove_comments_char_literal_still_a_string() -> None:
+    code = "def c := '-' -- dash"
+    assert remove_comments(code) == "def c := '-' "
