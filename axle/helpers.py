@@ -6,6 +6,14 @@ This module provides utilities for string manipulation, on top of AXLE core tran
 import re
 
 
+_CHAR_LITERAL = re.compile(r"'(?:\\(?:x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4}|.)|[^\\'\n])'")
+
+
+def _is_ident_char(c: str) -> bool:
+    """Characters that can continue a Lean 4 identifier (letters, digits, subscripts, _ ' ! ?)."""
+    return c.isalnum() or c in "_'!?"
+
+
 def remove_comments(
     code: str,
     include_module_docs: bool = False,
@@ -32,11 +40,21 @@ def remove_comments(
         ch = code[i]
 
         if state == OUT:
-            if ch in ('"', "'"):
+            if ch == '"':
                 state = STRING
                 string_delim = ch
                 result.append(ch)
                 i += 1
+            elif ch == "'":
+                # A ' is a char literal ('a', '\n') only where a name can't continue;
+                # otherwise it is part of the code (h', foo', xs[i]'h).
+                m = _CHAR_LITERAL.match(code, i)
+                if m and not (i > 0 and _is_ident_char(code[i - 1])):
+                    result.append(m.group())
+                    i = m.end()
+                else:
+                    result.append(ch)
+                    i += 1
             elif three == "/--":
                 # Docstring
                 state = BLOCK
